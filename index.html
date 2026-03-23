@@ -207,7 +207,7 @@ function E(s){return(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/
 
 function buildChips(){
   var bdrs=["All"].concat(DATA.map(function(d){return d.b;}).filter(function(v,i,a){return v&&a.indexOf(v)===i;}).sort());
-  var geos=["All","ANZ","UK"];
+  var geos=["All"].concat(DATA.map(function(d){return d.g;}).filter(function(v,i,a){return v&&a.indexOf(v)===i;}).sort());
   var sigs=[{k:"All",l:"All"},{k:"hot",l:"Hot 8+",x:"chip-hot"},{k:"warm",l:"Warm 5-7",x:"chip-warm"},{k:"cool",l:"Watch 3-4",x:"chip-cool"},{k:"hj",l:"Has Jobs",x:"chip-hj"},{k:"hn",l:"Has News",x:"chip-hn"},{k:"hb",l:"Buyer Intent",x:"chip-hb"},{k:"hw",l:"Web Visitors",x:"chip-hw"}];
   function mk(id,arr,gV,sV){arr.forEach(function(item){var v=typeof item==="string"?item:item.k,l=typeof item==="string"?item:item.l,x=item.x||"";var b=document.createElement("button");b.className="chip "+x+(gV()===v?" on":"");b.textContent=l;b.dataset.v=v;b.onclick=function(){sV(v);document.querySelectorAll("#"+id+" .chip").forEach(function(c){c.classList.toggle("on",c.dataset.v===v);});render();};document.getElementById(id).appendChild(b);});}
   mk("bdr-chips",bdrs,function(){return aBdr;},function(v){aBdr=v;});
