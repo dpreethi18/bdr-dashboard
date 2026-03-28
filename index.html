@@ -4,6 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>BDR Intent Dashboard</title>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-E7KS8ZF493');
+</script>
+<!-- End Google Analytics -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -209,8 +218,7 @@ function buildChips(){
   var bdrs=["All"].concat(DATA.map(function(d){return d.b;}).filter(function(v,i,a){return v&&a.indexOf(v)===i;}).sort());
   var geos=["All"].concat(DATA.map(function(d){return d.g;}).filter(function(v,i,a){return v&&a.indexOf(v)===i;}).sort());
   var sigs=[{k:"All",l:"All"},{k:"hot",l:"Hot 8+",x:"chip-hot"},{k:"warm",l:"Warm 5-7",x:"chip-warm"},{k:"cool",l:"Watch 3-4",x:"chip-cool"},{k:"hj",l:"Has Jobs",x:"chip-hj"},{k:"hn",l:"Has News",x:"chip-hn"},{k:"hb",l:"Buyer Intent",x:"chip-hb"},{k:"hw",l:"Web Visitors",x:"chip-hw"}];
-  function mk(id,arr,gV,sV){arr.forEach(function(item){var v=typeof item==="string"?item:item.k,l=typeof item==="string"?item:item.l,x=item.x||"";var b=document.createElement("button");b.className="chip "+x+(gV()===v?" on":"");b.textContent=l;b.dataset.v=v;b.onclick=function(){sV(v);document.querySelectorAll("#"+id+" .chip").forEach(function(c){c.classList.toggle("on",c.dataset.v===v);});render();};document.getElementById(id).appendChild(b);});}
-  mk("bdr-chips",bdrs,function(){return aBdr;},function(v){aBdr=v;});
+  function mk(id,arr,gV,sV){arr.forEach(function(item){var v=typeof item==="string"?item:item.k,l=typeof item==="string"?item:item.l,x=item.x||"";var b=document.createElement("button");b.className="chip "+x+(gV()===v?" on":"");b.textContent=l;b.dataset.v=v;b.onclick=function(){sV(v);if(id==="bdr-chips"&&typeof gtag!=="undefined")gtag("event","bdr_filter_click",{bdr_name:v});document.querySelectorAll("#"+id+" .chip").forEach(function(c){c.classList.toggle("on",c.dataset.v===v);});render();};document.getElementById(id).appendChild(b);});}  mk("bdr-chips",bdrs,function(){return aBdr;},function(v){aBdr=v;});
   mk("geo-chips",geos,function(){return aGeo;},function(v){aGeo=v;});
   mk("sig-chips",sigs,function(){return aSig;},function(v){aSig=v;});
 }
