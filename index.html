@@ -4,42 +4,44 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>BDR Intent Dashboard</title>
-<!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
 <script>
-  window.dataLayer = window.dataLayer || [];
+  window.dataLayer=window.dataLayer||[];
   function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-E7KS8ZF493');
+  gtag('js',new Date());
+  gtag('config','G-E7KS8ZF493');
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#F0F2F8;--surface:#fff;--surface2:#F7F8FC;--border:#E4E7F0;--border2:#CDD2E0;--text:#0D1117;--text2:#4A5568;--text3:#94A3B8;--accent:#5B6AF0;--accent2:#EEF0FE;--hot:#EF4444;--hotbg:#FEF2F2;--hotbdr:#FECACA;--warm:#F59E0B;--warmbg:#FFFBEB;--warmbdr:#FDE68A;--cool:#3B82F6;--coolbg:#EFF6FF;--bi:#8B5CF6;--bibg:#F5F3FF;--bibdr:#DDD6FE;--ws:#0891B2;--wsbg:#ECFEFF;--wsbdr:#A5F3FC;--news:#059669;--newsbg:#ECFDF5;--newsbdr:#A7F3D0;--jobs:#D97706;--jobsbg:#FFFBEB;--jobsbdr:#FDE68A;--r:10px;--r-sm:7px;--sh-lg:0 8px 32px rgba(0,0,0,.12)}
+:root{--bg:#F0F2F8;--surface:#fff;--surface2:#F7F8FC;--border:#E4E7F0;--border2:#CDD2E0;--text:#0D1117;--text2:#4A5568;--text3:#94A3B8;--accent:#5B6AF0;--accent2:#EEF0FE;--brand:#301894;--hot:#EF4444;--hotbg:#FEF2F2;--hotbdr:#FECACA;--warm:#F59E0B;--warmbg:#FFFBEB;--warmbdr:#FDE68A;--cool:#3B82F6;--coolbg:#EFF6FF;--cold:#9CA3AF;--bi:#8B5CF6;--bibg:#F5F3FF;--bibdr:#DDD6FE;--ws:#0891B2;--wsbg:#ECFEFF;--wsbdr:#A5F3FC;--news:#059669;--newsbg:#ECFDF5;--newsbdr:#A7F3D0;--jobs:#D97706;--jobsbg:#FFFBEB;--jobsbdr:#FDE68A;--r:10px;--r-sm:7px;--sh-lg:0 8px 32px rgba(0,0,0,.12)}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 #loading{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;z-index:999}
 .spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 #app{display:none}
-
 /* TOPBAR */
-.topbar{background:var(--text);height:58px;display:flex;align-items:center;padding:0 28px;gap:20px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.3)}
-.tb-brand{display:flex;align-items:center;gap:10px}
-.tb-logo{font-size:22px}
-.tb-title{font-size:15px;font-weight:700;color:#fff;letter-spacing:-.3px}
+.topbar{background:var(--brand);height:62px;display:flex;align-items:center;padding:0 28px;gap:16px;position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(0,0,0,.35)}
+.tb-logo-wrap{display:flex;align-items:center;gap:10px;padding-right:16px;border-right:1px solid rgba(255,255,255,.18);margin-right:4px}
+.tb-facilio-logo{display:flex;align-items:center;gap:6px}
+.tb-facilio-text{font-size:22px;font-weight:800;color:#fff;letter-spacing:-1px}
+.tb-facilio-dot1{width:8px;height:8px;border-radius:2px;background:#E91E8C;margin-bottom:12px}
+.tb-facilio-dot2{width:8px;height:8px;border-radius:2px;background:#00BCD4;margin-bottom:12px}
+.tb-title-wrap{display:flex;flex-direction:column}
+.tb-title{font-size:13px;font-weight:700;color:#fff}
 .tb-subtitle{font-size:11px;color:rgba(255,255,255,.4);margin-top:1px}
-.tb-stats{display:flex;gap:24px;margin-left:auto}
+.tb-stats{display:flex;gap:22px;margin-left:auto}
 .tb-stat{text-align:right}
 .tb-val{font-size:18px;font-weight:800;font-family:'JetBrains Mono',monospace;line-height:1}
 .tb-lbl{font-size:10px;color:rgba(255,255,255,.4);margin-top:1px}
 .s-total{color:#fff}.s-hot{color:#FCA5A5}.s-warm{color:#FCD34D}.s-jobs{color:#6EE7B7}.s-news{color:#93C5FD}
-
 /* TOOLBAR */
-.toolbar{background:var(--surface);border-bottom:1.5px solid var(--border);padding:12px 28px;display:flex;flex-direction:column;gap:10px;position:sticky;top:58px;z-index:90}
+.toolbar{background:var(--surface);border-bottom:1.5px solid var(--border);padding:12px 28px;display:flex;flex-direction:column;gap:10px;position:sticky;top:62px;z-index:90}
 .tr1{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .tr2{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .tr3{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.search-wrap{position:relative;flex:1;min-width:200px;max-width:360px}
+.search-wrap{position:relative;flex:1;min-width:200px;max-width:340px}
 .search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none}
 .search-input{width:100%;padding:9px 12px 9px 34px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-family:'Inter',sans-serif;font-size:13px;color:var(--text);background:var(--surface2);outline:none;transition:border-color .15s}
 .search-input:focus{border-color:var(--accent);background:#fff}
@@ -54,7 +56,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .chip{padding:5px 12px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface2);font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .15s;white-space:nowrap;font-family:'Inter',sans-serif}
 .chip:hover{border-color:var(--accent);color:var(--accent)}
 .chip.on{background:var(--text);border-color:var(--text);color:#fff}
-.chip-bdr.on{background:var(--accent);border-color:var(--accent)}
+.chip-bdr.on{background:var(--brand);border-color:var(--brand)}
 .chip-geo.on{background:#0F766E;border-color:#0F766E}
 .chip-hot.on{background:var(--hot);border-color:var(--hot)}
 .chip-warm.on{background:var(--warm);border-color:var(--warm)}
@@ -67,35 +69,47 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .divider{width:1px;height:20px;background:var(--border);flex-shrink:0}
 .show-hidden-btn{padding:5px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface2);font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s}
 .show-hidden-btn.on{background:#FEF2F2;border-color:var(--hot);color:var(--hot)}
-
-/* BDR PERSONAL DASHBOARD */
-.bdr-dash{background:var(--surface);border-bottom:1.5px solid var(--border);padding:20px 28px;display:none}
+/* CHART FILTER BANNER */
+.chart-filter-banner{display:none;background:#FFF7ED;border-bottom:1.5px solid #FDE68A;padding:10px 28px;align-items:center;gap:10px}
+.chart-filter-banner.visible{display:flex}
+.cfb-text{font-size:13px;font-weight:600;color:#92400E}
+.cfb-clear{padding:5px 14px;border-radius:20px;border:1.5px solid #F59E0B;background:#fff;font-size:12px;font-weight:600;color:#92400E;cursor:pointer;font-family:'Inter',sans-serif}
+.cfb-clear:hover{background:#F59E0B;color:#fff}
+/* BDR DASHBOARD */
+.bdr-dash{background:var(--surface);border-bottom:1.5px solid var(--border);padding:20px 28px 0;display:none}
 .bdr-dash.visible{display:block}
 .bdr-dash-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
-.bdr-dash-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff;flex-shrink:0}
+.bdr-dash-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#fff;flex-shrink:0}
 .bdr-dash-name{font-size:20px;font-weight:800;color:var(--text)}
 .bdr-dash-sub{font-size:12px;color:var(--text3);margin-top:2px}
-.bdr-stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:16px}
-.bdr-stat-card{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:14px;position:relative;overflow:hidden}
-.bdr-stat-bar{position:absolute;top:0;left:0;right:0;height:3px}
-.bdr-stat-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
-.bdr-stat-val{font-size:26px;font-weight:800;font-family:'JetBrains Mono',monospace;line-height:1;margin-bottom:2px}
-.bdr-stat-sub{font-size:11px;color:var(--text3)}
-.bdr-verticals{display:flex;gap:6px;flex-wrap:wrap}
-.bdr-vert-tag{padding:4px 10px;border-radius:6px;font-size:12px;font-weight:500;background:var(--surface2);border:1.5px solid var(--border);color:var(--text2)}
+.bdr-tier-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.bdr-tier-card{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:14px;position:relative;overflow:hidden;cursor:pointer;transition:all .15s}
+.bdr-tier-card:hover{transform:translateY(-2px);box-shadow:var(--sh-lg)}
+.bdr-tier-card.active-filter{border-width:2px}
+.bdr-tier-bar{position:absolute;top:0;left:0;right:0;height:3px}
+.bdr-tier-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.bdr-tier-val{font-size:28px;font-weight:800;font-family:'JetBrains Mono',monospace;line-height:1;margin-bottom:4px}
+.bdr-tier-sub{font-size:11px;color:var(--text3)}
+.bdr-sig-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.bdr-sig-card{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:10px 14px;display:flex;align-items:center;gap:10px}
+.bdr-sig-icon{font-size:20px}
+.bdr-sig-label{font-size:11px;color:var(--text3);font-weight:600;margin-bottom:2px}
+.bdr-sig-count{font-size:22px;font-weight:800;font-family:'JetBrains Mono',monospace}
 .bdr-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
-.bdr-signals-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
-.bdr-sig-card{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:10px 12px;display:flex;align-items:center;gap:10px}
-.bdr-sig-icon{font-size:18px}
-.bdr-sig-label{font-size:11px;color:var(--text3);font-weight:600}
-.bdr-sig-count{font-size:20px;font-weight:800;font-family:'JetBrains Mono',monospace}
-
-/* MAIN GRID */
+/* CHARTS */
+.bdr-charts-wrap{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:0;padding-bottom:20px}
+.bdr-chart-box{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:16px}
+.bdr-chart-title{font-size:12px;font-weight:700;color:var(--text2);margin-bottom:4px}
+.bdr-chart-sub{font-size:11px;color:var(--text3);margin-bottom:12px}
+.chart-canvas-wrap{position:relative;height:220px}
+.chart-legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px}
+.chart-legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)}
+.chart-legend-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+/* MAIN */
 .main{padding:20px 28px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(272px,1fr));gap:12px}
 .empty{text-align:center;padding:60px 20px;color:var(--text3)}
-
-/* CARDS */
+/* CARD */
 .card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);padding:16px;cursor:pointer;transition:all .18s;position:relative}
 .card:hover{border-color:var(--accent);box-shadow:var(--sh-lg);transform:translateY(-2px)}
 .card.hidden-card{opacity:.45;border-style:dashed}
@@ -119,10 +133,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .bdr-Rhythm{background:#FEF3C7;color:#92400E}
 .bdr-Aman{background:#FEE2E2;color:#9D174D}
 .bdr-Arpita{background:#DBEAFE;color:#1E40AF}
-.bdr-Kanishka{background:#D1FAE5;color:#065F46}
+.bdr-Kanishka{background:#D1FAE5;color:#166534}
 .bdr-Ojasvi{background:#FEF3C7;color:#78350F}
 .bdr-Saeed{background:#EDE9FE;color:#4C1D95}
 .bdr-Tushar{background:#E0F2FE;color:#0369A1}
+.bdr-Basha{background:#FCE7F3;color:#9D174D}
 .bdr-Unassigned{background:#F3F4F6;color:#6B7280}
 .sigs{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px}
 .sig{padding:2px 7px;border-radius:5px;font-size:11px;font-weight:600}
@@ -130,7 +145,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .sig-ws{background:var(--wsbg);color:var(--ws)}
 .sig-news{background:var(--newsbg);color:var(--news)}
 .sig-jobs{background:var(--jobsbg);color:var(--jobs)}
-
 /* MODAL */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;opacity:0;pointer-events:none;transition:opacity .2s;overflow-y:auto}
 .overlay.open{opacity:1;pointer-events:all}
@@ -181,14 +195,28 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .tip{padding:9px 13px;border-radius:7px;font-size:13px;margin-bottom:7px;line-height:1.5}
 .about-box{font-size:13px;color:var(--text2);line-height:1.7;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:13px;margin-bottom:8px}
 .mt-empty{text-align:center;padding:30px;color:var(--text3)}
-@media(max-width:640px){.topbar,.toolbar,.main{padding-left:16px;padding-right:16px}.sgrid{grid-template-columns:repeat(2,1fr)}.bdr-stats-grid{grid-template-columns:repeat(2,1fr)}.bdr-signals-row{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.topbar,.toolbar,.main{padding-left:16px;padding-right:16px}.sgrid,.bdr-tier-grid,.bdr-sig-row{grid-template-columns:repeat(2,1fr)}.bdr-charts-wrap{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div id="loading"><div class="spinner"></div><div style="font-size:13px;color:var(--text3)">Loading...</div></div>
 <div id="app">
+
+<!-- TOPBAR -->
 <div class="topbar">
-  <div class="tb-brand"><span class="tb-logo">&#9889;</span><div><div class="tb-title">BDR Intent Dashboard</div><div class="tb-subtitle" id="sub">-</div></div></div>
+  <div class="tb-logo-wrap">
+    <div class="tb-facilio-logo">
+      <span class="tb-facilio-text">fac</span>
+      <span class="tb-facilio-dot1"></span>
+      <span class="tb-facilio-text">l</span>
+      <span class="tb-facilio-dot2"></span>
+      <span class="tb-facilio-text">o</span>
+    </div>
+  </div>
+  <div class="tb-title-wrap">
+    <div class="tb-title">BDR Intent Dashboard</div>
+    <div class="tb-subtitle" id="sub">Updated daily</div>
+  </div>
   <div class="tb-stats">
     <div class="tb-stat"><div class="tb-val s-total" id="s-total">-</div><div class="tb-lbl">Accounts</div></div>
     <div class="tb-stat"><div class="tb-val s-hot" id="s-hot">-</div><div class="tb-lbl">Hot</div></div>
@@ -197,6 +225,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     <div class="tb-stat"><div class="tb-val s-news" id="s-news">-</div><div class="tb-lbl">News</div></div>
   </div>
 </div>
+
+<!-- TOOLBAR -->
 <div class="toolbar">
   <div class="tr1">
     <div class="search-wrap">
@@ -230,14 +260,22 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
   </div>
 </div>
 
+<!-- CHART FILTER BANNER -->
+<div class="chart-filter-banner" id="chart-banner">
+  <span class="cfb-text" id="chart-banner-text"></span>
+  <button class="cfb-clear" onclick="clearChartFilter()">&#10005; Clear filter</button>
+</div>
+
 <!-- BDR PERSONAL DASHBOARD -->
 <div class="bdr-dash" id="bdr-dash"></div>
 
+<!-- GRID -->
 <div class="main">
   <div class="grid" id="grid"></div>
   <div class="empty" id="empty" style="display:none"><div style="font-size:36px;margin-bottom:8px">&#128269;</div><div>No accounts match</div></div>
 </div>
 
+<!-- MODAL -->
 <div class="overlay" id="overlay" onclick="if(event.target===this)closeModal()">
   <div class="modal">
     <div class="mhead">
@@ -253,17 +291,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 
 <script>
 var DATA=[], aBdr="All", aGeo="All", aSig="All", aCat="All", cur=null, aTab="overview", showHidden=false;
+var chartFilterVert=null, chartFilterTier=null;
+var tierChart=null, sigChart=null;
 var HIDDEN_KEY="bdr_hidden_v1";
-var BDR_COLORS={
-  "Anjana":"#B91C1C","Dheeraj":"#1D4ED8","Swathi":"#065F46","Nishanth":"#6D28D9",
-  "Rhythm":"#92400E","Aman":"#9D174D","Arpita":"#1E40AF","Kanishka":"#166534",
-  "Ojasvi":"#78350F","Saeed":"#4C1D95","Tushar":"#0369A1"
-};
-var BDR_BG={
-  "Anjana":"#FEE2E2","Dheeraj":"#DBEAFE","Swathi":"#D1FAE5","Nishanth":"#EDE9FE",
-  "Rhythm":"#FEF3C7","Aman":"#FCE7F3","Arpita":"#BFDBFE","Kanishka":"#BBFFD0",
-  "Ojasvi":"#FEF3C7","Saeed":"#DDD6FE","Tushar":"#E0F2FE"
-};
+
+var BDR_COLORS={"Anjana":"#B91C1C","Dheeraj":"#1D4ED8","Swathi":"#065F46","Nishanth":"#6D28D9","Rhythm":"#92400E","Aman":"#9D174D","Arpita":"#1E40AF","Kanishka":"#166534","Ojasvi":"#78350F","Saeed":"#4C1D95","Tushar":"#0369A1","Basha":"#9D174D"};
 
 function getHidden(){try{return JSON.parse(localStorage.getItem(HIDDEN_KEY)||"[]");}catch(e){return[];}}
 function saveHidden(arr){try{localStorage.setItem(HIDDEN_KEY,JSON.stringify(arr));}catch(e){}}
@@ -275,13 +307,18 @@ function clearDate(){document.getElementById("date-from").value="";document.getE
 function afterDate(ds,from){if(!from)return true;if(!ds||ds==="-")return false;try{return new Date(ds)>=new Date(from);}catch(e){return false;}}
 function getFromDate(){var v=document.getElementById("date-from").value;document.getElementById("date-clear").style.display=v?"inline-block":"none";return v||null;}
 
+function clearChartFilter(){
+  chartFilterVert=null;chartFilterTier=null;
+  document.getElementById("chart-banner").classList.remove("visible");
+  render();
+}
+
 fetch("data.json?v="+Date.now())
   .then(function(r){return r.json();})
   .then(function(d){
     DATA=d;
     document.getElementById("loading").style.display="none";
     document.getElementById("app").style.display="block";
-    document.getElementById("sub").textContent="Updated daily";
     document.getElementById("s-total").textContent=DATA.length;
     document.getElementById("s-hot").textContent=DATA.filter(function(x){return x.is>=8;}).length;
     document.getElementById("s-warm").textContent=DATA.filter(function(x){return x.is>=5&&x.is<8;}).length;
@@ -293,7 +330,7 @@ fetch("data.json?v="+Date.now())
     document.getElementById("loading").innerHTML="<div style='color:#EF4444;font-size:14px;text-align:center;padding:20px'>Failed to load data.<br><button onclick='location.reload()' style='margin-top:12px;padding:8px 20px;background:#5B6AF0;color:#fff;border:none;border-radius:7px;cursor:pointer'>Retry</button></div>";
   });
 
-function T(s){return s>=8?{l:"Hot "+s,c:"t-hot"}:s>=5?{l:"Warm "+s,c:"t-warm"}:s>=3?{l:"Cool "+s,c:"t-cool"}:{l:"Cold "+s,c:"t-cold"};}
+function T(s){return s>=8?{l:"Hot "+s,c:"t-hot",k:"hot"}:s>=5?{l:"Warm "+s,c:"t-warm",k:"warm"}:s>=3?{l:"Cool "+s,c:"t-cool",k:"watch"}:{l:"Cold "+s,c:"t-cold",k:"cold"};}
 function D(d){if(!d||d==="-")return "-";try{return new Date(d).toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"});}catch(e){return d;}}
 function P(n,m,c){var h="<div class='pips'>";for(var i=0;i<m;i++)h+="<div class='pip'"+(i<n?" style='background:var(--"+c+")'":"")+"></div>";return h+"</div>";}
 function E(s){return(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
@@ -316,12 +353,13 @@ function buildChips(){
         sV(v);
         if(id==="bdr-chips"){
           if(typeof gtag!=="undefined")gtag("event","bdr_filter_click",{bdr_name:v});
+          clearChartFilter();
           renderBdrDash(v);
         }
         if(id==="sig-chips"){
-          var showCat=(v==="hn");
-          document.getElementById("cat-row").style.display=showCat?"flex":"none";
-          if(!showCat){aCat="All";document.querySelectorAll("#cat-chips .chip").forEach(function(c){c.classList.toggle("on",c.dataset.v==="All");});}
+          var sc=(v==="hn");
+          document.getElementById("cat-row").style.display=sc?"flex":"none";
+          if(!sc){aCat="All";document.querySelectorAll("#cat-chips .chip").forEach(function(c){c.classList.toggle("on",c.dataset.v==="All");});}
         }
         document.querySelectorAll("#"+id+" .chip").forEach(function(c){c.classList.toggle("on",c.dataset.v===v);});
         render();
@@ -338,60 +376,151 @@ function buildChips(){
 // ── BDR PERSONAL DASHBOARD ────────────────────────────────────
 function renderBdrDash(bdr){
   var dash=document.getElementById("bdr-dash");
-  if(bdr==="All"){dash.classList.remove("visible");dash.innerHTML="";return;}
+  if(bdr==="All"){dash.classList.remove("visible");dash.innerHTML="";if(tierChart){tierChart.destroy();tierChart=null;}if(sigChart){sigChart.destroy();sigChart=null;}return;}
 
-  var myData=DATA.filter(function(d){return d.b===bdr;});
-  var hot=myData.filter(function(d){return d.is>=8;}).length;
-  var warm=myData.filter(function(d){return d.is>=5&&d.is<8;}).length;
-  var watch=myData.filter(function(d){return d.is>=3&&d.is<5;}).length;
-  var cold=myData.filter(function(d){return d.is<3;}).length;
-  var hasNews=myData.filter(function(d){return d.ns>0;}).length;
-  var hasJobs=myData.filter(function(d){return d.js>0;}).length;
-  var hasWeb=myData.filter(function(d){return d.ws>0;}).length;
-  var hasBi=myData.filter(function(d){return d.bi>0;}).length;
+  var my=DATA.filter(function(d){return d.b===bdr;});
+  var hot=my.filter(function(d){return d.is>=8;}).length;
+  var warm=my.filter(function(d){return d.is>=5&&d.is<8;}).length;
+  var watch=my.filter(function(d){return d.is>=3&&d.is<5;}).length;
+  var cold=my.filter(function(d){return d.is<3;}).length;
+  var hasNews=my.filter(function(d){return d.ns>0;}).length;
+  var hasJobs=my.filter(function(d){return d.js>0;}).length;
+  var hasWeb=my.filter(function(d){return d.ws>0;}).length;
+  var hasBi=my.filter(function(d){return d.bi>0;}).length;
 
-  // Verticals breakdown
-  var vertMap={};
-  myData.forEach(function(d){if(d.v){vertMap[d.v]=(vertMap[d.v]||0)+1;}});
-  var verts=Object.keys(vertMap).sort(function(a,b){return vertMap[b]-vertMap[a];}).slice(0,8);
-
-  var color=BDR_COLORS[bdr]||"#5B6AF0";
-  var bg=BDR_BG[bdr]||"#EEF0FE";
+  var color=BDR_COLORS[bdr]||"#301894";
   var initials=bdr.slice(0,2).toUpperCase();
 
   var h="<div class='bdr-dash-header'>"
     +"<div class='bdr-dash-avatar' style='background:"+color+"'>"+initials+"</div>"
     +"<div><div class='bdr-dash-name'>"+E(bdr)+"'s Dashboard</div>"
-    +"<div class='bdr-dash-sub'>"+myData.length+" assigned accounts</div></div>"
+    +"<div class='bdr-dash-sub'>"+my.length+" assigned accounts</div></div>"
     +"</div>";
 
-  // Tier stats
+  // Tier cards
   h+="<div class='bdr-section-title'>Account Tiers</div>";
-  h+="<div class='bdr-stats-grid'>"
-    +"<div class='bdr-stat-card'><div class='bdr-stat-bar' style='background:var(--hot)'></div><div class='bdr-stat-label'>Hot</div><div class='bdr-stat-val' style='color:var(--hot)'>"+hot+"</div><div class='bdr-stat-sub'>Score 8+</div></div>"
-    +"<div class='bdr-stat-card'><div class='bdr-stat-bar' style='background:var(--warm)'></div><div class='bdr-stat-label'>Warm</div><div class='bdr-stat-val' style='color:var(--warm)'>"+warm+"</div><div class='bdr-stat-sub'>Score 5–7</div></div>"
-    +"<div class='bdr-stat-card'><div class='bdr-stat-bar' style='background:var(--cool)'></div><div class='bdr-stat-label'>Watch</div><div class='bdr-stat-val' style='color:var(--cool)'>"+watch+"</div><div class='bdr-stat-sub'>Score 3–4</div></div>"
-    +"<div class='bdr-stat-card'><div class='bdr-stat-bar' style='background:var(--border2)'></div><div class='bdr-stat-label'>Cold</div><div class='bdr-stat-val' style='color:var(--text3)'>"+cold+"</div><div class='bdr-stat-sub'>Score 0–2</div></div>"
+  h+="<div class='bdr-tier-grid'>"
+    +"<div class='bdr-tier-card' onclick='applyChartFilter(null,\"hot\")' style='cursor:pointer'><div class='bdr-tier-bar' style='background:var(--hot)'></div><div class='bdr-tier-label'>Hot</div><div class='bdr-tier-val' style='color:var(--hot)'>"+hot+"</div><div class='bdr-tier-sub'>Score 8+</div></div>"
+    +"<div class='bdr-tier-card' onclick='applyChartFilter(null,\"warm\")' style='cursor:pointer'><div class='bdr-tier-bar' style='background:var(--warm)'></div><div class='bdr-tier-label'>Warm</div><div class='bdr-tier-val' style='color:var(--warm)'>"+warm+"</div><div class='bdr-tier-sub'>Score 5–7</div></div>"
+    +"<div class='bdr-tier-card' onclick='applyChartFilter(null,\"watch\")' style='cursor:pointer'><div class='bdr-tier-bar' style='background:var(--cool)'></div><div class='bdr-tier-label'>Watch</div><div class='bdr-tier-val' style='color:var(--cool)'>"+watch+"</div><div class='bdr-tier-sub'>Score 3–4</div></div>"
+    +"<div class='bdr-tier-card' onclick='applyChartFilter(null,\"cold\")' style='cursor:pointer'><div class='bdr-tier-bar' style='background:var(--border2)'></div><div class='bdr-tier-label'>Cold</div><div class='bdr-tier-val' style='color:var(--text3)'>"+cold+"</div><div class='bdr-tier-sub'>Score 0–2</div></div>"
     +"</div>";
 
-  // Signals breakdown
+  // Signal summary
   h+="<div class='bdr-section-title'>Signals Active</div>";
-  h+="<div class='bdr-signals-row'>"
+  h+="<div class='bdr-sig-row'>"
     +"<div class='bdr-sig-card'><div class='bdr-sig-icon'>&#128240;</div><div><div class='bdr-sig-label'>News</div><div class='bdr-sig-count' style='color:var(--news)'>"+hasNews+"</div></div></div>"
     +"<div class='bdr-sig-card'><div class='bdr-sig-icon'>&#128188;</div><div><div class='bdr-sig-label'>Jobs</div><div class='bdr-sig-count' style='color:var(--jobs)'>"+hasJobs+"</div></div></div>"
     +"<div class='bdr-sig-card'><div class='bdr-sig-icon'>&#127760;</div><div><div class='bdr-sig-label'>Website</div><div class='bdr-sig-count' style='color:var(--ws)'>"+hasWeb+"</div></div></div>"
     +"<div class='bdr-sig-card'><div class='bdr-sig-icon'>&#127919;</div><div><div class='bdr-sig-label'>Buyer Intent</div><div class='bdr-sig-count' style='color:var(--bi)'>"+hasBi+"</div></div></div>"
     +"</div>";
 
-  // Verticals
-  if(verts.length){
-    h+="<div class='bdr-section-title'>Verticals</div><div class='bdr-verticals'>";
-    verts.forEach(function(v){h+="<div class='bdr-vert-tag'>"+E(v)+" <span style='color:var(--text3);font-weight:400'>("+vertMap[v]+")</span></div>";});
-    h+="</div>";
-  }
+  // Charts
+  h+="<div class='bdr-section-title' style='margin-top:4px'>Vertical Breakdown — click any segment to filter accounts</div>";
+  h+="<div class='bdr-charts-wrap'>"
+    +"<div class='bdr-chart-box'><div class='bdr-chart-title'>By Tier</div><div class='bdr-chart-sub'>Hot / Warm / Watch / Cold per vertical</div><div class='chart-canvas-wrap'><canvas id='tier-chart'></canvas></div>"
+    +"<div class='chart-legend'><div class='chart-legend-item'><div class='chart-legend-dot' style='background:#EF4444'></div>Hot</div><div class='chart-legend-item'><div class='chart-legend-dot' style='background:#F59E0B'></div>Warm</div><div class='chart-legend-item'><div class='chart-legend-dot' style='background:#3B82F6'></div>Watch</div><div class='chart-legend-item'><div class='chart-legend-dot' style='background:#D1D5DB'></div>Cold</div></div>"
+    +"</div>"
+    +"<div class='bdr-chart-box'><div class='bdr-chart-title'>By Signal</div><div class='bdr-chart-sub'>Accounts with active signals per vertical</div><div class='chart-canvas-wrap'><canvas id='sig-chart'></canvas></div>"
+    +"<div class='chart-legend'><div class='chart-legend-item'><div class='chart-legend-dot' style='background:#059669'></div>News</div><div class='chart-legend-item'><div class='chart-legend-dot' style='background:#D97706'></div>Jobs</div><div class='chart-legend-item'><div class='chart-legend-dot' style='background:#0891B2'></div>Website</div><div class='chart-legend-item'><div class='chart-legend-dot' style='background:#8B5CF6'></div>Buyer Intent</div></div>"
+    +"</div>"
+    +"</div>";
 
   dash.innerHTML=h;
   dash.classList.add("visible");
+
+  // Build chart data
+  var vertMap={};
+  my.forEach(function(d){
+    var v=d.v||"Other";
+    if(!vertMap[v])vertMap[v]={hot:0,warm:0,watch:0,cold:0,news:0,jobs:0,web:0,bi:0};
+    var m=vertMap[v];
+    if(d.is>=8)m.hot++;else if(d.is>=5)m.warm++;else if(d.is>=3)m.watch++;else m.cold++;
+    if(d.ns>0)m.news++;
+    if(d.js>0)m.jobs++;
+    if(d.ws>0)m.web++;
+    if(d.bi>0)m.bi++;
+  });
+  var verts=Object.keys(vertMap).sort(function(a,b){
+    var ta=vertMap[a].hot+vertMap[a].warm+vertMap[a].watch+vertMap[a].cold;
+    var tb=vertMap[b].hot+vertMap[b].warm+vertMap[b].watch+vertMap[b].cold;
+    return tb-ta;
+  }).slice(0,10);
+  var labels=verts.map(function(v){return v.length>18?v.slice(0,16)+"..":v;});
+
+  // Tier chart
+  if(tierChart)tierChart.destroy();
+  var tc=document.getElementById("tier-chart");
+  if(tc){
+    tierChart=new Chart(tc,{
+      type:"bar",
+      data:{
+        labels:labels,
+        datasets:[
+          {label:"Hot",data:verts.map(function(v){return vertMap[v].hot;}),backgroundColor:"#EF4444",borderRadius:3},
+          {label:"Warm",data:verts.map(function(v){return vertMap[v].warm;}),backgroundColor:"#F59E0B",borderRadius:3},
+          {label:"Watch",data:verts.map(function(v){return vertMap[v].watch;}),backgroundColor:"#3B82F6",borderRadius:3},
+          {label:"Cold",data:verts.map(function(v){return vertMap[v].cold;}),backgroundColor:"#D1D5DB",borderRadius:3}
+        ]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{callbacks:{title:function(items){return verts[items[0].dataIndex];}}}},
+        scales:{x:{stacked:true,ticks:{font:{size:10},maxRotation:35}},y:{stacked:true,ticks:{font:{size:10}}}},
+        onClick:function(e,els){
+          if(!els.length)return;
+          var di=els[0].datasetIndex,ii=els[0].index;
+          var tiers=["hot","warm","watch","cold"];
+          applyChartFilter(verts[ii],tiers[di]);
+        }
+      }
+    });
+  }
+
+  // Signal chart
+  if(sigChart)sigChart.destroy();
+  var sc=document.getElementById("sig-chart");
+  if(sc){
+    sigChart=new Chart(sc,{
+      type:"bar",
+      data:{
+        labels:labels,
+        datasets:[
+          {label:"News",data:verts.map(function(v){return vertMap[v].news;}),backgroundColor:"#059669",borderRadius:3},
+          {label:"Jobs",data:verts.map(function(v){return vertMap[v].jobs;}),backgroundColor:"#D97706",borderRadius:3},
+          {label:"Website",data:verts.map(function(v){return vertMap[v].web;}),backgroundColor:"#0891B2",borderRadius:3},
+          {label:"Buyer Intent",data:verts.map(function(v){return vertMap[v].bi;}),backgroundColor:"#8B5CF6",borderRadius:3}
+        ]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{callbacks:{title:function(items){return verts[items[0].dataIndex];}}}},
+        scales:{x:{stacked:true,ticks:{font:{size:10},maxRotation:35}},y:{stacked:true,ticks:{font:{size:10}}}},
+        onClick:function(e,els){
+          if(!els.length)return;
+          var ii=els[0].index;
+          applyChartFilter(verts[ii],null);
+        }
+      }
+    });
+  }
+}
+
+function applyChartFilter(vert,tier){
+  chartFilterVert=vert;chartFilterTier=tier;
+  var banner=document.getElementById("chart-banner");
+  var parts=[];
+  if(vert)parts.push("Vertical: "+vert);
+  if(tier)parts.push("Tier: "+tier.charAt(0).toUpperCase()+tier.slice(1));
+  if(parts.length){
+    document.getElementById("chart-banner-text").textContent="Showing — "+parts.join(" · ");
+    banner.classList.add("visible");
+  } else {
+    banner.classList.remove("visible");
+  }
+  render();
+  // Scroll to grid
+  setTimeout(function(){document.getElementById("grid").scrollIntoView({behavior:"smooth",block:"start"});},100);
 }
 
 function getFiltered(){
@@ -411,9 +540,14 @@ function getFiltered(){
     if(aSig==="hb"&&d.bi<=0)return false;
     if(aSig==="hw"&&d.ws<=0)return false;
     if(aSig==="hn"&&aCat!=="All"&&!d.news.some(function(n){return(n.signal_type||"").trim()===aCat;}))return false;
-    if(from){
-      var ok=afterDate(d.bid,from)||afterDate(d.wsd,from)||d.news.some(function(n){return afterDate(n.dt,from);})||d.jobs.some(function(j){return afterDate(j.posted,from);});
-      if(!ok)return false;
+    if(from){var ok=afterDate(d.bid,from)||afterDate(d.wsd,from)||d.news.some(function(n){return afterDate(n.dt,from);})||d.jobs.some(function(j){return afterDate(j.posted,from);});if(!ok)return false;}
+    // Chart click filters
+    if(chartFilterVert&&(d.v||"Other")!==chartFilterVert)return false;
+    if(chartFilterTier){
+      if(chartFilterTier==="hot"&&d.is<8)return false;
+      if(chartFilterTier==="warm"&&(d.is<5||d.is>=8))return false;
+      if(chartFilterTier==="watch"&&(d.is<3||d.is>=5))return false;
+      if(chartFilterTier==="cold"&&d.is>=3)return false;
     }
     return true;
   }).sort(function(a,b){if(s==="c")return a.c.localeCompare(b.c);return(b[s]||0)-(a[s]||0);});
