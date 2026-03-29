@@ -35,11 +35,16 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .toolbar{background:var(--surface);border-bottom:1.5px solid var(--border);padding:12px 28px;display:flex;flex-direction:column;gap:10px;position:sticky;top:58px;z-index:90}
 .tr1{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .tr2{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tr3{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .search-wrap{position:relative;flex:1;min-width:200px;max-width:360px}
 .search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none}
 .search-input{width:100%;padding:9px 12px 9px 34px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-family:'Inter',sans-serif;font-size:13px;color:var(--text);background:var(--surface2);outline:none;transition:border-color .15s}
 .search-input:focus{border-color:var(--accent);background:#fff}
 .sort-sel{padding:8px 12px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-family:'Inter',sans-serif;font-size:13px;color:var(--text2);background:var(--surface2);outline:none;cursor:pointer}
+.date-input{padding:7px 10px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-family:'Inter',sans-serif;font-size:13px;color:var(--text2);background:var(--surface2);outline:none;cursor:pointer}
+.date-input:focus{border-color:var(--accent)}
+.date-clear{padding:6px 10px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:12px;color:var(--text3);background:var(--surface2);cursor:pointer;font-family:'Inter',sans-serif}
+.date-clear:hover{border-color:var(--hot);color:var(--hot)}
 .count{font-size:12px;color:var(--text3);margin-left:auto;white-space:nowrap}
 .flbl{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px}
 .chips{display:flex;gap:5px;flex-wrap:wrap}
@@ -55,13 +60,19 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .chip-hn.on{background:var(--news);border-color:var(--news);color:#fff}
 .chip-hb.on{background:var(--bi);border-color:var(--bi);color:#fff}
 .chip-hw.on{background:var(--ws);border-color:var(--ws);color:#fff}
+.chip-cat.on{background:#0F766E;border-color:#0F766E;color:#fff}
 .divider{width:1px;height:20px;background:var(--border);flex-shrink:0}
 .main{padding:20px 28px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(272px,1fr));gap:12px}
 .empty{text-align:center;padding:60px 20px;color:var(--text3)}
-.card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);padding:16px;cursor:pointer;transition:all .18s}
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);padding:16px;cursor:pointer;transition:all .18s;position:relative}
 .card:hover{border-color:var(--accent);box-shadow:var(--sh-lg);transform:translateY(-2px)}
-.card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px}
+.card.hidden-card{opacity:.45;border-style:dashed}
+.hide-btn{position:absolute;top:10px;right:10px;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--border);background:var(--surface2);font-size:11px;color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;transition:all .15s}
+.hide-btn:hover{background:var(--hot);border-color:var(--hot);color:#fff}
+.show-hidden-btn{padding:5px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface2);font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s}
+.show-hidden-btn.on{background:#FEF2F2;border-color:var(--hot);color:var(--hot)}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;padding-right:28px}
 .card-name{font-size:14px;font-weight:700;color:var(--text);line-height:1.3;flex:1;margin-right:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tbadge{padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;flex-shrink:0}
 .t-hot{background:var(--hotbg);color:var(--hot);border:1px solid var(--hotbdr)}
@@ -77,6 +88,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .bdr-Swathi{background:#D1FAE5;color:#065F46}
 .bdr-Nishanth{background:#EDE9FE;color:#6D28D9}
 .bdr-Rhythm{background:#FEF3C7;color:#92400E}
+.bdr-Aman{background:#FEE2E2;color:#9D174D}
+.bdr-Arpita{background:#DBEAFE;color:#1E40AF}
+.bdr-Kanishka{background:#D1FAE5;color:#065F46}
+.bdr-Ojasvi{background:#FEF3C7;color:#78350F}
+.bdr-Saeed{background:#EDE9FE;color:#4C1D95}
+.bdr-Tushar{background:#E0F2FE;color:#0369A1}
 .sigs{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px}
 .sig{padding:2px 7px;border-radius:5px;font-size:11px;font-weight:600}
 .sig-bi{background:var(--bibg);color:var(--bi)}
@@ -162,6 +179,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       <option value="js">Sort: Jobs</option>
       <option value="c">Sort: Name</option>
     </select>
+    <span class="flbl" style="margin-left:8px">From</span>
+    <input type="date" class="date-input" id="date-from" onchange="render()" title="Show accounts with any signal from this date">
+    <button class="date-clear" id="date-clear" onclick="clearDate()" style="display:none">&#10005; Clear date</button>
     <span class="count" id="count">-</span>
   </div>
   <div class="tr2">
@@ -170,6 +190,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     <span class="flbl">Geo</span><div class="chips" id="geo-chips"></div>
     <div class="divider"></div>
     <span class="flbl">Signal</span><div class="chips" id="sig-chips"></div>
+    <div class="divider"></div>
+    <button class="show-hidden-btn" id="show-hidden-btn" onclick="toggleShowHidden()">&#128065; Show hidden (<span id="hidden-count">0</span>)</button>
+  </div>
+  <div class="tr3" id="cat-row" style="display:none">
+    <span class="flbl">News Category</span><div class="chips" id="cat-chips"></div>
   </div>
 </div>
 <div class="main">
@@ -189,7 +214,16 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 </div>
 </div>
 <script>
-var DATA=[], aBdr="All", aGeo="All", aSig="All", cur=null, aTab="overview";
+var DATA=[], aBdr="All", aGeo="All", aSig="All", aCat="All", cur=null, aTab="overview", showHidden=false;
+var HIDDEN_KEY="bdr_hidden_v1";
+
+function getHidden(){try{return JSON.parse(localStorage.getItem(HIDDEN_KEY)||"[]");}catch(e){return[];}}
+function saveHidden(arr){try{localStorage.setItem(HIDDEN_KEY,JSON.stringify(arr));}catch(e){}}
+function isHidden(co){return getHidden().indexOf(co)>-1;}
+function toggleHide(co){var h=getHidden();var i=h.indexOf(co);if(i>-1)h.splice(i,1);else h.push(co);saveHidden(h);updateHiddenCount();render();}
+function updateHiddenCount(){var n=getHidden().length;document.getElementById("hidden-count").textContent=n;}
+function toggleShowHidden(){showHidden=!showHidden;document.getElementById("show-hidden-btn").classList.toggle("on",showHidden);render();}
+function clearDate(){document.getElementById("date-from").value="";document.getElementById("date-clear").style.display="none";render();}
 
 fetch("data.json?v=" + Date.now())
   .then(function(r){ return r.json(); })
@@ -203,7 +237,7 @@ fetch("data.json?v=" + Date.now())
     document.getElementById("s-warm").textContent=DATA.filter(function(x){return x.is>=5&&x.is<8;}).length;
     document.getElementById("s-jobs").textContent=DATA.filter(function(x){return x.js>0;}).length;
     document.getElementById("s-news").textContent=DATA.filter(function(x){return x.ns>0;}).length;
-    buildChips(); render();
+    buildChips(); updateHiddenCount(); render();
   })
   .catch(function(e){
     document.getElementById("loading").innerHTML="<div style='color:#EF4444;font-size:14px;text-align:center;padding:20px'>Failed to load data.<br><button onclick='location.reload()' style='margin-top:12px;padding:8px 20px;background:#5B6AF0;color:#fff;border:none;border-radius:7px;cursor:pointer'>Retry</button></div>";
@@ -213,20 +247,45 @@ function T(s){return s>=8?{l:"Hot "+s,c:"t-hot"}:s>=5?{l:"Warm "+s,c:"t-warm"}:s
 function D(d){if(!d||d==="-")return "-";try{return new Date(d).toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"});}catch(e){return d;}}
 function P(n,m,c){var h="<div class='pips'>";for(var i=0;i<m;i++)h+="<div class='pip'"+(i<n?" style='background:var(--"+c+")'":"")+"></div>";return h+"</div>";}
 function E(s){return(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function afterDate(dateStr, fromStr){if(!fromStr)return true;if(!dateStr||dateStr==="-")return false;try{return new Date(dateStr)>=new Date(fromStr);}catch(e){return false;}}
 
 function buildChips(){
   var bdrs=["All"].concat(DATA.map(function(d){return d.b;}).filter(function(v,i,a){return v&&a.indexOf(v)===i;}).sort());
   var geos=["All"].concat(DATA.map(function(d){return d.g;}).filter(function(v,i,a){return v&&a.indexOf(v)===i;}).sort());
-  var sigs=[{k:"All",l:"All"},{k:"hot",l:"Hot 8+",x:"chip-hot"},{k:"warm",l:"Warm 5-7",x:"chip-warm"},{k:"cool",l:"Watch 3-4",x:"chip-cool"},{k:"hj",l:"Has Jobs",x:"chip-hj"},{k:"hn",l:"Has News",x:"chip-hn"},{k:"hb",l:"Buyer Intent",x:"chip-hb"},{k:"hw",l:"Web Visitors",x:"chip-hw"},{k:"n30",l:"News 30d",x:"chip-hn"},{k:"n90",l:"News 90d",x:"chip-hn"}];
-  function mk(id,arr,gV,sV){arr.forEach(function(item){var v=typeof item==="string"?item:item.k,l=typeof item==="string"?item:item.l,x=item.x||"";var b=document.createElement("button");b.className="chip "+x+(gV()===v?" on":"");b.textContent=l;b.dataset.v=v;b.onclick=function(){sV(v);if(id==="bdr-chips"&&typeof gtag!=="undefined")gtag("event","bdr_filter_click",{bdr_name:v});document.querySelectorAll("#"+id+" .chip").forEach(function(c){c.classList.toggle("on",c.dataset.v===v);});render();};document.getElementById(id).appendChild(b);});}  mk("bdr-chips",bdrs,function(){return aBdr;},function(v){aBdr=v;});
+  var sigs=[{k:"All",l:"All"},{k:"hot",l:"Hot 8+",x:"chip-hot"},{k:"warm",l:"Warm 5-7",x:"chip-warm"},{k:"cool",l:"Watch 3-4",x:"chip-cool"},{k:"hj",l:"Has Jobs",x:"chip-hj"},{k:"hn",l:"Has News",x:"chip-hn"},{k:"hb",l:"Buyer Intent",x:"chip-hb"},{k:"hw",l:"Web Visitors",x:"chip-hw"}];
+
+  // Build news categories dynamically from data
+  var catSet={};
+  DATA.forEach(function(d){
+    (d.news||[]).forEach(function(n){
+      var c=(n.signal_type||"").trim();
+      if(c) catSet[c]=true;
+    });
+  });
+  var cats=["All"].concat(Object.keys(catSet).sort());
+
+  function mk(id,arr,gV,sV,chipClass){arr.forEach(function(item){var v=typeof item==="string"?item:item.k,l=typeof item==="string"?item:item.l,x=item.x||(chipClass||"");var b=document.createElement("button");b.className="chip "+x+(gV()===v?" on":"");b.textContent=l;b.dataset.v=v;b.onclick=function(){sV(v);if(id==="bdr-chips"&&typeof gtag!=="undefined")gtag("event","bdr_filter_click",{bdr_name:v});document.querySelectorAll("#"+id+" .chip").forEach(function(c){c.classList.toggle("on",c.dataset.v===v);});render();};document.getElementById(id).appendChild(b);});}
+
+  mk("bdr-chips",bdrs,function(){return aBdr;},function(v){aBdr=v;});
   mk("geo-chips",geos,function(){return aGeo;},function(v){aGeo=v;});
-  mk("sig-chips",sigs,function(){return aSig;},function(v){aSig=v;});
+  mk("sig-chips",sigs,function(){return aSig;},function(v){
+    aSig=v;
+    // show/hide category row when news signal is selected
+    var showCat=(v==="hn");
+    document.getElementById("cat-row").style.display=showCat?"flex":"none";
+    if(!showCat){aCat="All";document.querySelectorAll("#cat-chips .chip").forEach(function(c){c.classList.toggle("on",c.dataset.v==="All");});}
+  });
+  mk("cat-chips",cats,function(){return aCat;},function(v){aCat=v;},"chip-cat");
 }
+
+function getFromDate(){var v=document.getElementById("date-from").value;document.getElementById("date-clear").style.display=v?"inline-block":"none";return v||null;}
 
 function getFiltered(){
   var q=document.getElementById("search").value.toLowerCase().trim();
   var s=document.getElementById("sort").value;
+  var from=getFromDate();
   return DATA.filter(function(d){
+    if(!showHidden&&isHidden(d.c))return false;
     if(aBdr!=="All"&&d.b!==aBdr)return false;
     if(aGeo!=="All"&&d.g!==aGeo)return false;
     if(q&&d.c.toLowerCase().indexOf(q)<0&&(d.v||"").toLowerCase().indexOf(q)<0&&(d.b||"").toLowerCase().indexOf(q)<0)return false;
@@ -237,8 +296,13 @@ function getFiltered(){
     if(aSig==="hn"&&d.ns<=0)return false;
     if(aSig==="hb"&&d.bi<=0)return false;
     if(aSig==="hw"&&d.ws<=0)return false;
-    if(aSig==="n30"&&!d.news.some(function(n){return n.dt&&n.dt!=="-"&&(new Date()-new Date(n.dt))/(1000*60*60*24)<=30;}))return false;
-    if(aSig==="n90"&&!d.news.some(function(n){return n.dt&&n.dt!=="-"&&(new Date()-new Date(n.dt))/(1000*60*60*24)<=90;}))return false;
+    // News category filter
+    if(aSig==="hn"&&aCat!=="All"&&!d.news.some(function(n){return(n.signal_type||"").trim()===aCat;}))return false;
+    // Global date filter — account must have at least one signal on or after the date
+    if(from){
+      var hasRecent=afterDate(d.bid,from)||afterDate(d.wsd,from)||d.news.some(function(n){return afterDate(n.dt,from);})||d.jobs.some(function(j){return afterDate(j.posted,from);});
+      if(!hasRecent)return false;
+    }
     return true;
   }).sort(function(a,b){if(s==="c")return a.c.localeCompare(b.c);return(b[s]||0)-(a[s]||0);});
 }
@@ -249,14 +313,20 @@ function render(){
   document.getElementById("empty").style.display=list.length?"none":"block";
   var g=document.getElementById("grid");g.innerHTML="";
   list.forEach(function(d){
-    var t=T(d.is),sigs="";
+    var t=T(d.is),sigs="",hidden=isHidden(d.c);
     if(d.bi>0)sigs+="<span class='sig sig-bi'>&#127919; "+d.bi+"</span>";
     if(d.ws>0)sigs+="<span class='sig sig-ws'>&#127760; "+d.ws+"</span>";
     if(d.ns>0)sigs+="<span class='sig sig-news'>&#128240; "+d.ns+"</span>";
     if(d.js>0)sigs+="<span class='sig sig-jobs'>&#128188; "+d.jobs.length+"</span>";
-    var c=document.createElement("div");c.className="card";
-    c.innerHTML="<div class='card-top'><div class='card-name' title='"+E(d.c)+"'>"+E(d.c)+"</div><div class='tbadge "+t.c+"'>"+t.l+"</div></div><div class='card-meta'>"+(d.v?"<b>"+E(d.v)+"</b> &middot; ":"")+d.g+"</div><div class='card-foot'><span class='bdrtag bdr-"+d.b+"'>"+d.b+"</span></div>"+(sigs?"<div class='sigs'>"+sigs+"</div>":"");
-    c.onclick=function(){openModal(d);};g.appendChild(c);
+    var c=document.createElement("div");
+    c.className="card"+(hidden?" hidden-card":"");
+    c.innerHTML="<button class='hide-btn' title='"+(hidden?"Unhide":"Hide this account")+"' onclick='event.stopPropagation();toggleHide(\""+E(d.c)+"\")'>"+( hidden?"&#8635;":"&#10005;")+"</button>"
+      +"<div class='card-top'><div class='card-name' title='"+E(d.c)+"'>"+E(d.c)+"</div><div class='tbadge "+t.c+"'>"+t.l+"</div></div>"
+      +"<div class='card-meta'>"+(d.v?"<b>"+E(d.v)+"</b> &middot; ":"")+d.g+"</div>"
+      +"<div class='card-foot'><span class='bdrtag bdr-"+d.b+"'>"+d.b+"</span></div>"
+      +(sigs?"<div class='sigs'>"+sigs+"</div>":"");
+    c.onclick=function(){if(!hidden)openModal(d);};
+    g.appendChild(c);
   });
 }
 
@@ -337,9 +407,10 @@ function NC(n,mini){
   var sc=parseInt(n.score||0),scC=sc>=5?"var(--hot)":sc>=3?"var(--warm)":"var(--text3)";
   var h="<div class='ncard'><div class='ntop'><div class='ntitle'>"+E(n.title||"Untitled")+"</div><div class='nscore' style='color:"+scC+"'>"+n.score+"</div></div>";
   if(n.dt&&n.dt!=="-")h+="<div style='font-size:11px;color:var(--text3);margin-bottom:6px'>&#128197; "+D(n.dt)+"</div>";
+  if(n.signal_type)h+="<div style='display:inline-block;padding:2px 8px;border-radius:4px;background:var(--newsbg);color:var(--news);font-size:11px;font-weight:600;margin-bottom:6px'>"+E(n.signal_type)+"</div>";
   if(n.summary)h+="<div class='nsummary'>"+E(n.summary)+"</div>";
   if(n.article&&!mini)h+="<div class='narticle'>"+E(n.article.slice(0,300))+"</div>";
-  if(!mini&&(n.signal_type||n.signal_strength))h+="<div class='nsigs'>"+(n.signal_type?"<span><b>Type:</b> "+E(n.signal_type)+"</span>":"")+(n.signal_strength?"<span><b>Strength:</b> "+E(n.signal_strength)+"</span>":"")+"</div>";
+  if(!mini&&n.signal_strength)h+="<div class='nsigs'><span><b>Strength:</b> "+E(n.signal_strength)+"</span></div>";
   return h+"</div>";
 }
 
