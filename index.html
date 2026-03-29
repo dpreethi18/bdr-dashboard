@@ -24,10 +24,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 /* TOPBAR */
 .topbar{background:var(--brand);height:62px;display:flex;align-items:center;padding:0 28px;gap:16px;position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(0,0,0,.35)}
 .tb-logo-wrap{display:flex;align-items:center;gap:10px;padding-right:16px;border-right:1px solid rgba(255,255,255,.18);margin-right:4px}
-.tb-facilio-logo{display:flex;align-items:center;gap:0px}
+.tb-facilio-logo{display:flex;align-items:center}
 .tb-facilio-text{font-size:24px;font-weight:800;color:#fff;letter-spacing:-1.5px;line-height:1}
-.tb-facilio-dot1{width:7px;height:7px;border-radius:1px;background:#E91E8C;display:inline-block;vertical-align:super;margin:0 1px}
-.tb-facilio-dot2{width:7px;height:7px;border-radius:1px;background:#00BCD4;display:inline-block;vertical-align:super;margin:0 1px}
 .tb-title-wrap{display:flex;flex-direction:column}
 .tb-title{font-size:13px;font-weight:700;color:#fff}
 .tb-subtitle{font-size:11px;color:rgba(255,255,255,.4);margin-top:1px}
@@ -204,11 +202,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 
 <!-- TOPBAR -->
 <div class="topbar">
-  <div class="tb-logo-wrap">
-    <div class="tb-facilio-logo">
-      <span class="tb-facilio-text">fac</span><span class="tb-facilio-dot1"></span><span class="tb-facilio-text">lio</span>
-    </div>
-  </div>
+  <div class="tb-logo-wrap"><span style="font-size:24px;font-weight:800;color:#fff;letter-spacing:-1.5px;font-family:Inter,Arial,sans-serif">facilio</span></div>
   <div class="tb-title-wrap">
     <div class="tb-title">BDR Intent Dashboard</div>
     <div class="tb-subtitle" id="sub">Updated daily</div>
