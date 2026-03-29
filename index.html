@@ -288,7 +288,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 <script>
 var DATA=[], aBdr="All", aGeo="All", aSig="All", aCat="All", cur=null, aTab="overview", showHidden=false;
 var chartFilterVert=null, chartFilterTier=null;
-var tierChart=null, sigChart=null;
+var tierChart=null;
 var HIDDEN_KEY="bdr_hidden_v1";
 
 var BDR_COLORS={"Anjana":"#B91C1C","Dheeraj":"#1D4ED8","Swathi":"#065F46","Nishanth":"#6D28D9","Rhythm":"#92400E","Aman":"#9D174D","Arpita":"#1E40AF","Kanishka":"#166534","Ojasvi":"#78350F","Saeed":"#4C1D95","Tushar":"#0369A1","Basha":"#9D174D"};
@@ -372,7 +372,7 @@ function buildChips(){
 // ── BDR PERSONAL DASHBOARD ────────────────────────────────────
 function renderBdrDash(bdr){
   var dash=document.getElementById("bdr-dash");
-  if(bdr==="All"){dash.classList.remove("visible");dash.innerHTML="";if(tierChart){tierChart.destroy();tierChart=null;}if(sigChart){sigChart.destroy();sigChart=null;}return;}
+  if(bdr==="All"){dash.classList.remove("visible");dash.innerHTML="";if(tierChart){tierChart.destroy();tierChart=null;}return;}
 
   var my=DATA.filter(function(d){return d.b===bdr;});
   var hot=my.filter(function(d){return d.is>=8;}).length;
@@ -470,7 +470,7 @@ function renderBdrDash(bdr){
     });
   }
 
-  if(sigChart){sigChart.destroy();sigChart=null;}
+  
 }
 
 function applyChartFilter(vert,tier){
