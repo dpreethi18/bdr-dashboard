@@ -138,6 +138,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .bdr-Tushar{background:#E0F2FE;color:#0369A1}
 .bdr-Basha{background:#FCE7F3;color:#9D174D}
 .bdr-Unassigned{background:#F3F4F6;color:#6B7280}
+.card-ai{border-color:#7C3AED!important;background:linear-gradient(135deg,#fff 0%,#F5F3FF 100%)}
+.card-ai:hover{border-color:#6D28D9!important}
+.ai-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;background:linear-gradient(135deg,#7C3AED,#5B6AF0);color:#fff;margin-top:6px}
 .sigs{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px}
 .sig{padding:2px 7px;border-radius:5px;font-size:11px;font-weight:600}
 .sig-bi{background:var(--bibg);color:var(--bi)}
@@ -329,7 +332,7 @@ function E(s){return(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/
 function buildChips(){
   var bdrs=["All"].concat(DATA.map(function(d){return d.b;}).filter(function(v,i,a){return v&&a.indexOf(v)===i;}).sort());
   var geos=["All"].concat(DATA.map(function(d){return d.g;}).filter(function(v,i,a){return v&&a.indexOf(v)===i;}).sort());
-  var sigs=[{k:"All",l:"All"},{k:"hot",l:"Hot 8+",x:"chip-hot"},{k:"warm",l:"Warm 5-7",x:"chip-warm"},{k:"cool",l:"Watch 3-4",x:"chip-cool"},{k:"hj",l:"Has Jobs",x:"chip-hj"},{k:"hn",l:"Has News",x:"chip-hn"},{k:"hb",l:"Buyer Intent",x:"chip-hb"},{k:"hw",l:"Web Visitors",x:"chip-hw"}];
+  var sigs=[{k:"All",l:"All"},{k:"hot",l:"Hot 8+",x:"chip-hot"},{k:"warm",l:"Warm 5-7",x:"chip-warm"},{k:"cool",l:"Watch 3-4",x:"chip-cool"},{k:"hj",l:"Has Jobs",x:"chip-hj"},{k:"hn",l:"Has News",x:"chip-hn"},{k:"hb",l:"Buyer Intent",x:"chip-hb"},{k:"hw",l:"Web Visitors",x:"chip-hw"}, {k:"hai",l:"AI Intent",x:"chip-hb"}];
   var catSet={};
   DATA.forEach(function(d){(d.news||[]).forEach(function(n){var c=(n.signal_type||"").trim();if(c)catSet[c]=true;});});
   var cats=["All"].concat(Object.keys(catSet).sort());
@@ -501,6 +504,7 @@ function getFiltered(){
     if(aSig==="hn"&&d.ns<=0)return false;
     if(aSig==="hb"&&d.bi<=0)return false;
     if(aSig==="hw"&&d.ws<=0)return false;
+    if(aSig==="hai"&&!d.ai)return false;
     if(aSig==="hn"&&aCat!=="All"&&!d.news.some(function(n){return(n.signal_type||"").trim()===aCat;}))return false;
     if(from){var ok=afterDate(d.bid,from)||afterDate(d.wsd,from)||d.news.some(function(n){return afterDate(n.dt,from);})||d.jobs.some(function(j){return afterDate(j.posted,from);});if(!ok)return false;}
     // Chart click filters
@@ -527,12 +531,13 @@ function render(){
     if(d.ns>0)sigs+="<span class='sig sig-news'>&#128240; "+d.ns+"</span>";
     if(d.js>0)sigs+="<span class='sig sig-jobs'>&#128188; "+d.jobs.length+"</span>";
     var c=document.createElement("div");
-    c.className="card"+(hidden?" hidden-card":"");
+    c.className="card"+(hidden?" hidden-card":"")+(d.ai?" card-ai":"");
     c.innerHTML="<button class='hide-btn' title='"+(hidden?"Unhide":"Hide")+"' onclick='event.stopPropagation();toggleHide(\""+E(d.c)+"\")'>"+( hidden?"&#8635;":"&#10005;")+"</button>"
       +"<div class='card-top'><div class='card-name' title='"+E(d.c)+"'>"+E(d.c)+"</div><div class='tbadge "+t.c+"'>"+t.l+"</div></div>"
       +"<div class='card-meta'>"+(d.v?"<b>"+E(d.v)+"</b> &middot; ":"")+d.g+"</div>"
       +"<div class='card-foot'><span class='bdrtag bdr-"+d.b+"'>"+d.b+"</span></div>"
-      +(sigs?"<div class='sigs'>"+sigs+"</div>":"");
+      +(sigs?"<div class='sigs'>"+sigs+"</div>":"")
+      +(d.ai?"<div class='ai-badge'>&#129302; AI Intent · "+E(d.ai)+"</div>":"");
     c.onclick=function(){if(!hidden)openModal(d);};
     g.appendChild(c);
   });
