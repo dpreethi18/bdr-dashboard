@@ -40,10 +40,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .search-input{width:100%;padding:9px 12px 9px 34px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-family:'Inter',sans-serif;font-size:13px;color:var(--text);background:var(--surface2);outline:none;transition:border-color .15s}
 .search-input:focus{border-color:var(--accent);background:#fff}
 .sort-sel{padding:8px 12px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-family:'Inter',sans-serif;font-size:13px;color:var(--text2);background:var(--surface2);outline:none;cursor:pointer}
-.date-input{padding:7px 10px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-family:'Inter',sans-serif;font-size:13px;color:var(--text2);background:var(--surface2);outline:none;cursor:pointer}
-.date-input:focus{border-color:var(--accent)}
-.date-clear{padding:6px 10px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:12px;color:var(--text3);background:var(--surface2);cursor:pointer;font-family:'Inter',sans-serif}
-.date-clear:hover{border-color:var(--hot);color:var(--hot)}
 .count{font-size:12px;color:var(--text3);margin-left:auto;white-space:nowrap}
 .flbl{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;white-space:nowrap}
 .chips{display:flex;gap:5px;flex-wrap:wrap}
@@ -242,9 +238,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       <option value="js">Sort: Jobs</option>
       <option value="c">Sort: Name</option>
     </select>
-    <span class="flbl" style="margin-left:4px">From</span>
-    <input type="date" class="date-input" id="date-from" onchange="render()">
-    <button class="date-clear" id="date-clear" onclick="clearDate()" style="display:none">&#10005; Clear</button>
     <span class="count" id="count">-</span>
   </div>
   <div class="tr2">
@@ -300,10 +293,7 @@ function isHidden(co){return getHidden().indexOf(co)>-1;}
 function toggleHide(co){var h=getHidden();var i=h.indexOf(co);if(i>-1)h.splice(i,1);else h.push(co);saveHidden(h);updateHiddenCount();render();}
 function updateHiddenCount(){document.getElementById("hidden-count").textContent=getHidden().length;}
 function toggleShowHidden(){showHidden=!showHidden;document.getElementById("show-hidden-btn").classList.toggle("on",showHidden);render();}
-function clearDate(){document.getElementById("date-from").value="";document.getElementById("date-clear").style.display="none";render();}
-function afterDate(ds,from){if(!from)return true;if(!ds||ds==="-")return false;try{return new Date(ds)>=new Date(from);}catch(e){return false;}}
-function getFromDate(){var v=document.getElementById("date-from").value;document.getElementById("date-clear").style.display=v?"inline-block":"none";return v||null;}
-
+catch(e){return false;}}
 function clearChartFilter(){
   chartFilterVert=null;chartFilterTier=null;
   document.getElementById("chart-banner").classList.remove("visible");
@@ -481,7 +471,6 @@ function applyChartFilter(vert,tier){
 function getFiltered(){
   var q=document.getElementById("search").value.toLowerCase().trim();
   var s=document.getElementById("sort").value;
-  var from=getFromDate();
   return DATA.filter(function(d){
     if(!showHidden&&isHidden(d.c))return false;
     if(aBdr!=="All"&&d.b!==aBdr)return false;
@@ -496,7 +485,6 @@ function getFiltered(){
     if(aSig==="hw"&&d.ws<=0)return false;
     if(aSig==="hai"&&!d.ai)return false;
     if(aSig==="hn"&&aCat!=="All"&&!d.news.some(function(n){return(n.signal_type||"").trim()===aCat;}))return false;
-    if(from){var ok=afterDate(d.bid,from)||afterDate(d.wsd,from)||d.news.some(function(n){return afterDate(n.dt,from);})||d.jobs.some(function(j){return afterDate(j.posted,from);});if(!ok)return false;}
     if(chartFilterVert&&(d.v||"Other")!==chartFilterVert)return false;
     if(chartFilterTier){
       if(chartFilterTier==="hot"&&d.is<8)return false;
