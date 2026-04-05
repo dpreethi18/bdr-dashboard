@@ -158,7 +158,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       <span class="count" id="count">-</span>
     </div>
     <div class="tr2">
-      <span class="flbl">Stage</span><div class="chips" id="stage-chips"></div>
+      <span class="flbl">Territory</span><div class="chips" id="territory-chips"></div>
       <div class="divider"></div>
       <span class="flbl">Owner</span><div class="chips" id="owner-chips"></div>
       <div class="divider"></div>
@@ -188,7 +188,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 
 <script>
 var DATA=[];
-var aStage='All', aOwner='All', aRisk='All';
+var aTerritory='All', aOwner='All', aRisk='All';
 
 function E(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function fmt(v){var n=parseFloat(v)||0;if(!n)return '—';if(n>=1000000)return '$'+(n/1000000).toFixed(1)+'M';if(n>=1000)return '$'+(n/1000).toFixed(0)+'K';return '$'+n.toLocaleString();}
@@ -215,6 +215,7 @@ function stageClass(s){
 }
 
 function isBlank(v){return !v||v.trim()===''||v==='No Activity Logged';}
+function getTerritory(d){ return (d.territory||'').trim()||'Other'; }
 
 fetch('deals.json?v='+Date.now())
   .then(function(r){return r.json();})
@@ -242,7 +243,8 @@ function updateStats(){
 }
 
 function buildChips(){
-  var stages=['All'].concat([...new Set(DATA.map(function(d){return d.stage;}))].filter(Boolean).sort());
+  // Territory comes directly from the Territory column in the sheet
+  var territories=['All'].concat([...new Set(DATA.map(getTerritory))].filter(Boolean).sort());
   var owners=['All'].concat([...new Set(DATA.map(function(d){return d.owner;}))].filter(Boolean).sort());
   var risks=['All','High','Medium','Low','Dead'];
   var riskColors={High:'#059669',Medium:'#D97706',Low:'#EF4444',Dead:'#6B7280'};
@@ -272,7 +274,7 @@ function buildChips(){
       el.appendChild(b);
     });
   }
-  mkChips('stage-chips',stages,function(){return aStage;},function(v){aStage=v;});
+  mkChips('territory-chips',territories,function(){return aTerritory;},function(v){aTerritory=v;});
   mkChips('owner-chips',owners,function(){return aOwner;},function(v){aOwner=v;});
   mkChips('risk-chips',risks,function(){return aRisk;},function(v){aRisk=v;});
 }
@@ -281,7 +283,7 @@ function getFiltered(){
   var q=document.getElementById('search').value.toLowerCase().trim();
   var sort=document.getElementById('sort').value;
   return DATA.filter(function(d){
-    if(aStage!=='All'&&d.stage!==aStage)return false;
+    if(aTerritory!=='All'&&getTerritory(d)!==aTerritory)return false;
     if(aOwner!=='All'&&d.owner!==aOwner)return false;
     if(aRisk!=='All'&&riskLabel(d.riskRating)!==aRisk)return false;
     if(q){
