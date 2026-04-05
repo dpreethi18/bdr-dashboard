@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Deals Dashboard — Facilio</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F0F2F8;--surface:#fff;--surface2:#F7F8FC;--border:#E4E7F0;--border2:#CDD2E0;
+  --text:#0D1117;--text2:#4A5568;--text3:#94A3B8;
+  --accent:#5B6AF0;--accent2:#EEF0FE;--brand:#301894;
+  --news:#059669;--newsbg:#ECFDF5;
+  --jobs:#D97706;--jobsbg:#FFFBEB;
+  --r:10px;--r-sm:7px;--sh-lg:0 8px 32px rgba(0,0,0,.12)
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+#loading{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;z-index:999}
+.spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#app{display:none}
+
+/* TOPBAR */
+.topbar{background:var(--brand);height:62px;display:flex;align-items:center;padding:0 28px;gap:16px;position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(0,0,0,.35)}
+.tb-logo{font-size:24px;font-weight:800;color:#fff;letter-spacing:-1.5px;padding-right:16px;border-right:1px solid rgba(255,255,255,.18);margin-right:4px}
+.tb-title-wrap{display:flex;flex-direction:column}
+.tb-title{font-size:13px;font-weight:700;color:#fff}
+.tb-subtitle{font-size:11px;color:rgba(255,255,255,.4);margin-top:1px}
+.tb-stats{display:flex;gap:22px;margin-left:auto}
+.tb-stat{text-align:right}
+.tb-val{font-size:18px;font-weight:800;font-family:'JetBrains Mono',monospace;line-height:1}
+.tb-lbl{font-size:10px;color:rgba(255,255,255,.4);margin-top:1px}
+.s-total{color:#fff}.s-value{color:#FCD34D}.s-signals{color:#6EE7B7}.s-high{color:#86EFAC}
+.bdr-link{margin-left:12px;padding:6px 14px;border-radius:20px;border:1.5px solid rgba(255,255,255,.3);background:transparent;color:rgba(255,255,255,.8);font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;text-decoration:none;white-space:nowrap;transition:all .15s}
+.bdr-link:hover{background:rgba(255,255,255,.15);color:#fff}
+
+/* TOOLBAR */
+.toolbar{background:var(--surface);border-bottom:1.5px solid var(--border);padding:12px 28px;display:flex;flex-direction:column;gap:10px;position:sticky;top:62px;z-index:90}
+.tr1{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tr2{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.search-wrap{position:relative;flex:1;min-width:200px;max-width:340px}
+.search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none}
+.search-input{width:100%;padding:9px 12px 9px 34px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-family:'Inter',sans-serif;font-size:13px;color:var(--text);background:var(--surface2);outline:none;transition:border-color .15s}
+.search-input:focus{border-color:var(--accent);background:#fff}
+.sort-sel{padding:8px 12px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-family:'Inter',sans-serif;font-size:13px;color:var(--text2);background:var(--surface2);outline:none;cursor:pointer}
+.count{font-size:12px;color:var(--text3);margin-left:auto;white-space:nowrap}
+.flbl{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;white-space:nowrap}
+.chips{display:flex;gap:5px;flex-wrap:wrap}
+.chip{padding:5px 12px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface2);font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .15s;white-space:nowrap;font-family:'Inter',sans-serif}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+.chip.on{background:var(--text);border-color:var(--text);color:#fff}
+.divider{width:1px;height:20px;background:var(--border);flex-shrink:0}
+
+/* GRID */
+.main{padding:20px 28px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.empty{text-align:center;padding:60px 20px;color:var(--text3)}
+
+/* CARDS */
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);padding:16px;cursor:pointer;transition:all .18s;position:relative}
+.card:hover{border-color:var(--accent);box-shadow:var(--sh-lg);transform:translateY(-2px)}
+.card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;gap:8px}
+.card-name{font-size:13px;font-weight:700;color:var(--text);line-height:1.3;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stage-badge{padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;flex-shrink:0;text-transform:uppercase;letter-spacing:.4px}
+.s-on-hold{background:#FEF3C7;color:#92400E;border:1px solid #FDE68A}
+.s-interest{background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE}
+.s-opportunity{background:#F0FDF4;color:#166534;border:1px solid #BBF7D0}
+.s-procurement{background:#F5F3FF;color:#6D28D9;border:1px solid #DDD6FE}
+.s-other{background:#F3F4F6;color:#6B7280;border:1px solid #E5E7EB}
+.card-amount{font-size:20px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--text);margin-bottom:4px}
+.card-meta{font-size:11px;color:var(--text3);line-height:1.6;margin-bottom:10px}
+.card-meta b{color:var(--text2)}
+.card-foot{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding-top:10px;border-top:1px solid var(--border)}
+.risk-badge{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700}
+.r-High{background:#ECFDF5;color:#059669;border:1px solid #A7F3D0}
+.r-Medium{background:#FFFBEB;color:#D97706;border:1px solid #FDE68A}
+.r-Low{background:#FEF2F2;color:#EF4444;border:1px solid #FECACA}
+.r-Dead{background:#F3F4F6;color:#6B7280;border:1px solid #E5E7EB}
+.r-Unknown{background:#F3F4F6;color:#6B7280;border:1px solid #E5E7EB}
+.sig{padding:2px 7px;border-radius:5px;font-size:11px;font-weight:600}
+.sig-news{background:var(--newsbg);color:var(--news)}
+.sig-jobs{background:var(--jobsbg);color:var(--jobs)}
+.brief-btn{margin-left:auto;padding:5px 12px;background:var(--brand);color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap}
+.brief-btn:hover{background:#4338CA}
+
+/* BRIEF PANEL */
+.brief-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:300;opacity:0;pointer-events:none;transition:opacity .2s;display:none}
+.brief-overlay.open{opacity:1;pointer-events:all}
+.brief-panel{position:fixed;top:0;right:0;bottom:0;width:min(680px,96vw);background:var(--surface);overflow-y:auto;box-shadow:-8px 0 40px rgba(0,0,0,.2);transform:translateX(100%);transition:transform .25s;z-index:301;display:flex;flex-direction:column}
+.brief-overlay.open .brief-panel{transform:translateX(0)}
+.brief-head{background:var(--brand);padding:20px 24px;flex-shrink:0}
+.brief-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.brief-title{font-size:15px;font-weight:800;color:#fff;flex:1;margin-right:12px;line-height:1.3}
+.brief-close{width:32px;height:32px;border-radius:50%;border:1.5px solid rgba(255,255,255,.3);background:transparent;color:#fff;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center}
+.brief-close:hover{background:rgba(255,255,255,.2)}
+.brief-meta-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.bmeta{font-size:11px;color:rgba(255,255,255,.65)}
+.brief-body{padding:20px 24px;flex:1}
+.bsec{margin-bottom:20px}
+.bsec-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text3);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.btext{font-size:13px;color:var(--text2);line-height:1.7;white-space:pre-wrap;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:12px}
+.bopening{font-size:13px;font-weight:600;color:var(--accent);background:var(--accent2);border:1.5px solid #C7D2FE;border-radius:var(--r-sm);padding:13px;line-height:1.6}
+.bnext{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:13px;font-size:13px;color:var(--text2);line-height:1.6}
+.brisk{border-radius:var(--r-sm);padding:12px;font-size:13px;font-weight:600;line-height:1.6}
+.brisk-High{background:#ECFDF5;color:#059669;border:1.5px solid #A7F3D0}
+.brisk-Medium{background:#FFFBEB;color:#D97706;border:1.5px solid #FDE68A}
+.brisk-Low{background:#FEF2F2;color:#EF4444;border:1.5px solid #FECACA}
+.brisk-Dead{background:#F3F4F6;color:#6B7280;border:1.5px solid #E5E7EB}
+.bnews{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);padding:11px 13px;margin-bottom:8px}
+.bnews-title{font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px;line-height:1.4}
+.bnews-sum{font-size:12px;color:var(--text2);font-style:italic;line-height:1.5}
+.bnews-line{font-size:12px;color:var(--accent);margin-top:6px;font-weight:500}
+.bsigtag{display:inline-flex;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;background:var(--newsbg);color:var(--news);margin-top:5px}
+.bjob{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 13px;margin-bottom:8px}
+.bjob-title{font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px}
+.bjob-meta{font-size:11px;color:var(--text3)}
+.japply{display:inline-flex;align-items:center;margin-top:6px;padding:4px 10px;background:var(--accent2);border:1.5px solid #C7D2FE;border-radius:5px;font-size:11px;font-weight:600;color:var(--accent);text-decoration:none}
+.japply:hover{background:var(--accent);color:#fff}
+.no-brief{text-align:center;padding:40px 20px;color:var(--text3)}
+
+@media(max-width:640px){.topbar,.toolbar,.main{padding-left:16px;padding-right:16px}.brief-panel{width:100%}}
+</style>
+</head>
+<body>
+
+<div id="loading"><div class="spinner"></div><div style="font-size:13px;color:var(--text3)">Loading deals...</div></div>
+
+<div id="app">
+  <div class="topbar">
+    <span class="tb-logo">facilio</span>
+    <div class="tb-title-wrap">
+      <div class="tb-title">Deals Dashboard</div>
+      <div class="tb-subtitle">On-hold pipeline re-engagement</div>
+    </div>
+    <div class="tb-stats">
+      <div class="tb-stat"><div class="tb-val s-total" id="s-total">-</div><div class="tb-lbl">Deals</div></div>
+      <div class="tb-stat"><div class="tb-val s-value" id="s-value">-</div><div class="tb-lbl">Pipeline</div></div>
+      <div class="tb-stat"><div class="tb-val s-signals" id="s-signals">-</div><div class="tb-lbl">With Signals</div></div>
+      <div class="tb-stat"><div class="tb-val s-high" id="s-high">-</div><div class="tb-lbl">High Potential</div></div>
+    </div>
+    <a class="bdr-link" href="index.html">⬅ BDR Dashboard</a>
+  </div>
+
+  <div class="toolbar">
+    <div class="tr1">
+      <div class="search-wrap">
+        <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input class="search-input" id="search" placeholder="Search deal, account, owner..." oninput="render()">
+      </div>
+      <select class="sort-sel" id="sort" onchange="render()">
+        <option value="amount">Sort: Amount ↓</option>
+        <option value="age">Sort: Age ↓</option>
+        <option value="acct">Sort: Account A–Z</option>
+        <option value="risk">Sort: Risk</option>
+        <option value="signals">Sort: Signals ↓</option>
+      </select>
+      <span class="count" id="count">-</span>
+    </div>
+    <div class="tr2">
+      <span class="flbl">Stage</span><div class="chips" id="stage-chips"></div>
+      <div class="divider"></div>
+      <span class="flbl">Owner</span><div class="chips" id="owner-chips"></div>
+      <div class="divider"></div>
+      <span class="flbl">Risk</span><div class="chips" id="risk-chips"></div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="grid" id="grid"></div>
+    <div class="empty" id="empty" style="display:none"><div style="font-size:36px;margin-bottom:8px">📋</div><div>No deals match your filters</div></div>
+  </div>
+</div>
+
+<!-- Brief overlay -->
+<div class="brief-overlay" id="brief-overlay" onclick="if(event.target===this)closeBrief()">
+  <div class="brief-panel">
+    <div class="brief-head">
+      <div class="brief-top">
+        <div class="brief-title" id="bp-title"></div>
+        <button class="brief-close" onclick="closeBrief()">&#10005;</button>
+      </div>
+      <div class="brief-meta-row" id="bp-meta"></div>
+    </div>
+    <div class="brief-body" id="bp-body"></div>
+  </div>
+</div>
+
+<script>
+var DATA=[];
+var aStage='All', aOwner='All', aRisk='All';
+
+function E(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function fmt(v){var n=parseFloat(v)||0;if(!n)return '—';if(n>=1000000)return '$'+(n/1000000).toFixed(1)+'M';if(n>=1000)return '$'+(n/1000).toFixed(0)+'K';return '$'+n.toLocaleString();}
+function D(d){if(!d||d==='-')return '-';try{return new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});}catch(e){return d;}}
+
+function riskLabel(r){
+  if(!r)return 'Unknown';
+  var u=(r||'').toUpperCase();
+  if(u.indexOf('HIGH')>-1)return 'High';
+  if(u.indexOf('MEDIUM')>-1)return 'Medium';
+  if(u.indexOf('LOW')>-1&&u.indexOf('COLD')<0)return 'Low';
+  if(u.indexOf('DEAD')>-1||u.indexOf('LOST')>-1||u.indexOf('COLD')>-1)return 'Dead';
+  return 'Unknown';
+}
+
+function stageClass(s){
+  if(!s)return 's-other';
+  var sl=s.toLowerCase();
+  if(sl.indexOf('hold')>-1)return 's-on-hold';
+  if(sl.indexOf('interest')>-1)return 's-interest';
+  if(sl.indexOf('opportunity')>-1)return 's-opportunity';
+  if(sl.indexOf('procurement')>-1)return 's-procurement';
+  return 's-other';
+}
+
+function isBlank(v){return !v||v.trim()===''||v==='No Activity Logged';}
+
+fetch('deals.json?v='+Date.now())
+  .then(function(r){return r.json();})
+  .then(function(d){
+    DATA=d;
+    document.getElementById('loading').style.display='none';
+    document.getElementById('app').style.display='block';
+    document.getElementById('brief-overlay').style.display='block';
+    updateStats();
+    buildChips();
+    render();
+  })
+  .catch(function(){
+    document.getElementById('loading').innerHTML="<div style='color:#EF4444;font-size:14px;text-align:center;padding:20px'>Failed to load deals.json<br><small style='color:#94A3B8;display:block;margin-top:6px'>Make sure deals.json exists in the same folder</small><button onclick='location.reload()' style='margin-top:12px;padding:8px 20px;background:#5B6AF0;color:#fff;border:none;border-radius:7px;cursor:pointer'>Retry</button></div>";
+  });
+
+function updateStats(){
+  var totalVal=DATA.reduce(function(s,d){return s+(parseFloat(d.amount)||0);},0);
+  var withSignals=DATA.filter(function(d){return (d.news&&d.news.length)||(d.jobs&&d.jobs.length);}).length;
+  var highPotential=DATA.filter(function(d){return riskLabel(d.riskRating)==='High';}).length;
+  document.getElementById('s-total').textContent=DATA.length;
+  document.getElementById('s-value').textContent=totalVal>=1000000?'$'+(totalVal/1000000).toFixed(1)+'M':'$'+(totalVal/1000).toFixed(0)+'K';
+  document.getElementById('s-signals').textContent=withSignals;
+  document.getElementById('s-high').textContent=highPotential;
+}
+
+function buildChips(){
+  var stages=['All'].concat([...new Set(DATA.map(function(d){return d.stage;}))].filter(Boolean).sort());
+  var owners=['All'].concat([...new Set(DATA.map(function(d){return d.owner;}))].filter(Boolean).sort());
+  var risks=['All','High','Medium','Low','Dead'];
+  var riskColors={High:'#059669',Medium:'#D97706',Low:'#EF4444',Dead:'#6B7280'};
+
+  function mkChips(id,arr,getV,setV){
+    var el=document.getElementById(id);el.innerHTML='';
+    arr.forEach(function(v){
+      var b=document.createElement('button');
+      b.className='chip'+(getV()===v?' on':'');
+      b.textContent=v;b.dataset.v=v;
+      b.onclick=function(){
+        setV(v);
+        document.querySelectorAll('#'+id+' .chip').forEach(function(c){
+          var isOn=c.dataset.v===v;
+          c.classList.toggle('on',isOn);
+          // colour for risk chips
+          if(id==='risk-chips'&&isOn&&riskColors[v]){
+            c.style.background=riskColors[v];
+            c.style.borderColor=riskColors[v];
+            c.style.color='#fff';
+          } else if(id==='risk-chips'&&!isOn){
+            c.style.background='';c.style.borderColor='';c.style.color='';
+          }
+        });
+        render();
+      };
+      el.appendChild(b);
+    });
+  }
+  mkChips('stage-chips',stages,function(){return aStage;},function(v){aStage=v;});
+  mkChips('owner-chips',owners,function(){return aOwner;},function(v){aOwner=v;});
+  mkChips('risk-chips',risks,function(){return aRisk;},function(v){aRisk=v;});
+}
+
+function getFiltered(){
+  var q=document.getElementById('search').value.toLowerCase().trim();
+  var sort=document.getElementById('sort').value;
+  return DATA.filter(function(d){
+    if(aStage!=='All'&&d.stage!==aStage)return false;
+    if(aOwner!=='All'&&d.owner!==aOwner)return false;
+    if(aRisk!=='All'&&riskLabel(d.riskRating)!==aRisk)return false;
+    if(q){
+      var hay=(d.acct||'').toLowerCase()+(d.oname||'').toLowerCase()+(d.owner||'').toLowerCase();
+      if(hay.indexOf(q)<0)return false;
+    }
+    return true;
+  }).sort(function(a,b){
+    if(sort==='amount')return(parseFloat(b.amount)||0)-(parseFloat(a.amount)||0);
+    if(sort==='age')return(parseFloat(b.age)||0)-(parseFloat(a.age)||0);
+    if(sort==='acct')return(a.acct||'').localeCompare(b.acct||'');
+    if(sort==='signals'){
+      var sa=(a.news?a.news.length:0)+(a.jobs?a.jobs.length:0);
+      var sb=(b.news?b.news.length:0)+(b.jobs?b.jobs.length:0);
+      return sb-sa;
+    }
+    if(sort==='risk'){
+      var ord={High:3,Medium:2,Low:1,Dead:0,Unknown:4};
+      return(ord[riskLabel(b.riskRating)]||0)-(ord[riskLabel(a.riskRating)]||0);
+    }
+    return 0;
+  });
+}
+
+function render(){
+  var list=getFiltered();
+  document.getElementById('count').textContent=list.length+' deals';
+  document.getElementById('empty').style.display=list.length?'none':'block';
+  var g=document.getElementById('grid');g.innerHTML='';
+
+  list.forEach(function(d){
+    var rl=riskLabel(d.riskRating);
+    var sc=stageClass(d.stage);
+    var hasBrief=!isBlank(d.summary);
+    var nLen=(d.news||[]).length;
+    var jLen=(d.jobs||[]).length;
+
+    var card=document.createElement('div');
+    card.className='card';
+    card.innerHTML=
+      "<div class='card-header'>"+
+        "<div class='card-name' title='"+E(d.oname)+"'>"+E(d.oname)+"</div>"+
+        "<span class='stage-badge "+sc+"'>"+E(d.stage)+"</span>"+
+      "</div>"+
+      "<div class='card-amount'>"+fmt(d.amount)+"</div>"+
+      "<div class='card-meta'>"+
+        "<b>"+E(d.acct)+"</b>"+(d.vertical?" &middot; "+E(d.vertical):"")+
+        "<br>"+E(d.owner)+(d.age?" &middot; "+d.age+" days":"")+
+        (d.closeDate&&d.closeDate!=='-'?" &middot; Close "+E(d.closeDate):"")+
+      "</div>"+
+      "<div class='card-foot'>"+
+        "<span class='risk-badge r-"+rl+"'>"+rl+" Risk</span>"+
+        (nLen?"<span class='sig sig-news'>&#128240; "+nLen+"</span>":"")+
+        (jLen?"<span class='sig sig-jobs'>&#128188; "+jLen+"</span>":"")+
+        (hasBrief?"<button class='brief-btn' onclick='event.stopPropagation();openBriefForOid(\""+E(d.oid)+"\")'>Re-engagement Brief ↗</button>":"")+
+      "</div>";
+
+    if(hasBrief){
+      card.onclick=function(){openBriefForOid(d.oid);};
+    }
+    g.appendChild(card);
+  });
+}
+
+function findDeal(oid){
+  return DATA.find(function(d){
+    return d.oid===oid||d.oid.indexOf(oid)===0||oid.indexOf(d.oid)===0;
+  });
+}
+
+function openBriefForOid(oid){
+  var d=findDeal(oid);
+  if(!d)return;
+  showBrief(d);
+}
+
+function showBrief(d){
+  var rl=riskLabel(d.riskRating);
+
+  document.getElementById('bp-title').textContent=d.oname+' — '+d.acct;
+  document.getElementById('bp-meta').innerHTML=
+    "<span class='stage-badge "+stageClass(d.stage)+"' style='font-size:10px'>"+E(d.stage)+"</span>"+
+    "<span class='bmeta' style='font-weight:700;color:#fff;font-size:13px'>"+fmt(d.amount)+"</span>"+
+    "<span class='bmeta'>"+E(d.owner)+"</span>"+
+    (d.vertical?"<span class='bmeta'>"+E(d.vertical)+"</span>":"")+
+    (d.age?"<span class='bmeta'>"+d.age+" days old</span>":"")+
+    (d.closeDate&&d.closeDate!=='-'?"<span class='bmeta'>Close: "+E(d.closeDate)+"</span>":"");
+
+  function field(title,val,cls){
+    if(isBlank(val))return '';
+    return "<div class='bsec'><div class='bsec-title'>"+title+"</div><div class='"+(cls||'btext')+"'>"+E(val)+"</div></div>";
+  }
+
+  var body='';
+  body+=field('Deal Summary',d.summary);
+  body+=field('Last Outreach',d.lastOut);
+  body+=field('Key Contacts',d.prospects);
+  body+=field('Reason On Hold',d.holdReason);
+  body+=field('Unresolved Objections',d.objections);
+  body+=field('Evaluated Facilio For',d.evalFor);
+
+  if(!isBlank(d.reEngage)){
+    body+="<div class='bsec'><div class='bsec-title'>Re-engagement Opening Line</div><div class='bopening'>"+E(d.reEngage)+"</div></div>";
+  }
+  if(!isBlank(d.nextStep)){
+    body+="<div class='bsec'><div class='bsec-title'>Suggested Next Step</div><div class='bnext'>"+E(d.nextStep)+"</div></div>";
+  }
+  if(!isBlank(d.riskRating)){
+    body+="<div class='bsec'><div class='bsec-title'>Risk Rating</div><div class='brisk brisk-"+rl+"'>"+E(d.riskRating)+"</div></div>";
+  }
+
+  var news=d.news||[];
+  if(news.length){
+    body+="<div class='bsec'><div class='bsec-title'>Intent Signals — News ("+news.length+")</div>";
+    news.forEach(function(n){
+      body+="<div class='bnews'>"+
+        "<div class='bnews-title'>"+E(n.title)+"</div>"+
+        (n.summary?"<div class='bnews-sum'>"+E(n.summary)+"</div>":"")+
+        (n.bdrLine?"<div class='bnews-line'>&#128073; "+E(n.bdrLine)+"</div>":"")+
+        (n.sigType?"<span class='bsigtag'>"+E(n.sigType)+"</span>":"")+
+        "</div>";
+    });
+    body+="</div>";
+  }
+
+  var jobs=d.jobs||[];
+  if(jobs.length){
+    body+="<div class='bsec'><div class='bsec-title'>Intent Signals — Jobs ("+jobs.length+")</div>";
+    jobs.forEach(function(j){
+      body+="<div class='bjob'>"+
+        "<div class='bjob-title'>"+E(j.title)+"</div>"+
+        "<div class='bjob-meta'>"+E(j.seniority)+(j.location?" &middot; "+E(j.location):"")+(j.posted&&j.posted!=='-'?" &middot; "+j.posted:"")+"</div>"+
+        (j.url?"<a href='"+E(j.url)+"' target='_blank' class='japply'>View Job &#8599;</a>":"")+
+        "</div>";
+    });
+    body+="</div>";
+  }
+
+  if(!body){
+    body="<div class='no-brief'><div style='font-size:32px;margin-bottom:8px'>📭</div>No brief data available</div>";
+  }
+
+  document.getElementById('bp-body').innerHTML=body;
+  document.getElementById('brief-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeBrief(){
+  document.getElementById('brief-overlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeBrief();});
+</script>
+</body>
+</html>
