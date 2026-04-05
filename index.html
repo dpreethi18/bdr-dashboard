@@ -239,8 +239,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .note-entry-meta{font-size:11px;color:var(--text3)}
 
 /* ── MODE SWITCHER ─────────────────────────────────────── */
-.mode-screen{position:fixed;inset:0;background:var(--brand);display:flex;align-items:center;justify-content:center;z-index:500;flex-direction:column;gap:32px}
+.mode-screen{position:fixed;inset:0;background:var(--brand);display:none;align-items:center;justify-content:center;z-index:500;flex-direction:column;gap:32px}
 .mode-screen.hidden{display:none}
+.mode-screen.visible{display:flex}
 .mode-logo{font-size:32px;font-weight:800;color:#fff;letter-spacing:-2px;margin-bottom:8px}
 .mode-tagline{font-size:14px;color:rgba(255,255,255,.5);margin-bottom:24px}
 .mode-cards{display:flex;gap:20px;flex-wrap:wrap;justify-content:center}
@@ -445,6 +446,8 @@ fetch("data.json?v="+Date.now())
     DATA=d;
     document.getElementById("loading").style.display="none";
     document.getElementById("app").style.display="block";
+    // Show mode selection screen
+    document.getElementById("mode-screen").style.display="flex";
     document.getElementById("s-total").textContent=DATA.length;
     document.getElementById("s-hot").textContent=DATA.filter(function(x){return x.is>=8;}).length;
     document.getElementById("s-warm").textContent=DATA.filter(function(x){return x.is>=5&&x.is<8;}).length;
@@ -956,7 +959,7 @@ var DEALS_DATA = [];
 var aStage='All', aOwner='All', aRisk='All', curDeal=null;
 
 function setMode(mode) {
-  document.getElementById('mode-screen').classList.add('hidden');
+  document.getElementById('mode-screen').style.display='none';
   if (mode === 'bdr') {
     document.getElementById('app').style.display = 'block';
     document.getElementById('deals-section').style.display = 'none';
@@ -988,7 +991,7 @@ function addSwitcherBtn(switchTo) {
   btn.className = 'mode-switcher-btn';
   btn.textContent = switchTo === 'bdr' ? '⬅ BDR View' : '💼 Deals View';
   btn.onclick = function() {
-    document.getElementById('mode-screen').classList.remove('hidden');
+    document.getElementById('mode-screen').style.display='flex';
   };
   document.querySelector('.topbar').appendChild(btn);
 }
