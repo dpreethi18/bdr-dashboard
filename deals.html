@@ -163,6 +163,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       <span class="flbl">Owner</span><div class="chips" id="owner-chips"></div>
       <div class="divider"></div>
       <span class="flbl">Risk</span><div class="chips" id="risk-chips"></div>
+      <div class="divider"></div>
+      <span class="flbl">Signals</span><div class="chips" id="signal-chips"></div>
     </div>
   </div>
 
@@ -188,7 +190,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 
 <script>
 var DATA=[];
-var aTerritory='All', aOwner='All', aRisk='All';
+var aTerritory='All', aOwner='All', aRisk='All', aSignal='All';
 
 function E(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function fmt(v){var n=parseFloat(v)||0;if(!n)return '—';if(n>=1000000)return '$'+(n/1000000).toFixed(1)+'M';if(n>=1000)return '$'+(n/1000).toFixed(0)+'K';return '$'+n.toLocaleString();}
@@ -275,6 +277,15 @@ function buildChips(){
     });
   }
   mkChips('territory-chips',territories,function(){return aTerritory;},function(v){aTerritory=v;});
+  var signals=[{k:'All',l:'All'},{k:'news',l:'&#128240; Has News'},{k:'jobs',l:'&#128188; Has Jobs'},{k:'both',l:'News + Jobs'}];
+  var sigEl=document.getElementById('signal-chips');sigEl.innerHTML='';
+  signals.forEach(function(sig){
+    var b=document.createElement('button');
+    b.className='chip'+(aSignal===sig.k?' on':'');
+    b.innerHTML=sig.l;b.dataset.v=sig.k;
+    b.onclick=function(){aSignal=sig.k;document.querySelectorAll('#signal-chips .chip').forEach(function(c){c.classList.toggle('on',c.dataset.v===sig.k);});render();};
+    sigEl.appendChild(b);
+  });
   mkChips('owner-chips',owners,function(){return aOwner;},function(v){aOwner=v;});
   mkChips('risk-chips',risks,function(){return aRisk;},function(v){aRisk=v;});
 }
@@ -286,6 +297,9 @@ function getFiltered(){
     if(aTerritory!=='All'&&getTerritory(d)!==aTerritory)return false;
     if(aOwner!=='All'&&d.owner!==aOwner)return false;
     if(aRisk!=='All'&&riskLabel(d.riskRating)!==aRisk)return false;
+    if(aSignal==='news'&&!(d.news&&d.news.length))return false;
+    if(aSignal==='jobs'&&!(d.jobs&&d.jobs.length))return false;
+    if(aSignal==='both'&&!(d.news&&d.news.length&&d.jobs&&d.jobs.length))return false;
     if(q){
       var hay=(d.acct||'').toLowerCase()+(d.oname||'').toLowerCase()+(d.owner||'').toLowerCase();
       if(hay.indexOf(q)<0)return false;
