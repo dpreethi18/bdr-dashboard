@@ -157,9 +157,23 @@ var DATA=[];
 var aTerritory='All', aOwner='All', aStatus='All', aSignal='All';
 
 function E(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function D(d){if(!d||d==='-')return '';try{return new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});}catch(e){return d;}}
-function hasWs(d){return (d.ws||'').indexOf('\u2705')>-1;}
-function hasBi(d){return (d.bi||'').indexOf('\u2705')>-1;}
+function D(d){
+  if(!d||d==='-'||d==='No') return '';
+  try{
+    return new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+  }catch(e){
+    return d;
+  }
+}
+
+function isPositive(v){
+  var x=(v||'').toString().trim().toLowerCase();
+  return x==='yes' || x==='y' || x==='true' || x==='1' || x.indexOf('✅')>-1;
+}
+
+function hasWs(d){ return isPositive(d.ws); }
+function hasBi(d){ return isPositive(d.bi); }
+
 function initials(fn,ln){return ((fn||'').charAt(0)+(ln||'').charAt(0)).toUpperCase()||'?';}
 
 function statusClass(s){
@@ -207,7 +221,9 @@ function buildChips(){
       b.textContent=v;b.dataset.v=v;
       b.onclick=function(){
         setV(v);
-        document.querySelectorAll('#'+id+' .chip').forEach(function(c){c.classList.toggle('on',c.dataset.v===v);});
+        document.querySelectorAll('#'+id+' .chip').forEach(function(c){
+          c.classList.toggle('on',c.dataset.v===v);
+        });
         render();
       };
       el.appendChild(b);
@@ -218,15 +234,24 @@ function buildChips(){
   mk('owner-chips',owners,function(){return aOwner;},function(v){aOwner=v;});
   mk('status-chips',statuses,function(){return aStatus;},function(v){aStatus=v;});
 
-  // Signal chips
-  var sigEl=document.getElementById('signal-chips');sigEl.innerHTML='';
-  [{k:'All',l:'All'},{k:'ws',l:'&#127760; Website'},{k:'bi',l:'&#127919; Buyer Intent'},{k:'both',l:'&#9889; Both'},{k:'none',l:'No Signals'}].forEach(function(sig){
+  var sigEl=document.getElementById('signal-chips');
+  sigEl.innerHTML='';
+  [
+    {k:'All',l:'All'},
+    {k:'ws',l:'🌐 Website'},
+    {k:'bi',l:'🎯 Buyer Intent'},
+    {k:'both',l:'⚡ Both'},
+    {k:'none',l:'No Signals'}
+  ].forEach(function(sig){
     var b=document.createElement('button');
     b.className='chip'+(aSignal===sig.k?' on':'');
-    b.innerHTML=sig.l;b.dataset.v=sig.k;
+    b.innerHTML=sig.l;
+    b.dataset.v=sig.k;
     b.onclick=function(){
       aSignal=sig.k;
-      document.querySelectorAll('#signal-chips .chip').forEach(function(c){c.classList.toggle('on',c.dataset.v===sig.k);});
+      document.querySelectorAll('#signal-chips .chip').forEach(function(c){
+        c.classList.toggle('on',c.dataset.v===sig.k);
+      });
       render();
     };
     sigEl.appendChild(b);
@@ -236,6 +261,7 @@ function buildChips(){
 function getFiltered(){
   var q=document.getElementById('search').value.toLowerCase().trim();
   var sort=document.getElementById('sort').value;
+
   return DATA.filter(function(d){
     if(aTerritory!=='All'&&(d.territory||'Other')!==aTerritory)return false;
     if(aOwner!=='All'&&d.owner!==aOwner)return false;
@@ -244,18 +270,23 @@ function getFiltered(){
     if(aSignal==='bi'&&!hasBi(d))return false;
     if(aSignal==='both'&&!(hasWs(d)&&hasBi(d)))return false;
     if(aSignal==='none'&&(hasWs(d)||hasBi(d)))return false;
+
     if(q){
-      var hay=(d.company||'').toLowerCase()+(d.owner||'').toLowerCase()+(d.vertical||'').toLowerCase()+(d.territory||'').toLowerCase();
+      var hay=[
+        d.company||'',
+        d.owner||'',
+        d.vertical||'',
+        d.territory||''
+      ].join(' ').toLowerCase();
+
       if(hay.indexOf(q)<0)return false;
     }
     return true;
   }).sort(function(a,b){
-    if(sort==='company')return(a.company||'').localeCompare(b.company||'');
-    if(sort==='lastAct'){
-      return new Date(b.lastAct||0)-new Date(a.lastAct||0);
-    }
-    if(sort==='contacts')return(b.contacts||[]).length-(a.contacts||[]).length;
-    // signals first: both > ws > bi > none
+    if(sort==='company') return (a.company||'').localeCompare(b.company||'');
+    if(sort==='lastAct') return new Date(b.lastAct||0)-new Date(a.lastAct||0);
+    if(sort==='contacts') return (b.contacts||[]).length-(a.contacts||[]).length;
+
     var sa=(hasWs(a)?2:0)+(hasBi(a)?1:0);
     var sb=(hasWs(b)?2:0)+(hasBi(b)?1:0);
     return sb-sa;
@@ -266,35 +297,53 @@ function render(){
   var list=getFiltered();
   document.getElementById('count').textContent=list.length+' accounts';
   document.getElementById('empty').style.display=list.length?'none':'block';
-  var g=document.getElementById('grid');g.innerHTML='';
+
+  var g=document.getElementById('grid');
+  g.innerHTML='';
 
   list.forEach(function(d){
     var ws=hasWs(d), bi=hasBi(d);
     var cardClass='card'+(ws&&bi?' card-both':'');
     var sc=statusClass(d.status);
 
-    // Signal blocks
     var signalHtml='<div class="card-signals">';
+
     if(ws){
       signalHtml+="<div style='flex:1'>";
-      signalHtml+="<div class='sig sig-ws'>&#127760; Website Visitor</div>";
-      if(d.wsd)signalHtml+="<div class='sig-detail'>"+E(d.wsd.slice(0,10))+"</div>";
-      if(d.wlp)signalHtml+="<div class='sig-detail' style='font-family:monospace;font-size:10px;word-break:break-all'>"+E(d.wlp.split(',')[0])+"</div>";
-      if(d.wtp)signalHtml+="<div class='sig-detail'>"+E(d.wtp)+" pages viewed</div>";
+      signalHtml+="<div class='sig sig-ws'>🌐 Website Visitor</div>";
+
+      if(d.wsd && d.wsd!=='-' && d.wsd!=='No'){
+        signalHtml+="<div class='sig-detail'><b>Date:</b> "+E(D(d.wsd))+"</div>";
+      }
+
+      if(d.wlp){
+        signalHtml+="<div class='sig-detail'><b>Last page:</b> <span style='font-family:monospace;font-size:10px;word-break:break-all'>"+E(d.wlp)+"</span></div>";
+      }
+
+      if(d.wtp){
+        signalHtml+="<div class='sig-detail'><b>Total pages:</b> "+E(d.wtp)+"</div>";
+      }
+
       signalHtml+="</div>";
     }
+
     if(bi){
       signalHtml+="<div style='flex:1'>";
-      signalHtml+="<div class='sig sig-bi'>&#127919; Buyer Intent</div>";
-      if(d.bid)signalHtml+="<div class='sig-detail'>"+E(d.bid.slice(0,10))+"</div>";
+      signalHtml+="<div class='sig sig-bi'>🎯 Buyer Intent</div>";
+
+      if(d.bid && d.bid!=='-' && d.bid!=='No'){
+        signalHtml+="<div class='sig-detail'><b>Date:</b> "+E(D(d.bid))+"</div>";
+      }
+
       signalHtml+="</div>";
     }
+
     if(!ws&&!bi){
       signalHtml+="<span class='sig-none'>No signals yet</span>";
     }
+
     signalHtml+="</div>";
 
-    // Contacts
     var contactHtml='';
     var contacts=d.contacts||[];
     if(contacts.length){
@@ -304,7 +353,7 @@ function render(){
           "<div class='contact-row'>"+
             "<div class='contact-avatar'>"+initials(c.firstName,c.lastName)+"</div>"+
             "<div class='contact-info'>"+
-              "<div class='contact-name'>"+E(c.firstName+" "+c.lastName)+"</div>"+
+              "<div class='contact-name'>"+E((c.firstName||'')+' '+(c.lastName||''))+"</div>"+
               (c.email?"<div class='contact-email'>"+E(c.email)+"</div>":"")+
               (c.phone?"<div class='contact-phone'>"+E(c.phone)+"</div>":"")+
             "</div>"+
@@ -326,7 +375,7 @@ function render(){
       "<div class='card-meta'>"+
         (d.vertical?"<b>"+E(d.vertical)+"</b>"+(d.territory?" &middot; "+E(d.territory):""):E(d.territory||''))+
         "<br>"+E(d.owner||'Unassigned')+
-        (d.lastAct?" &middot; "+D(d.lastAct):"")+
+        (d.lastAct?" &middot; "+E(D(d.lastAct)):"")+
       "</div>"+
       signalHtml+
       contactHtml;
