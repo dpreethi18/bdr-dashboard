@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Inbound Dashboard — Facilio</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F0F2F8;--surface:#fff;--surface2:#F7F8FC;--border:#E4E7F0;--border2:#CDD2E0;
+  --text:#0D1117;--text2:#4A5568;--text3:#94A3B8;
+  --accent:#5B6AF0;--accent2:#EEF0FE;--brand:#301894;
+  --ws:#0891B2;--wsbg:#ECFEFF;
+  --bi:#8B5CF6;--bibg:#F5F3FF;
+  --hot:#EF4444;--hotbg:#FEF2F2;
+  --warm:#F59E0B;--warmbg:#FFFBEB;
+  --r:10px;--r-sm:7px;--sh-lg:0 8px 32px rgba(0,0,0,.12)
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+#loading{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;z-index:999}
+.spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#app{display:none}
+
+/* TOPBAR */
+.topbar{background:var(--brand);height:62px;display:flex;align-items:center;padding:0 28px;gap:16px;position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(0,0,0,.35)}
+.tb-logo{font-size:24px;font-weight:800;color:#fff;letter-spacing:-1.5px;padding-right:16px;border-right:1px solid rgba(255,255,255,.18);margin-right:4px}
+.tb-title-wrap{display:flex;flex-direction:column}
+.tb-title{font-size:13px;font-weight:700;color:#fff}
+.tb-subtitle{font-size:11px;color:rgba(255,255,255,.4);margin-top:1px}
+.tb-stats{display:flex;gap:22px;margin-left:auto}
+.tb-stat{text-align:right}
+.tb-val{font-size:18px;font-weight:800;font-family:'JetBrains Mono',monospace;line-height:1}
+.tb-lbl{font-size:10px;color:rgba(255,255,255,.4);margin-top:1px}
+.s-total{color:#fff}.s-ws{color:#67E8F9}.s-bi{color:#C4B5FD}.s-both{color:#FCD34D}
+.nav-link{padding:6px 14px;border-radius:20px;border:1.5px solid rgba(255,255,255,.3);background:transparent;color:rgba(255,255,255,.8);font-size:12px;font-weight:600;text-decoration:none;white-space:nowrap;transition:all .15s}
+.nav-link:hover{background:rgba(255,255,255,.15);color:#fff}
+
+/* TOOLBAR */
+.toolbar{background:var(--surface);border-bottom:1.5px solid var(--border);padding:12px 28px;display:flex;flex-direction:column;gap:10px;position:sticky;top:62px;z-index:90}
+.tr1{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tr2{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.search-wrap{position:relative;flex:1;min-width:200px;max-width:340px}
+.search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none}
+.search-input{width:100%;padding:9px 12px 9px 34px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-family:'Inter',sans-serif;font-size:13px;color:var(--text);background:var(--surface2);outline:none;transition:border-color .15s}
+.search-input:focus{border-color:var(--accent);background:#fff}
+.sort-sel{padding:8px 12px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-family:'Inter',sans-serif;font-size:13px;color:var(--text2);background:var(--surface2);outline:none;cursor:pointer}
+.count{font-size:12px;color:var(--text3);margin-left:auto;white-space:nowrap}
+.flbl{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;white-space:nowrap}
+.chips{display:flex;gap:5px;flex-wrap:wrap}
+.chip{padding:5px 12px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface2);font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .15s;white-space:nowrap;font-family:'Inter',sans-serif}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+.chip.on{background:var(--text);border-color:var(--text);color:#fff}
+.divider{width:1px;height:20px;background:var(--border);flex-shrink:0}
+
+/* GRID */
+.main{padding:20px 28px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
+.empty{text-align:center;padding:60px 20px;color:var(--text3)}
+
+/* CARDS */
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);padding:16px;transition:all .18s;position:relative}
+.card:hover{border-color:var(--accent);box-shadow:var(--sh-lg);transform:translateY(-2px)}
+.card-both{border-color:#8B5CF6;box-shadow:0 0 0 2px rgba(139,92,246,.15)}
+.card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;gap:8px}
+.card-company{font-size:14px;font-weight:700;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.status-badge{padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;flex-shrink:0;white-space:nowrap}
+.st-new{background:#ECFDF5;color:#059669;border:1px solid #A7F3D0}
+.st-inprogress{background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE}
+.st-other{background:#F3F4F6;color:#6B7280;border:1px solid #E5E7EB}
+.card-meta{font-size:11px;color:var(--text3);margin-bottom:10px;line-height:1.5}
+.card-meta b{color:var(--text2)}
+.card-signals{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.sig{padding:3px 9px;border-radius:6px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:4px}
+.sig-ws{background:var(--wsbg);color:var(--ws);border:1px solid #A5F3FC}
+.sig-bi{background:var(--bibg);color:var(--bi);border:1px solid #DDD6FE}
+.sig-none{background:var(--surface2);color:var(--text3);font-size:11px;padding:3px 9px;border-radius:6px}
+.sig-detail{font-size:10px;color:var(--text3);margin-top:3px}
+
+/* CONTACTS */
+.contacts-wrap{margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.contacts-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:7px}
+.contact-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)}
+.contact-row:last-child{border-bottom:none;padding-bottom:0}
+.contact-avatar{width:28px;height:28px;border-radius:50%;background:var(--accent2);color:var(--accent);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.contact-info{flex:1;min-width:0}
+.contact-name{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.contact-email{font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.contact-phone{font-size:11px;color:var(--text3)}
+.no-contacts{font-size:11px;color:var(--text3);font-style:italic;padding:4px 0}
+
+/* SIGNAL DETAIL BLOCKS */
+.ws-block{background:var(--wsbg);border:1px solid #A5F3FC;border-radius:var(--r-sm);padding:8px 10px;margin-bottom:6px}
+.bi-block{background:var(--bibg);border:1px solid #DDD6FE;border-radius:var(--r-sm);padding:8px 10px;margin-bottom:6px}
+.block-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:4px}
+.block-val{font-size:12px;color:var(--text2);line-height:1.5}
+.block-url{font-size:11px;color:var(--ws);font-family:monospace;word-break:break-all;margin-top:3px}
+
+@media(max-width:640px){.topbar,.toolbar,.main{padding-left:16px;padding-right:16px}}
+</style>
+</head>
+<body>
+
+<div id="loading"><div class="spinner"></div><div style="font-size:13px;color:var(--text3)">Loading inbound leads...</div></div>
+
+<div id="app">
+  <div class="topbar">
+    <span class="tb-logo">facilio</span>
+    <div class="tb-title-wrap">
+      <div class="tb-title">Inbound Dashboard</div>
+      <div class="tb-subtitle">Website &amp; buyer intent signals</div>
+    </div>
+    <div class="tb-stats">
+      <div class="tb-stat"><div class="tb-val s-total" id="s-total">-</div><div class="tb-lbl">Accounts</div></div>
+      <div class="tb-stat"><div class="tb-val s-ws" id="s-ws">-</div><div class="tb-lbl">Web Visitors</div></div>
+      <div class="tb-stat"><div class="tb-val s-bi" id="s-bi">-</div><div class="tb-lbl">Buyer Intent</div></div>
+      <div class="tb-stat"><div class="tb-val s-both" id="s-both">-</div><div class="tb-lbl">Both Signals</div></div>
+    </div>
+    <a class="nav-link" href="index.html">🎯 BDR</a>
+    <a class="nav-link" href="deals.html">💼 Deals</a>
+  </div>
+
+  <div class="toolbar">
+    <div class="tr1">
+      <div class="search-wrap">
+        <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input class="search-input" id="search" placeholder="Search company, owner, vertical..." oninput="render()">
+      </div>
+      <select class="sort-sel" id="sort" onchange="render()">
+        <option value="signals">Sort: Signals First</option>
+        <option value="company">Sort: Company A–Z</option>
+        <option value="lastAct">Sort: Recent Activity</option>
+        <option value="contacts">Sort: Most Contacts</option>
+      </select>
+      <span class="count" id="count">-</span>
+    </div>
+    <div class="tr2">
+      <span class="flbl">Territory</span><div class="chips" id="territory-chips"></div>
+      <div class="divider"></div>
+      <span class="flbl">Owner</span><div class="chips" id="owner-chips"></div>
+      <div class="divider"></div>
+      <span class="flbl">Status</span><div class="chips" id="status-chips"></div>
+      <div class="divider"></div>
+      <span class="flbl">Signals</span><div class="chips" id="signal-chips"></div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="grid" id="grid"></div>
+    <div class="empty" id="empty" style="display:none"><div style="font-size:36px;margin-bottom:8px">📭</div><div>No accounts match your filters</div></div>
+  </div>
+</div>
+
+<script>
+var DATA=[];
+var aTerritory='All', aOwner='All', aStatus='All', aSignal='All';
+
+function E(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function D(d){if(!d||d==='-')return '';try{return new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});}catch(e){return d;}}
+function hasWs(d){return (d.ws||'').indexOf('\u2705')>-1;}
+function hasBi(d){return (d.bi||'').indexOf('\u2705')>-1;}
+function initials(fn,ln){return ((fn||'').charAt(0)+(ln||'').charAt(0)).toUpperCase()||'?';}
+
+function statusClass(s){
+  if(!s)return 'st-other';
+  var sl=s.toLowerCase();
+  if(sl==='new')return 'st-new';
+  if(sl.indexOf('progress')>-1||sl.indexOf('in-progress')>-1)return 'st-inprogress';
+  return 'st-other';
+}
+
+fetch('inbound.json?v='+Date.now())
+  .then(function(r){return r.json();})
+  .then(function(d){
+    DATA=d;
+    document.getElementById('loading').style.display='none';
+    document.getElementById('app').style.display='block';
+    updateStats();
+    buildChips();
+    render();
+  })
+  .catch(function(){
+    document.getElementById('loading').innerHTML="<div style='color:#EF4444;font-size:14px;text-align:center;padding:20px'>Failed to load inbound.json<br><button onclick='location.reload()' style='margin-top:12px;padding:8px 20px;background:#5B6AF0;color:#fff;border:none;border-radius:7px;cursor:pointer'>Retry</button></div>";
+  });
+
+function updateStats(){
+  var ws=DATA.filter(hasWs).length;
+  var bi=DATA.filter(hasBi).length;
+  var both=DATA.filter(function(d){return hasWs(d)&&hasBi(d);}).length;
+  document.getElementById('s-total').textContent=DATA.length;
+  document.getElementById('s-ws').textContent=ws;
+  document.getElementById('s-bi').textContent=bi;
+  document.getElementById('s-both').textContent=both;
+}
+
+function buildChips(){
+  var territories=['All'].concat([...new Set(DATA.map(function(d){return d.territory||'Other';}))].filter(Boolean).sort());
+  var owners=['All'].concat([...new Set(DATA.map(function(d){return d.owner;}))].filter(Boolean).sort());
+  var statuses=['All'].concat([...new Set(DATA.map(function(d){return d.status;}))].filter(Boolean).sort());
+
+  function mk(id,arr,getV,setV){
+    var el=document.getElementById(id);el.innerHTML='';
+    arr.forEach(function(v){
+      var b=document.createElement('button');
+      b.className='chip'+(getV()===v?' on':'');
+      b.textContent=v;b.dataset.v=v;
+      b.onclick=function(){
+        setV(v);
+        document.querySelectorAll('#'+id+' .chip').forEach(function(c){c.classList.toggle('on',c.dataset.v===v);});
+        render();
+      };
+      el.appendChild(b);
+    });
+  }
+
+  mk('territory-chips',territories,function(){return aTerritory;},function(v){aTerritory=v;});
+  mk('owner-chips',owners,function(){return aOwner;},function(v){aOwner=v;});
+  mk('status-chips',statuses,function(){return aStatus;},function(v){aStatus=v;});
+
+  // Signal chips
+  var sigEl=document.getElementById('signal-chips');sigEl.innerHTML='';
+  [{k:'All',l:'All'},{k:'ws',l:'&#127760; Website'},{k:'bi',l:'&#127919; Buyer Intent'},{k:'both',l:'&#9889; Both'},{k:'none',l:'No Signals'}].forEach(function(sig){
+    var b=document.createElement('button');
+    b.className='chip'+(aSignal===sig.k?' on':'');
+    b.innerHTML=sig.l;b.dataset.v=sig.k;
+    b.onclick=function(){
+      aSignal=sig.k;
+      document.querySelectorAll('#signal-chips .chip').forEach(function(c){c.classList.toggle('on',c.dataset.v===sig.k);});
+      render();
+    };
+    sigEl.appendChild(b);
+  });
+}
+
+function getFiltered(){
+  var q=document.getElementById('search').value.toLowerCase().trim();
+  var sort=document.getElementById('sort').value;
+  return DATA.filter(function(d){
+    if(aTerritory!=='All'&&(d.territory||'Other')!==aTerritory)return false;
+    if(aOwner!=='All'&&d.owner!==aOwner)return false;
+    if(aStatus!=='All'&&d.status!==aStatus)return false;
+    if(aSignal==='ws'&&!hasWs(d))return false;
+    if(aSignal==='bi'&&!hasBi(d))return false;
+    if(aSignal==='both'&&!(hasWs(d)&&hasBi(d)))return false;
+    if(aSignal==='none'&&(hasWs(d)||hasBi(d)))return false;
+    if(q){
+      var hay=(d.company||'').toLowerCase()+(d.owner||'').toLowerCase()+(d.vertical||'').toLowerCase()+(d.territory||'').toLowerCase();
+      if(hay.indexOf(q)<0)return false;
+    }
+    return true;
+  }).sort(function(a,b){
+    if(sort==='company')return(a.company||'').localeCompare(b.company||'');
+    if(sort==='lastAct'){
+      return new Date(b.lastAct||0)-new Date(a.lastAct||0);
+    }
+    if(sort==='contacts')return(b.contacts||[]).length-(a.contacts||[]).length;
+    // signals first: both > ws > bi > none
+    var sa=(hasWs(a)?2:0)+(hasBi(a)?1:0);
+    var sb=(hasWs(b)?2:0)+(hasBi(b)?1:0);
+    return sb-sa;
+  });
+}
+
+function render(){
+  var list=getFiltered();
+  document.getElementById('count').textContent=list.length+' accounts';
+  document.getElementById('empty').style.display=list.length?'none':'block';
+  var g=document.getElementById('grid');g.innerHTML='';
+
+  list.forEach(function(d){
+    var ws=hasWs(d), bi=hasBi(d);
+    var cardClass='card'+(ws&&bi?' card-both':'');
+    var sc=statusClass(d.status);
+
+    // Signal blocks
+    var signalHtml='<div class="card-signals">';
+    if(ws){
+      signalHtml+="<div style='flex:1'>";
+      signalHtml+="<div class='sig sig-ws'>&#127760; Website Visitor</div>";
+      if(d.wsd)signalHtml+="<div class='sig-detail'>"+E(d.wsd.slice(0,10))+"</div>";
+      if(d.wlp)signalHtml+="<div class='sig-detail' style='font-family:monospace;font-size:10px;word-break:break-all'>"+E(d.wlp.split(',')[0])+"</div>";
+      if(d.wtp)signalHtml+="<div class='sig-detail'>"+E(d.wtp)+" pages viewed</div>";
+      signalHtml+="</div>";
+    }
+    if(bi){
+      signalHtml+="<div style='flex:1'>";
+      signalHtml+="<div class='sig sig-bi'>&#127919; Buyer Intent</div>";
+      if(d.bid)signalHtml+="<div class='sig-detail'>"+E(d.bid.slice(0,10))+"</div>";
+      signalHtml+="</div>";
+    }
+    if(!ws&&!bi){
+      signalHtml+="<span class='sig-none'>No signals yet</span>";
+    }
+    signalHtml+="</div>";
+
+    // Contacts
+    var contactHtml='';
+    var contacts=d.contacts||[];
+    if(contacts.length){
+      contactHtml="<div class='contacts-wrap'><div class='contacts-title'>Contacts ("+contacts.length+")</div>";
+      contacts.slice(0,3).forEach(function(c){
+        contactHtml+=
+          "<div class='contact-row'>"+
+            "<div class='contact-avatar'>"+initials(c.firstName,c.lastName)+"</div>"+
+            "<div class='contact-info'>"+
+              "<div class='contact-name'>"+E(c.firstName+" "+c.lastName)+"</div>"+
+              (c.email?"<div class='contact-email'>"+E(c.email)+"</div>":"")+
+              (c.phone?"<div class='contact-phone'>"+E(c.phone)+"</div>":"")+
+            "</div>"+
+          "</div>";
+      });
+      if(contacts.length>3){
+        contactHtml+="<div style='font-size:11px;color:var(--text3);padding-top:6px'>+"+(contacts.length-3)+" more contacts</div>";
+      }
+      contactHtml+="</div>";
+    }
+
+    var card=document.createElement('div');
+    card.className=cardClass;
+    card.innerHTML=
+      "<div class='card-header'>"+
+        "<div class='card-company' title='"+E(d.company)+"'>"+E(d.company)+"</div>"+
+        "<span class='status-badge "+sc+"'>"+E(d.status||'—')+"</span>"+
+      "</div>"+
+      "<div class='card-meta'>"+
+        (d.vertical?"<b>"+E(d.vertical)+"</b>"+(d.territory?" &middot; "+E(d.territory):""):E(d.territory||''))+
+        "<br>"+E(d.owner||'Unassigned')+
+        (d.lastAct?" &middot; "+D(d.lastAct):"")+
+      "</div>"+
+      signalHtml+
+      contactHtml;
+
+    g.appendChild(card);
+  });
+}
+</script>
+</body>
+</html>
