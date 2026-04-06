@@ -13,6 +13,9 @@
   --accent:#5B6AF0;--accent2:#EEF0FE;--brand:#301894;
   --news:#059669;--newsbg:#ECFDF5;
   --jobs:#D97706;--jobsbg:#FFFBEB;
+  --ws:#0891B2;--wsbg:#ECFEFF;
+  --bi:#8B5CF6;--bibg:#F5F3FF;
+  --ws:#0891B2;--bi:#8B5CF6;
   --r:10px;--r-sm:7px;--sh-lg:0 8px 32px rgba(0,0,0,.12)
 }
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
@@ -81,6 +84,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .sig{padding:2px 7px;border-radius:5px;font-size:11px;font-weight:600}
 .sig-news{background:var(--newsbg);color:var(--news)}
 .sig-jobs{background:var(--jobsbg);color:var(--jobs)}
+.sig-ws{background:#ECFEFF;color:#0891B2}
+.sig-bi{background:#F5F3FF;color:#8B5CF6}
+.sig-ws{background:#ECFEFF;color:#0891B2}
+.sig-bi{background:#F5F3FF;color:#8B5CF6}
 .brief-btn{margin-left:auto;padding:5px 12px;background:var(--brand);color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap}
 .brief-btn:hover{background:#4338CA}
 
@@ -218,6 +225,10 @@ function stageClass(s){
 
 function isBlank(v){return !v||v.trim()===''||v==='No Activity Logged';}
 function getTerritory(d){ return (d.territory||'').trim()||'Other'; }
+function hasWebSignal(d){ return (d.ws||'').indexOf('✅')>-1; }
+function hasBiSignal(d){ return (d.bi||'').indexOf('✅')>-1; }
+function hasWebSignal(d){ var v=(d.ws||'').toLowerCase(); return v.indexOf('record found')>-1&&v.indexOf('no record')<0; }
+function hasBiSignal(d){ var v=(d.bi||'').toLowerCase(); return v.indexOf('record found')>-1&&v.indexOf('no record')<0; }
 
 fetch('deals.json?v='+Date.now())
   .then(function(r){return r.json();})
@@ -277,7 +288,7 @@ function buildChips(){
     });
   }
   mkChips('territory-chips',territories,function(){return aTerritory;},function(v){aTerritory=v;});
-  var signals=[{k:'All',l:'All'},{k:'news',l:'&#128240; Has News'},{k:'jobs',l:'&#128188; Has Jobs'},{k:'both',l:'News + Jobs'}];
+  var signals=[{k:'All',l:'All'},{k:'news',l:'&#128240; News'},{k:'jobs',l:'&#128188; Jobs'},{k:'web',l:'&#127760; Website'},{k:'bi',l:'&#127919; Buyer Intent'}];
   var sigEl=document.getElementById('signal-chips');sigEl.innerHTML='';
   signals.forEach(function(sig){
     var b=document.createElement('button');
@@ -287,6 +298,15 @@ function buildChips(){
     sigEl.appendChild(b);
   });
   mkChips('owner-chips',owners,function(){return aOwner;},function(v){aOwner=v;});
+  // Signal chips
+  var sigEl=document.getElementById('signal-chips');sigEl.innerHTML='';
+  [{k:'All',l:'All'},{k:'news',l:'&#128240; Has News'},{k:'jobs',l:'&#128188; Has Jobs'},{k:'web',l:'&#127760; Has Website'},{k:'bi',l:'&#127919; Has Buyer Intent'}].forEach(function(sig){
+    var b=document.createElement('button');
+    b.className='chip'+(aSignal===sig.k?' on':'');
+    b.innerHTML=sig.l;b.dataset.v=sig.k;
+    b.onclick=function(){aSignal=sig.k;document.querySelectorAll('#signal-chips .chip').forEach(function(c){c.classList.toggle('on',c.dataset.v===sig.k);});render();};
+    sigEl.appendChild(b);
+  });
   mkChips('risk-chips',risks,function(){return aRisk;},function(v){aRisk=v;});
 }
 
@@ -299,7 +319,8 @@ function getFiltered(){
     if(aRisk!=='All'&&riskLabel(d.riskRating)!==aRisk)return false;
     if(aSignal==='news'&&!(d.news&&d.news.length))return false;
     if(aSignal==='jobs'&&!(d.jobs&&d.jobs.length))return false;
-    if(aSignal==='both'&&!(d.news&&d.news.length&&d.jobs&&d.jobs.length))return false;
+    if(aSignal==='web'&&!hasWebSignal(d))return false;
+    if(aSignal==='bi'&&!hasBiSignal(d))return false;
     if(q){
       var hay=(d.acct||'').toLowerCase()+(d.oname||'').toLowerCase()+(d.owner||'').toLowerCase();
       if(hay.indexOf(q)<0)return false;
@@ -352,6 +373,8 @@ function render(){
         "<span class='risk-badge r-"+rl+"'>"+rl+" Risk</span>"+
         (nLen?"<span class='sig sig-news'>&#128240; "+nLen+"</span>":"")+
         (jLen?"<span class='sig sig-jobs'>&#128188; "+jLen+"</span>":"")+
+        (hasWebSignal(d)?"<span class='sig sig-ws'>&#127760; Web</span>":"")+
+        (hasBiSignal(d)?"<span class='sig sig-bi'>&#127919; Buyer</span>":"")+
         (hasBrief?"<button class='brief-btn' onclick='event.stopPropagation();openBriefForOid(\""+E(d.oid)+"\")'>Re-engagement Brief ↗</button>":"")+
       "</div>";
 
