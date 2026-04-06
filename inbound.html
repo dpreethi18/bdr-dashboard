@@ -13,8 +13,6 @@
   --accent:#5B6AF0;--accent2:#EEF0FE;--brand:#301894;
   --ws:#0891B2;--wsbg:#ECFEFF;
   --bi:#8B5CF6;--bibg:#F5F3FF;
-  --hot:#EF4444;--hotbg:#FEF2F2;
-  --warm:#F59E0B;--warmbg:#FFFBEB;
   --r:10px;--r-sm:7px;--sh-lg:0 8px 32px rgba(0,0,0,.12)
 }
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
@@ -85,13 +83,14 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 /* CONTACTS */
 .contacts-wrap{margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
 .contacts-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:7px}
-.contact-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)}
+.contact-row{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)}
 .contact-row:last-child{border-bottom:none;padding-bottom:0}
 .contact-avatar{width:28px;height:28px;border-radius:50%;background:var(--accent2);color:var(--accent);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .contact-info{flex:1;min-width:0}
 .contact-name{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .contact-email{font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.contact-meta{font-size:11px;color:var(--text3);line-height:1.4;}
+.contact-phone-small{font-size:10px;color:var(--text3);line-height:1.35}
+.contact-meta{font-size:10px;color:var(--text3);line-height:1.35}
 
 @media(max-width:640px){.topbar,.toolbar,.main{padding-left:16px;padding-right:16px}}
 </style>
@@ -170,7 +169,9 @@ function E(s){
 function D(d){
   if(!d || d==='-' || d==='No') return '';
   try{
-    return new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+    var parsed = new Date(d);
+    if(isNaN(parsed.getTime())) return d;
+    return parsed.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
   }catch(e){
     return d;
   }
@@ -199,7 +200,7 @@ function statusClass(s){
 fetch('inbound.json?v='+Date.now())
   .then(function(r){ return r.json(); })
   .then(function(d){
-    DATA=d;
+    DATA=d || [];
     document.getElementById('loading').style.display='none';
     document.getElementById('app').style.display='block';
     updateStats();
@@ -404,16 +405,16 @@ function render(){
       contacts.slice(0,3).forEach(function(c){
         contactHtml +=
           "<div class='contact-row'>"+
-          "<div class='contact-avatar'>"+initials(c.firstName,c.lastName)+"</div>"+
-          "<div class='contact-info'>"+
-          "<div class='contact-name'>"+E(((c.firstName||'')+' '+(c.lastName||'')).trim() || 'Unknown')+"</div>"+
-          (c.email ? "<div class='contact-email'>"+E(c.email)+"</div>" : "")+
-          (c.phone ? "<div class='contact-phone'>"+E(c.phone)+"</div>" : "")+
-          (c.created ? "<div class='contact-meta'><b>Created:</b> "+E(c.created)+"</div>" : "")+
-          (c.sourceType ? "<div class='contact-meta'><b>Source type:</b> "+E(c.sourceType)+"</div>" : "")+
-          (c.broadSource ? "<div class='contact-meta'><b>Broad source:</b> "+E(c.broadSource)+"</div>" : "")+
-          "</div>"+
-        "</div>";
+            "<div class='contact-avatar'>"+initials(c.firstName,c.lastName)+"</div>"+
+            "<div class='contact-info'>"+
+              "<div class='contact-name'>"+E(((c.firstName||'')+' '+(c.lastName||'')).trim() || 'Unknown')+"</div>"+
+              (c.email ? "<div class='contact-email'>"+E(c.email)+"</div>" : "")+
+              (c.phone ? "<div class='contact-phone-small'>"+E(c.phone)+"</div>" : "")+
+              (c.created ? "<div class='contact-meta'><b>Created:</b> "+E(c.created)+"</div>" : "")+
+              (c.sourceType ? "<div class='contact-meta'><b>Source type:</b> "+E(c.sourceType)+"</div>" : "")+
+              (c.broadSource ? "<div class='contact-meta'><b>Broad source:</b> "+E(c.broadSource)+"</div>" : "")+
+            "</div>"+
+          "</div>";
       });
 
       if(contacts.length>3){
