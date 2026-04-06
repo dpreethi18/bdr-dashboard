@@ -15,7 +15,6 @@
   --jobs:#D97706;--jobsbg:#FFFBEB;
   --ws:#0891B2;--wsbg:#ECFEFF;
   --bi:#8B5CF6;--bibg:#F5F3FF;
-  --ws:#0891B2;--bi:#8B5CF6;
   --r:10px;--r-sm:7px;--sh-lg:0 8px 32px rgba(0,0,0,.12)
 }
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
@@ -84,10 +83,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .sig{padding:2px 7px;border-radius:5px;font-size:11px;font-weight:600}
 .sig-news{background:var(--newsbg);color:var(--news)}
 .sig-jobs{background:var(--jobsbg);color:var(--jobs)}
-.sig-ws{background:#ECFEFF;color:#0891B2}
-.sig-bi{background:#F5F3FF;color:#8B5CF6}
-.sig-ws{background:#ECFEFF;color:#0891B2}
-.sig-bi{background:#F5F3FF;color:#8B5CF6}
+.sig-ws{background:var(--wsbg);color:var(--ws)}
+.sig-bi{background:var(--bibg);color:var(--bi)}
 .brief-btn{margin-left:auto;padding:5px 12px;background:var(--brand);color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap}
 .brief-btn:hover{background:#4338CA}
 
@@ -114,6 +111,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .brisk-Medium{background:#FFFBEB;color:#D97706;border:1.5px solid #FDE68A}
 .brisk-Low{background:#FEF2F2;color:#EF4444;border:1.5px solid #FECACA}
 .brisk-Dead{background:#F3F4F6;color:#6B7280;border:1.5px solid #E5E7EB}
+.bsig-box{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:12px;margin-bottom:8px}
+.bsig-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.bsig-val{font-size:13px;color:var(--text2);line-height:1.5}
 .bnews{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);padding:11px 13px;margin-bottom:8px}
 .bnews-title{font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px;line-height:1.4}
 .bnews-sum{font-size:12px;color:var(--text2);font-style:italic;line-height:1.5}
@@ -224,11 +224,11 @@ function stageClass(s){
 }
 
 function isBlank(v){return !v||v.trim()===''||v==='No Activity Logged';}
-function getTerritory(d){ return (d.territory||'').trim()||'Other'; }
-function hasWebSignal(d){ return (d.ws||'').indexOf('✅')>-1; }
-function hasBiSignal(d){ return (d.bi||'').indexOf('✅')>-1; }
-function hasWebSignal(d){ var v=(d.ws||'').toLowerCase(); return v.indexOf('record found')>-1&&v.indexOf('no record')<0; }
-function hasBiSignal(d){ var v=(d.bi||'').toLowerCase(); return v.indexOf('record found')>-1&&v.indexOf('no record')<0; }
+function getTerritory(d){return (d.territory||'').trim()||'Other';}
+
+// Website and Buyer Intent — checks for ✅ emoji in the column value from sheet
+function hasWebSignal(d){return (d.ws||'').indexOf('\u2705')>-1;}
+function hasBiSignal(d){return (d.bi||'').indexOf('\u2705')>-1;}
 
 fetch('deals.json?v='+Date.now())
   .then(function(r){return r.json();})
@@ -247,7 +247,7 @@ fetch('deals.json?v='+Date.now())
 
 function updateStats(){
   var totalVal=DATA.reduce(function(s,d){return s+(parseFloat(d.amount)||0);},0);
-  var withSignals=DATA.filter(function(d){return (d.news&&d.news.length)||(d.jobs&&d.jobs.length);}).length;
+  var withSignals=DATA.filter(function(d){return (d.news&&d.news.length)||(d.jobs&&d.jobs.length)||hasWebSignal(d)||hasBiSignal(d);}).length;
   var highPotential=DATA.filter(function(d){return riskLabel(d.riskRating)==='High';}).length;
   document.getElementById('s-total').textContent=DATA.length;
   document.getElementById('s-value').textContent=totalVal>=1000000?'$'+(totalVal/1000000).toFixed(1)+'M':'$'+(totalVal/1000).toFixed(0)+'K';
@@ -256,7 +256,6 @@ function updateStats(){
 }
 
 function buildChips(){
-  // Territory comes directly from the Territory column in the sheet
   var territories=['All'].concat([...new Set(DATA.map(getTerritory))].filter(Boolean).sort());
   var owners=['All'].concat([...new Set(DATA.map(function(d){return d.owner;}))].filter(Boolean).sort());
   var risks=['All','High','Medium','Low','Dead'];
@@ -273,11 +272,8 @@ function buildChips(){
         document.querySelectorAll('#'+id+' .chip').forEach(function(c){
           var isOn=c.dataset.v===v;
           c.classList.toggle('on',isOn);
-          // colour for risk chips
           if(id==='risk-chips'&&isOn&&riskColors[v]){
-            c.style.background=riskColors[v];
-            c.style.borderColor=riskColors[v];
-            c.style.color='#fff';
+            c.style.background=riskColors[v];c.style.borderColor=riskColors[v];c.style.color='#fff';
           } else if(id==='risk-chips'&&!isOn){
             c.style.background='';c.style.borderColor='';c.style.color='';
           }
@@ -287,27 +283,24 @@ function buildChips(){
       el.appendChild(b);
     });
   }
+
   mkChips('territory-chips',territories,function(){return aTerritory;},function(v){aTerritory=v;});
-  var signals=[{k:'All',l:'All'},{k:'news',l:'&#128240; News'},{k:'jobs',l:'&#128188; Jobs'},{k:'web',l:'&#127760; Website'},{k:'bi',l:'&#127919; Buyer Intent'}];
-  var sigEl=document.getElementById('signal-chips');sigEl.innerHTML='';
-  signals.forEach(function(sig){
-    var b=document.createElement('button');
-    b.className='chip'+(aSignal===sig.k?' on':'');
-    b.innerHTML=sig.l;b.dataset.v=sig.k;
-    b.onclick=function(){aSignal=sig.k;document.querySelectorAll('#signal-chips .chip').forEach(function(c){c.classList.toggle('on',c.dataset.v===sig.k);});render();};
-    sigEl.appendChild(b);
-  });
   mkChips('owner-chips',owners,function(){return aOwner;},function(v){aOwner=v;});
+  mkChips('risk-chips',risks,function(){return aRisk;},function(v){aRisk=v;});
+
   // Signal chips
   var sigEl=document.getElementById('signal-chips');sigEl.innerHTML='';
   [{k:'All',l:'All'},{k:'news',l:'&#128240; Has News'},{k:'jobs',l:'&#128188; Has Jobs'},{k:'web',l:'&#127760; Has Website'},{k:'bi',l:'&#127919; Has Buyer Intent'}].forEach(function(sig){
     var b=document.createElement('button');
     b.className='chip'+(aSignal===sig.k?' on':'');
     b.innerHTML=sig.l;b.dataset.v=sig.k;
-    b.onclick=function(){aSignal=sig.k;document.querySelectorAll('#signal-chips .chip').forEach(function(c){c.classList.toggle('on',c.dataset.v===sig.k);});render();};
+    b.onclick=function(){
+      aSignal=sig.k;
+      document.querySelectorAll('#signal-chips .chip').forEach(function(c){c.classList.toggle('on',c.dataset.v===sig.k);});
+      render();
+    };
     sigEl.appendChild(b);
   });
-  mkChips('risk-chips',risks,function(){return aRisk;},function(v){aRisk=v;});
 }
 
 function getFiltered(){
@@ -331,8 +324,8 @@ function getFiltered(){
     if(sort==='age')return(parseFloat(b.age)||0)-(parseFloat(a.age)||0);
     if(sort==='acct')return(a.acct||'').localeCompare(b.acct||'');
     if(sort==='signals'){
-      var sa=(a.news?a.news.length:0)+(a.jobs?a.jobs.length:0);
-      var sb=(b.news?b.news.length:0)+(b.jobs?b.jobs.length:0);
+      var sa=(a.news?a.news.length:0)+(a.jobs?a.jobs.length:0)+(hasWebSignal(a)?1:0)+(hasBiSignal(a)?1:0);
+      var sb=(b.news?b.news.length:0)+(b.jobs?b.jobs.length:0)+(hasWebSignal(b)?1:0)+(hasBiSignal(b)?1:0);
       return sb-sa;
     }
     if(sort==='risk'){
@@ -378,23 +371,18 @@ function render(){
         (hasBrief?"<button class='brief-btn' onclick='event.stopPropagation();openBriefForOid(\""+E(d.oid)+"\")'>Re-engagement Brief ↗</button>":"")+
       "</div>";
 
-    if(hasBrief){
-      card.onclick=function(){openBriefForOid(d.oid);};
-    }
+    if(hasBrief){card.onclick=function(){openBriefForOid(d.oid);};}
     g.appendChild(card);
   });
 }
 
 function findDeal(oid){
-  return DATA.find(function(d){
-    return d.oid===oid||d.oid.indexOf(oid)===0||oid.indexOf(d.oid)===0;
-  });
+  return DATA.find(function(d){return d.oid===oid||d.oid.indexOf(oid)===0||oid.indexOf(d.oid)===0;});
 }
 
 function openBriefForOid(oid){
   var d=findDeal(oid);
-  if(!d)return;
-  showBrief(d);
+  if(d)showBrief(d);
 }
 
 function showBrief(d){
@@ -407,9 +395,9 @@ function showBrief(d){
     "<span class='bmeta'>"+E(d.owner)+"</span>"+
     (d.vertical?"<span class='bmeta'>"+E(d.vertical)+"</span>":"")+
     (d.age?"<span class='bmeta'>"+d.age+" days old</span>":"")+
-    (d.closeDate&&d.closeDate!=='-'?"<span class='bmeta'>Close: "+E(d.closeDate)+"</span>":"")+     
-    (hasWebSignal(d)?"<span class='bmeta'>&#127760; "+E(d.wsd)+(d.wlp?" &middot; "+E(d.wlp):"")+"</span>":"")+     
-    (hasBiSignal(d)?"<span class='bmeta'>&#127919; Buyer Intent "+E(d.bid)+"</span>":"");
+    (d.closeDate&&d.closeDate!=='-'?"<span class='bmeta'>Close: "+E(d.closeDate)+"</span>":"")+
+    (hasWebSignal(d)&&d.wsd?"<span class='bmeta'>&#127760; Visited: "+E(d.wsd)+(d.wlp?" &middot; "+E(d.wlp):"")+"</span>":"")+
+    (hasBiSignal(d)&&d.bid?"<span class='bmeta'>&#127919; Buyer Intent: "+E(d.bid)+"</span>":"");
 
   function field(title,val,cls){
     if(isBlank(val))return '';
@@ -417,6 +405,22 @@ function showBrief(d){
   }
 
   var body='';
+
+  // Show website/buyer intent signal details at the top if present
+  if(hasWebSignal(d)||hasBiSignal(d)){
+    body+="<div class='bsec'><div class='bsec-title'>Intent Signals — Website &amp; Buyer</div>";
+    if(hasWebSignal(d)){
+      body+="<div class='bsig-box'><div class='bsig-label' style='color:var(--ws)'>&#127760; Website Visitor</div>"+
+        "<div class='bsig-val'>"+(d.wsd&&d.wsd!=='-'?"Visited: "+E(d.wsd):"Signal detected")+
+        (d.wlp?"<br>Last page: "+E(d.wlp):"")+"</div></div>";
+    }
+    if(hasBiSignal(d)){
+      body+="<div class='bsig-box'><div class='bsig-label' style='color:var(--bi)'>&#127919; Buyer Intent</div>"+
+        "<div class='bsig-val'>"+(d.bid&&d.bid!=='-'?"Date: "+E(d.bid):"Signal detected")+"</div></div>";
+    }
+    body+="</div>";
+  }
+
   body+=field('Deal Summary',d.summary);
   body+=field('Last Outreach',d.lastOut);
   body+=field('Key Contacts',d.prospects);
