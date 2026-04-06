@@ -53,6 +53,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .chip:hover{border-color:var(--accent);color:var(--accent)}
 .chip.on{background:var(--text);border-color:var(--text);color:#fff}
 .divider{width:1px;height:20px;background:var(--border);flex-shrink:0}
+.owner-select{min-width:220px;max-width:260px}
 
 /* GRID */
 .main{padding:20px 28px}
@@ -71,12 +72,15 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .st-other{background:#F3F4F6;color:#6B7280;border:1px solid #E5E7EB}
 .card-meta{font-size:11px;color:var(--text3);margin-bottom:10px;line-height:1.5}
 .card-meta b{color:var(--text2)}
-.card-signals{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.card-signals{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.sig-col{flex:1;min-width:140px}
 .sig{padding:3px 9px;border-radius:6px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:4px}
 .sig-ws{background:var(--wsbg);color:var(--ws);border:1px solid #A5F3FC}
 .sig-bi{background:var(--bibg);color:var(--bi);border:1px solid #DDD6FE}
 .sig-none{background:var(--surface2);color:var(--text3);font-size:11px;padding:3px 9px;border-radius:6px}
-.sig-detail{font-size:10px;color:var(--text3);margin-top:3px}
+.sig-detail{font-size:10px;color:var(--text3);margin-top:4px;line-height:1.45}
+.sig-detail b{color:var(--text2)}
+.mono{font-family:'JetBrains Mono',monospace;word-break:break-all}
 
 /* CONTACTS */
 .contacts-wrap{margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
@@ -88,14 +92,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .contact-name{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .contact-email{font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .contact-phone{font-size:11px;color:var(--text3)}
-.no-contacts{font-size:11px;color:var(--text3);font-style:italic;padding:4px 0}
-
-/* SIGNAL DETAIL BLOCKS */
-.ws-block{background:var(--wsbg);border:1px solid #A5F3FC;border-radius:var(--r-sm);padding:8px 10px;margin-bottom:6px}
-.bi-block{background:var(--bibg);border:1px solid #DDD6FE;border-radius:var(--r-sm);padding:8px 10px;margin-bottom:6px}
-.block-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:4px}
-.block-val{font-size:12px;color:var(--text2);line-height:1.5}
-.block-url{font-size:11px;color:var(--ws);font-family:monospace;word-break:break-all;margin-top:3px}
 
 @media(max-width:640px){.topbar,.toolbar,.main{padding-left:16px;padding-right:16px}}
 </style>
@@ -135,10 +131,16 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       </select>
       <span class="count" id="count">-</span>
     </div>
+
     <div class="tr2">
       <span class="flbl">Territory</span><div class="chips" id="territory-chips"></div>
       <div class="divider"></div>
-      <span class="flbl">Owner</span><div class="chips" id="owner-chips"></div>
+
+      <span class="flbl">Owner</span>
+      <select class="sort-sel owner-select" id="owner-select" onchange="onOwnerChange()">
+        <option value="All">All Owners</option>
+      </select>
+
       <div class="divider"></div>
       <span class="flbl">Status</span><div class="chips" id="status-chips"></div>
       <div class="divider"></div>
@@ -156,9 +158,17 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 var DATA=[];
 var aTerritory='All', aOwner='All', aStatus='All', aSignal='All';
 
-function E(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function E(s){
+  return (s||'')
+    .toString()
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
 function D(d){
-  if(!d||d==='-'||d==='No') return '';
+  if(!d || d==='-' || d==='No') return '';
   try{
     return new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
   }catch(e){
@@ -174,18 +184,20 @@ function isPositive(v){
 function hasWs(d){ return isPositive(d.ws); }
 function hasBi(d){ return isPositive(d.bi); }
 
-function initials(fn,ln){return ((fn||'').charAt(0)+(ln||'').charAt(0)).toUpperCase()||'?';}
+function initials(fn,ln){
+  return ((fn||'').charAt(0)+(ln||'').charAt(0)).toUpperCase()||'?';
+}
 
 function statusClass(s){
-  if(!s)return 'st-other';
+  if(!s) return 'st-other';
   var sl=s.toLowerCase();
-  if(sl==='new')return 'st-new';
-  if(sl.indexOf('progress')>-1||sl.indexOf('in-progress')>-1)return 'st-inprogress';
+  if(sl==='new') return 'st-new';
+  if(sl.indexOf('progress')>-1 || sl.indexOf('in-progress')>-1) return 'st-inprogress';
   return 'st-other';
 }
 
 fetch('inbound.json?v='+Date.now())
-  .then(function(r){return r.json();})
+  .then(function(r){ return r.json(); })
   .then(function(d){
     DATA=d;
     document.getElementById('loading').style.display='none';
@@ -201,24 +213,60 @@ fetch('inbound.json?v='+Date.now())
 function updateStats(){
   var ws=DATA.filter(hasWs).length;
   var bi=DATA.filter(hasBi).length;
-  var both=DATA.filter(function(d){return hasWs(d)&&hasBi(d);}).length;
+  var both=DATA.filter(function(d){ return hasWs(d)&&hasBi(d); }).length;
+
   document.getElementById('s-total').textContent=DATA.length;
   document.getElementById('s-ws').textContent=ws;
   document.getElementById('s-bi').textContent=bi;
   document.getElementById('s-both').textContent=both;
 }
 
+function buildOwnerDropdown(){
+  var owners=['All'].concat(
+    [...new Set(DATA.map(function(d){ return d.owner; }))]
+      .filter(Boolean)
+      .sort()
+  );
+
+  var sel=document.getElementById('owner-select');
+  sel.innerHTML='';
+
+  owners.forEach(function(owner){
+    var opt=document.createElement('option');
+    opt.value=owner;
+    opt.textContent=(owner==='All') ? 'All Owners' : owner;
+    if(owner===aOwner) opt.selected=true;
+    sel.appendChild(opt);
+  });
+}
+
+function onOwnerChange(){
+  aOwner=document.getElementById('owner-select').value;
+  render();
+}
+
 function buildChips(){
-  var territories=['All'].concat([...new Set(DATA.map(function(d){return d.territory||'Other';}))].filter(Boolean).sort());
-  var owners=['All'].concat([...new Set(DATA.map(function(d){return d.owner;}))].filter(Boolean).sort());
-  var statuses=['All'].concat([...new Set(DATA.map(function(d){return d.status;}))].filter(Boolean).sort());
+  var territories=['All'].concat(
+    [...new Set(DATA.map(function(d){ return d.territory||'Other'; }))]
+      .filter(Boolean)
+      .sort()
+  );
+
+  var statuses=['All'].concat(
+    [...new Set(DATA.map(function(d){ return d.status; }))]
+      .filter(Boolean)
+      .sort()
+  );
 
   function mk(id,arr,getV,setV){
-    var el=document.getElementById(id);el.innerHTML='';
+    var el=document.getElementById(id);
+    el.innerHTML='';
+
     arr.forEach(function(v){
       var b=document.createElement('button');
       b.className='chip'+(getV()===v?' on':'');
-      b.textContent=v;b.dataset.v=v;
+      b.textContent=v;
+      b.dataset.v=v;
       b.onclick=function(){
         setV(v);
         document.querySelectorAll('#'+id+' .chip').forEach(function(c){
@@ -230,12 +278,13 @@ function buildChips(){
     });
   }
 
-  mk('territory-chips',territories,function(){return aTerritory;},function(v){aTerritory=v;});
-  mk('owner-chips',owners,function(){return aOwner;},function(v){aOwner=v;});
-  mk('status-chips',statuses,function(){return aStatus;},function(v){aStatus=v;});
+  mk('territory-chips',territories,function(){ return aTerritory; },function(v){ aTerritory=v; });
+  buildOwnerDropdown();
+  mk('status-chips',statuses,function(){ return aStatus; },function(v){ aStatus=v; });
 
   var sigEl=document.getElementById('signal-chips');
   sigEl.innerHTML='';
+
   [
     {k:'All',l:'All'},
     {k:'ws',l:'🌐 Website'},
@@ -263,13 +312,13 @@ function getFiltered(){
   var sort=document.getElementById('sort').value;
 
   return DATA.filter(function(d){
-    if(aTerritory!=='All'&&(d.territory||'Other')!==aTerritory)return false;
-    if(aOwner!=='All'&&d.owner!==aOwner)return false;
-    if(aStatus!=='All'&&d.status!==aStatus)return false;
-    if(aSignal==='ws'&&!hasWs(d))return false;
-    if(aSignal==='bi'&&!hasBi(d))return false;
-    if(aSignal==='both'&&!(hasWs(d)&&hasBi(d)))return false;
-    if(aSignal==='none'&&(hasWs(d)||hasBi(d)))return false;
+    if(aTerritory!=='All' && (d.territory||'Other')!==aTerritory) return false;
+    if(aOwner!=='All' && d.owner!==aOwner) return false;
+    if(aStatus!=='All' && d.status!==aStatus) return false;
+    if(aSignal==='ws' && !hasWs(d)) return false;
+    if(aSignal==='bi' && !hasBi(d)) return false;
+    if(aSignal==='both' && !(hasWs(d)&&hasBi(d))) return false;
+    if(aSignal==='none' && (hasWs(d)||hasBi(d))) return false;
 
     if(q){
       var hay=[
@@ -279,8 +328,9 @@ function getFiltered(){
         d.territory||''
       ].join(' ').toLowerCase();
 
-      if(hay.indexOf(q)<0)return false;
+      if(hay.indexOf(q)<0) return false;
     }
+
     return true;
   }).sort(function(a,b){
     if(sort==='company') return (a.company||'').localeCompare(b.company||'');
@@ -295,6 +345,7 @@ function getFiltered(){
 
 function render(){
   var list=getFiltered();
+
   document.getElementById('count').textContent=list.length+' accounts';
   document.getElementById('empty').style.display=list.length?'none':'block';
 
@@ -309,7 +360,7 @@ function render(){
     var signalHtml='<div class="card-signals">';
 
     if(ws){
-      signalHtml+="<div style='flex:1'>";
+      signalHtml+="<div class='sig-col'>";
       signalHtml+="<div class='sig sig-ws'>🌐 Website Visitor</div>";
 
       if(d.wsd && d.wsd!=='-' && d.wsd!=='No'){
@@ -317,7 +368,7 @@ function render(){
       }
 
       if(d.wlp){
-        signalHtml+="<div class='sig-detail'><b>Last page:</b> <span style='font-family:monospace;font-size:10px;word-break:break-all'>"+E(d.wlp)+"</span></div>";
+        signalHtml+="<div class='sig-detail'><b>Last page:</b> <span class='mono'>"+E(d.wlp)+"</span></div>";
       }
 
       if(d.wtp){
@@ -328,7 +379,7 @@ function render(){
     }
 
     if(bi){
-      signalHtml+="<div style='flex:1'>";
+      signalHtml+="<div class='sig-col'>";
       signalHtml+="<div class='sig sig-bi'>🎯 Buyer Intent</div>";
 
       if(d.bid && d.bid!=='-' && d.bid!=='No'){
@@ -338,7 +389,7 @@ function render(){
       signalHtml+="</div>";
     }
 
-    if(!ws&&!bi){
+    if(!ws && !bi){
       signalHtml+="<span class='sig-none'>No signals yet</span>";
     }
 
@@ -346,22 +397,26 @@ function render(){
 
     var contactHtml='';
     var contacts=d.contacts||[];
+
     if(contacts.length){
       contactHtml="<div class='contacts-wrap'><div class='contacts-title'>Contacts ("+contacts.length+")</div>";
+
       contacts.slice(0,3).forEach(function(c){
         contactHtml+=
           "<div class='contact-row'>"+
             "<div class='contact-avatar'>"+initials(c.firstName,c.lastName)+"</div>"+
             "<div class='contact-info'>"+
-              "<div class='contact-name'>"+E((c.firstName||'')+' '+(c.lastName||''))+"</div>"+
+              "<div class='contact-name'>"+E(((c.firstName||'')+' '+(c.lastName||'')).trim())+"</div>"+
               (c.email?"<div class='contact-email'>"+E(c.email)+"</div>":"")+
               (c.phone?"<div class='contact-phone'>"+E(c.phone)+"</div>":"")+
             "</div>"+
           "</div>";
       });
+
       if(contacts.length>3){
         contactHtml+="<div style='font-size:11px;color:var(--text3);padding-top:6px'>+"+(contacts.length-3)+" more contacts</div>";
       }
+
       contactHtml+="</div>";
     }
 
