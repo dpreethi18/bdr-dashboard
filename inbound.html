@@ -91,7 +91,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .contact-info{flex:1;min-width:0}
 .contact-name{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .contact-email{font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.contact-phone{font-size:11px;color:var(--text3)}
+.contact-meta{font-size:11px;color:var(--text3);line-height:1.4;}
 
 @media(max-width:640px){.topbar,.toolbar,.main{padding-left:16px;padding-right:16px}}
 </style>
@@ -402,15 +402,18 @@ function render(){
       contactHtml="<div class='contacts-wrap'><div class='contacts-title'>Contacts ("+contacts.length+")</div>";
 
       contacts.slice(0,3).forEach(function(c){
-        contactHtml+=
+        contactHtml +=
           "<div class='contact-row'>"+
-            "<div class='contact-avatar'>"+initials(c.firstName,c.lastName)+"</div>"+
-            "<div class='contact-info'>"+
-              "<div class='contact-name'>"+E(((c.firstName||'')+' '+(c.lastName||'')).trim())+"</div>"+
-              (c.email?"<div class='contact-email'>"+E(c.email)+"</div>":"")+
-              (c.phone?"<div class='contact-phone'>"+E(c.phone)+"</div>":"")+
-            "</div>"+
-          "</div>";
+          "<div class='contact-avatar'>"+initials(c.firstName,c.lastName)+"</div>"+
+          "<div class='contact-info'>"+
+          "<div class='contact-name'>"+E(((c.firstName||'')+' '+(c.lastName||'')).trim() || 'Unknown')+"</div>"+
+          (c.email ? "<div class='contact-email'>"+E(c.email)+"</div>" : "")+
+          (c.phone ? "<div class='contact-phone'>"+E(c.phone)+"</div>" : "")+
+          (c.created ? "<div class='contact-meta'><b>Created:</b> "+E(c.created)+"</div>" : "")+
+          (c.sourceType ? "<div class='contact-meta'><b>Source type:</b> "+E(c.sourceType)+"</div>" : "")+
+          (c.broadSource ? "<div class='contact-meta'><b>Broad source:</b> "+E(c.broadSource)+"</div>" : "")+
+          "</div>"+
+        "</div>";
       });
 
       if(contacts.length>3){
