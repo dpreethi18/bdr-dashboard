@@ -407,7 +407,9 @@ function showBrief(d){
     "<span class='bmeta'>"+E(d.owner)+"</span>"+
     (d.vertical?"<span class='bmeta'>"+E(d.vertical)+"</span>":"")+
     (d.age?"<span class='bmeta'>"+d.age+" days old</span>":"")+
-    (d.closeDate&&d.closeDate!=='-'?"<span class='bmeta'>Close: "+E(d.closeDate)+"</span>":"");
+    (d.closeDate&&d.closeDate!=='-'?"<span class='bmeta'>Close: "+E(d.closeDate)+"</span>":"")+     
+    (hasWebSignal(d)?"<span class='bmeta'>&#127760; "+E(d.wsd)+(d.wlp?" &middot; "+E(d.wlp):"")+"</span>":"")+     
+    (hasBiSignal(d)?"<span class='bmeta'>&#127919; Buyer Intent "+E(d.bid)+"</span>":"");
 
   function field(title,val,cls){
     if(isBlank(val))return '';
