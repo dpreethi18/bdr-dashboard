@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Facilio Sales Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--brand:#301894;--accent:#5B6AF0;--bg:#F0F2F8;--surface:#fff;--border:#E4E7F0;--text:#0D1117;--text2:#4A5568;--text3:#94A3B8}
+body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;display:flex;flex-direction:column}
+
+.header{background:var(--brand);padding:32px 40px;display:flex;align-items:center;gap:16px;box-shadow:0 2px 20px rgba(0,0,0,.3)}
+.logo{font-size:28px;font-weight:800;color:#fff;letter-spacing:-1.5px}
+.sep{width:1px;height:36px;background:rgba(255,255,255,.2);margin:0 4px}
+.header-title{font-size:15px;font-weight:700;color:#fff}
+.header-sub{font-size:12px;color:rgba(255,255,255,.45);margin-top:2px}
+
+.main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 24px}
+.heading{text-align:center;margin-bottom:48px}
+.heading h1{font-size:32px;font-weight:800;color:var(--text);letter-spacing:-1px;margin-bottom:10px}
+.heading p{font-size:15px;color:var(--text3);max-width:480px;margin:0 auto;line-height:1.6}
+
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:900px;width:100%}
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:16px;padding:32px 28px;cursor:pointer;text-decoration:none;transition:all .2s;display:flex;flex-direction:column;gap:16px;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;border-radius:16px 16px 0 0}
+.card-bdr::before{background:linear-gradient(90deg,#5B6AF0,#8B5CF6)}
+.card-deals::before{background:linear-gradient(90deg,#D97706,#F59E0B)}
+.card-inbound::before{background:linear-gradient(90deg,#0891B2,#06B6D4)}
+.card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.12);border-color:transparent}
+.card-bdr:hover{box-shadow:0 12px 40px rgba(91,106,240,.25)}
+.card-deals:hover{box-shadow:0 12px 40px rgba(217,119,6,.2)}
+.card-inbound:hover{box-shadow:0 12px 40px rgba(8,145,178,.2)}
+
+.card-icon{font-size:36px;line-height:1}
+.card-title{font-size:18px;font-weight:800;color:var(--text);margin-bottom:6px}
+.card-desc{font-size:13px;color:var(--text3);line-height:1.6}
+.card-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.tag{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.tag-bdr{background:#EEF0FE;color:#5B6AF0}
+.tag-deals{background:#FEF3C7;color:#D97706}
+.tag-inbound{background:#ECFEFF;color:#0891B2}
+.card-arrow{font-size:20px;color:var(--text3);align-self:flex-end;transition:all .2s;margin-top:auto}
+.card:hover .card-arrow{transform:translateX(5px);color:var(--text)}
+
+.footer{text-align:center;padding:24px;font-size:12px;color:var(--text3)}
+
+@media(max-width:720px){
+  .cards{grid-template-columns:1fr}
+  .header{padding:24px 20px}
+  .main{padding:40px 16px}
+  .heading h1{font-size:24px}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="logo">facilio</span>
+  <div class="sep"></div>
+  <div>
+    <div class="header-title">Sales Intelligence Hub</div>
+    <div class="header-sub">BDR &middot; Deals &middot; Inbound</div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="heading">
+    <h1>Choose your dashboard</h1>
+    <p>All your sales intelligence in one place — prospect intent signals, on-hold deals, and inbound leads.</p>
+  </div>
+
+  <div class="cards">
+
+    <a class="card card-bdr" href="https://dpreethi18.github.io/bdr-dashboard/" target="_blank">
+      <div class="card-icon">🎯</div>
+      <div>
+        <div class="card-title">BDR Intent Dashboard</div>
+        <div class="card-desc">Track buyer intent signals, website visitors, news signals, and job postings across 5,000+ prospect accounts.</div>
+        <div class="card-tags">
+          <span class="tag tag-bdr">Intent Scores</span>
+          <span class="tag tag-bdr">News Signals</span>
+          <span class="tag tag-bdr">Job Postings</span>
+        </div>
+      </div>
+      <div class="card-arrow">&#8594;</div>
+    </a>
+
+    <a class="card card-deals" href="https://dpreethi18.github.io/bdr-dashboard/deals.html" target="_blank">
+      <div class="card-icon">💼</div>
+      <div>
+        <div class="card-title">Deals Dashboard</div>
+        <div class="card-desc">Re-engage 50 on-hold deals with AI-generated briefs, outreach angles, and live intent signals per account.</div>
+        <div class="card-tags">
+          <span class="tag tag-deals">On-Hold Pipeline</span>
+          <span class="tag tag-deals">Re-engagement</span>
+          <span class="tag tag-deals">$2.1M Pipeline</span>
+        </div>
+      </div>
+      <div class="card-arrow">&#8594;</div>
+    </a>
+
+    <a class="card card-inbound" href="https://dpreethi18.github.io/bdr-dashboard/inbound.html" target="_blank">
+      <div class="card-icon">&#128229;</div>
+      <div>
+        <div class="card-title">Inbound Dashboard</div>
+        <div class="card-desc">Monitor inbound leads with website visitor signals, buyer intent scores, and matched contact details.</div>
+        <div class="card-tags">
+          <span class="tag tag-inbound">Web Visitors</span>
+          <span class="tag tag-inbound">Buyer Intent</span>
+          <span class="tag tag-inbound">Contact Matching</span>
+        </div>
+      </div>
+      <div class="card-arrow">&#8594;</div>
+    </a>
+
+  </div>
+</div>
+
+<div class="footer">Facilio Sales Intelligence &middot; Updated daily via Google Apps Script</div>
+
+</body>
+</html>
