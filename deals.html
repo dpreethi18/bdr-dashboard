@@ -127,6 +127,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .no-brief{text-align:center;padding:40px 20px;color:var(--text3)}
 
 @media(max-width:640px){.topbar,.toolbar,.main{padding-left:16px;padding-right:16px}.brief-panel{width:100%}}
+
+.nav-pills{display:flex;gap:6px;margin-left:12px}
+.nav-pill{padding:6px 14px;border-radius:20px;border:1.5px solid rgba(255,255,255,.25);background:transparent;color:rgba(255,255,255,.75);font-size:12px;font-weight:600;text-decoration:none;white-space:nowrap;transition:all .15s;font-family:'Inter',sans-serif}
+.nav-pill:hover{background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.5)}
+.nav-pill.active{background:#fff;color:var(--brand);border-color:#fff}
 </style>
 </head>
 <body>
@@ -146,7 +151,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       <div class="tb-stat"><div class="tb-val s-signals" id="s-signals">-</div><div class="tb-lbl">With Signals</div></div>
       <div class="tb-stat"><div class="tb-val s-high" id="s-high">-</div><div class="tb-lbl">High Potential</div></div>
     </div>
-    <a class="bdr-link" href="index.html">⬅ BDR Dashboard</a>
+    <div class='nav-pills'><a class='nav-pill' href='index.html'>🎯 BDR</a><a class='nav-pill active' href='deals.html'>💼 Deals</a><a class='nav-pill' href='inbound.html'>📥 Inbound</a></div>
   </div>
 
   <div class="toolbar">
