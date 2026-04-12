@@ -226,9 +226,8 @@ function stageClass(s){
 function isBlank(v){return !v||v.trim()===''||v==='No Activity Logged';}
 function getTerritory(d){return (d.territory||'').trim()||'Other';}
 
-// Website and Buyer Intent — checks for ✅ emoji in the column value from sheet
-function hasWebSignal(d){return (d.ws||'').indexOf('\u2705')>-1;}
-function hasBiSignal(d){return (d.bi||'').indexOf('\u2705')>-1;}
+function hasWebSignal(d){ return (parseFloat(d.webScore)||0) > 0; }
+function hasBiSignal(d){  return (parseFloat(d.biScore)||0)  > 0; }
 
 fetch('deals.json?v='+Date.now())
   .then(function(r){return r.json();})
