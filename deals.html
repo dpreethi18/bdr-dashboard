@@ -172,6 +172,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       <span class="flbl">Risk</span><div class="chips" id="risk-chips"></div>
       <div class="divider"></div>
       <span class="flbl">Signals</span><div class="chips" id="signal-chips"></div>
+      <div class="divider"></div>
+      <span class="flbl">Vertical</span><div class="chips" id="vertical-chips"></div>
     </div>
   </div>
 
@@ -197,11 +199,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 
 <script>
 var DATA=[];
-var aTerritory='All', aOwner='All', aRisk='All', aSignal='All';
+var aTerritory='All', aOwner='All', aRisk='All', aSignal='All', aVertical='All';
 
 function E(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function fmt(v){var n=parseFloat(v)||0;if(!n)return '—';if(n>=1000000)return '$'+(n/1000000).toFixed(1)+'M';if(n>=1000)return '$'+(n/1000).toFixed(0)+'K';return '$'+n.toLocaleString();}
-function D(d){if(!d||d==='-')return '-';try{return new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});}catch(e){return d;}}
+function D(v){if(!v||v==='-'||v==='')return '-';try{var d=new Date(v);if(isNaN(d.getTime()))return v;var dd=String(d.getDate()).padStart(2,'0');var mm=String(d.getMonth()+1).padStart(2,'0');return dd+'/'+mm+'/'+d.getFullYear();}catch(e){return v;}}
 
 function riskLabel(r){
   if(!r)return 'Unknown';
@@ -226,8 +228,9 @@ function stageClass(s){
 function isBlank(v){return !v||v.trim()===''||v==='No Activity Logged';}
 function getTerritory(d){return (d.territory||'').trim()||'Other';}
 
-function hasWebSignal(d){ return (parseFloat(d.webScore)||0) > 0; }
-function hasBiSignal(d){  return (parseFloat(d.biScore)||0)  > 0; }
+// Website/Buyer — works with both ✅ string (old) and numeric score (new buildDealDataset)
+function hasWebSignal(d){return (parseFloat(d.webScore)||0)>0||(d.ws||'').indexOf('\u2705')>-1;}
+function hasBiSignal(d){return (parseFloat(d.biScore)||0)>0||(d.bi||'').indexOf('\u2705')>-1;}
 
 fetch('deals.json?v='+Date.now())
   .then(function(r){return r.json();})
@@ -284,6 +287,8 @@ function buildChips(){
   }
 
   mkChips('territory-chips',territories,function(){return aTerritory;},function(v){aTerritory=v;});
+  var verticals=['All'].concat([...new Set(DATA.map(function(d){return d.vertical;}).filter(Boolean))].sort());
+  mkChips('vertical-chips',verticals,function(){return aVertical;},function(v){aVertical=v;});
   mkChips('owner-chips',owners,function(){return aOwner;},function(v){aOwner=v;});
   mkChips('risk-chips',risks,function(){return aRisk;},function(v){aRisk=v;});
 
@@ -307,6 +312,7 @@ function getFiltered(){
   var sort=document.getElementById('sort').value;
   return DATA.filter(function(d){
     if(aTerritory!=='All'&&getTerritory(d)!==aTerritory)return false;
+    if(aVertical!=='All'&&(d.vertical||'')!==aVertical)return false;
     if(aOwner!=='All'&&d.owner!==aOwner)return false;
     if(aRisk!=='All'&&riskLabel(d.riskRating)!==aRisk)return false;
     if(aSignal==='news'&&!(d.news&&d.news.length))return false;
@@ -363,10 +369,11 @@ function render(){
       "</div>"+
       "<div class='card-foot'>"+
         "<span class='risk-badge r-"+rl+"'>"+rl+" Risk</span>"+
+        (d.totalScore>0?"<span class='sig' style='background:#F0F4FF;color:#4338CA;border:1px solid #C7D2FE'>&#9889; "+d.totalScore+"</span>":"")+
         (nLen?"<span class='sig sig-news'>&#128240; "+nLen+"</span>":"")+
         (jLen?"<span class='sig sig-jobs'>&#128188; "+jLen+"</span>":"")+
-        (hasWebSignal(d)?"<span class='sig sig-ws'>&#127760; Web</span>":"")+
-        (hasBiSignal(d)?"<span class='sig sig-bi'>&#127919; Buyer</span>":"")+
+        (hasWebSignal(d)?"<span class='sig sig-ws'>&#127760; Web "+d.webScore+"</span>":"")+
+        (hasBiSignal(d)?"<span class='sig sig-bi'>&#127919; Buyer "+d.biScore+"</span>":"")+
         (hasBrief?"<button class='brief-btn' onclick='event.stopPropagation();openBriefForOid(\""+E(d.oid)+"\")'>Re-engagement Brief ↗</button>":"")+
       "</div>";
 
@@ -394,9 +401,9 @@ function showBrief(d){
     "<span class='bmeta'>"+E(d.owner)+"</span>"+
     (d.vertical?"<span class='bmeta'>"+E(d.vertical)+"</span>":"")+
     (d.age?"<span class='bmeta'>"+d.age+" days old</span>":"")+
-    (d.closeDate&&d.closeDate!=='-'?"<span class='bmeta'>Close: "+E(d.closeDate)+"</span>":"")+
-    (hasWebSignal(d)&&d.wsd?"<span class='bmeta'>&#127760; Visited: "+E(d.wsd)+(d.wlp?" &middot; "+E(d.wlp):"")+"</span>":"")+
-    (hasBiSignal(d)&&d.bid?"<span class='bmeta'>&#127919; Buyer Intent: "+E(d.bid)+"</span>":"");
+    (d.closeDate&&d.closeDate!=='-'?"<span class='bmeta'>Close: "+E(D(d.closeDate))+"</span>":"")+
+    (hasWebSignal(d)&&d.wsd?"<span class='bmeta'>&#127760; "+E(D(d.wsd))+(d.wlp?" &middot; "+E(d.wlp):"")+"</span>":"")+
+    (hasBiSignal(d)&&d.bid?"<span class='bmeta'>&#127919; "+E(D(d.bid))+"</span>":"");
 
   function field(title,val,cls){
     if(isBlank(val))return '';
@@ -409,13 +416,20 @@ function showBrief(d){
   if(hasWebSignal(d)||hasBiSignal(d)){
     body+="<div class='bsec'><div class='bsec-title'>Intent Signals — Website &amp; Buyer</div>";
     if(hasWebSignal(d)){
-      body+="<div class='bsig-box'><div class='bsig-label' style='color:var(--ws)'>&#127760; Website Visitor</div>"+
-        "<div class='bsig-val'>"+(d.wsd&&d.wsd!=='-'?"Visited: "+E(d.wsd):"Signal detected")+
-        (d.wlp?"<br>Last page: "+E(d.wlp):"")+"</div></div>";
+      body+="<div class='bsig-box'>"+
+        "<div class='bsig-label' style='color:var(--ws)'>&#127760; Website Visitor (Score: "+d.webScore+")</div>"+
+        "<div class='bsig-val'>"+
+        (d.wsd&&d.wsd!=='-'?"<div><b>Visited:</b> "+E(D(d.wsd))+"</div>":"")+
+        (d.wlp&&d.wlp.trim()?"<div style='margin-top:4px'><b>Last page:</b> <span style='font-family:monospace;font-size:11px;word-break:break-all'>"+E(d.wlp)+"</span></div>":"")+
+        (d.wtp&&d.wtp!=='0'&&d.wtp!==''?"<div style='margin-top:4px'><b>Total pages viewed:</b> "+E(d.wtp)+"</div>":"")+
+        "</div></div>";
     }
     if(hasBiSignal(d)){
-      body+="<div class='bsig-box'><div class='bsig-label' style='color:var(--bi)'>&#127919; Buyer Intent</div>"+
-        "<div class='bsig-val'>"+(d.bid&&d.bid!=='-'?"Date: "+E(d.bid):"Signal detected")+"</div></div>";
+      body+="<div class='bsig-box'>"+
+        "<div class='bsig-label' style='color:var(--bi)'>&#127919; Buyer Intent (Score: "+d.biScore+")</div>"+
+        "<div class='bsig-val'>"+
+        (d.bid&&d.bid!=='-'?"<div><b>Date:</b> "+E(D(d.bid))+"</div>":"<div>Signal detected</div>")+
+        "</div></div>";
     }
     body+="</div>";
   }
