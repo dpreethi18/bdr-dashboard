@@ -32,8 +32,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .tb-val{font-size:18px;font-weight:800;font-family:'JetBrains Mono',monospace;line-height:1}
 .tb-lbl{font-size:10px;color:rgba(255,255,255,.4);margin-top:1px}
 .s-total{color:#fff}.s-ws{color:#67E8F9}.s-bi{color:#C4B5FD}.s-both{color:#FCD34D}
-.nav-link{padding:6px 14px;border-radius:20px;border:1.5px solid rgba(255,255,255,.3);background:transparent;color:rgba(255,255,255,.8);font-size:12px;font-weight:600;text-decoration:none;white-space:nowrap;transition:all .15s}
-.nav-link:hover{background:rgba(255,255,255,.15);color:#fff}
+
 
 /* TOOLBAR */
 .toolbar{background:var(--surface);border-bottom:1.5px solid var(--border);padding:12px 28px;display:flex;flex-direction:column;gap:10px;position:sticky;top:62px;z-index:90}
@@ -114,6 +113,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .no-sig{font-size:11px;color:var(--text3);font-style:italic;padding:3px 0}
 
 @media(max-width:640px){.topbar,.toolbar,.main{padding-left:16px;padding-right:16px}}
+
+.nav-pills{display:flex;gap:6px;margin-left:12px}
+.nav-pill{padding:6px 14px;border-radius:20px;border:1.5px solid rgba(255,255,255,.25);background:transparent;color:rgba(255,255,255,.75);font-size:12px;font-weight:600;text-decoration:none;white-space:nowrap;transition:all .15s;font-family:'Inter',sans-serif}
+.nav-pill:hover{background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.5)}
+.nav-pill.active{background:#fff;color:var(--brand);border-color:#fff}
 </style>
 </head>
 <body>
@@ -133,8 +137,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       <div class="tb-stat"><div class="tb-val s-bi" id="s-bi">-</div><div class="tb-lbl">Buyer Intent</div></div>
       <div class="tb-stat"><div class="tb-val s-both" id="s-both">-</div><div class="tb-lbl">Both Signals</div></div>
     </div>
-    <a class="nav-link" href="index.html">🎯 BDR</a>
-    <a class="nav-link" href="deals.html">💼 Deals</a>
+    <div class='nav-pills'><a class='nav-pill' href='index.html'>🎯 BDR</a><a class='nav-pill' href='deals.html'>💼 Deals</a><a class='nav-pill active' href='inbound.html'>📥 Inbound</a></div>
   </div>
 
   <div class="toolbar">
