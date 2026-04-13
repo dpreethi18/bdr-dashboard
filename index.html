@@ -380,7 +380,7 @@ function buildChips(){
   var vertSet={};
   DATA.forEach(function(d){if(d.v)vertSet[d.v]=true;});
   var verts=["All"].concat(Object.keys(vertSet).sort());
-  mk("vert-chips",verts,"vert",function(){return aVert;},function(v){aVert=v;});
+  mk("vert-chips",verts,function(){return aVert;},function(v){aVert=v;});
 }
 
 function renderBdrDash(bdr){
