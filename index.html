@@ -216,6 +216,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .nav-pill{padding:6px 14px;border-radius:20px;border:1.5px solid rgba(255,255,255,.25);background:transparent;color:rgba(255,255,255,.75);font-size:12px;font-weight:600;text-decoration:none;white-space:nowrap;transition:all .15s;font-family:'Inter',sans-serif}
 .nav-pill:hover{background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.5)}
 .nav-pill.active{background:#fff;color:var(--brand);border-color:#fff}
+.vert-select{padding:6px 28px 6px 12px;border:1.5px solid var(--border);border-radius:20px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;color:var(--text2);background:var(--surface2);outline:none;cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2394A3B8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+.vert-select:focus{border-color:var(--accent)}
 @media(max-width:640px){.topbar,.toolbar,.main{padding-left:16px;padding-right:16px}.sgrid,.bdr-tier-grid,.bdr-sig-row{grid-template-columns:repeat(2,1fr)}.bdr-charts-wrap{grid-template-columns:1fr}}
 </style>
 </head>
@@ -273,8 +275,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
   <span class="cfb-text" id="chart-banner-text"></span>
   <button class="cfb-clear" onclick="clearChartFilter()">&#10005; Clear filter</button>
 </div>
-  <div class="tr2" id="vert-row">
-    <span class="flbl">Vertical</span><div class="chips" id="vert-chips"></div>
+  <div class="tr1" id="vert-row">
+    <span class="flbl">Vertical</span>
+    <select class="vert-select" id="vert-sel" onchange="aVert=this.value;render()"><option value="All">All Verticals</option></select>
   </div>
 </div>
 
@@ -379,8 +382,9 @@ function buildChips(){
   mk("cat-chips",cats,function(){return aCat;},function(v){aCat=v;},"chip-cat");
   var vertSet={};
   DATA.forEach(function(d){if(d.v)vertSet[d.v]=true;});
-  var verts=["All"].concat(Object.keys(vertSet).sort());
-  mk("vert-chips",verts,function(){return aVert;},function(v){aVert=v;});
+  var vertKeys=Object.keys(vertSet).sort();
+  var vsel=document.getElementById("vert-sel");
+  vertKeys.forEach(function(v){var o=document.createElement("option");o.value=v;o.textContent=v;vsel.appendChild(o);});
 }
 
 function renderBdrDash(bdr){
