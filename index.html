@@ -218,6 +218,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .nav-pill.active{background:#fff;color:var(--brand);border-color:#fff}
 .vert-select{padding:8px 28px 8px 12px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-family:'Inter',sans-serif;font-size:13px;font-weight:500;color:var(--text2);background:var(--surface2);outline:none;cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2394A3B8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
 .vert-select:focus{border-color:var(--accent);background:#fff}
+.ai-prd-tag{display:inline-flex;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;background:linear-gradient(135deg,#7C3AED,#4F46E5);color:#fff;margin:1px 2px}
+.ncard-ai{border:1.5px solid #7C3AED!important;background:linear-gradient(135deg,#F5F3FF,#EDE9FE)!important}
+.ai-news-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;background:#7C3AED;color:#fff;margin-bottom:5px}
 @media(max-width:640px){.topbar,.toolbar,.main{padding-left:16px;padding-right:16px}.sgrid,.bdr-tier-grid,.bdr-sig-row{grid-template-columns:repeat(2,1fr)}.bdr-charts-wrap{grid-template-columns:1fr}}
 </style>
 </head>
@@ -528,6 +531,10 @@ function TREND(cur,prev){
   if(diff<0)return "<span class='trend trend-dn'>&#9660;"+Math.abs(diff)+"</span><span class='prev-score'>was "+prev+"</span>";
   return "<span class='trend trend-flat'>&#10145;</span><span class='prev-score'>no change</span>";
 }
+function aiPrdTags(prd){
+  if(!prd)return '';
+  return prd.split(/[;,]+/).map(function(p){p=p.trim();return p?"<span class='ai-prd-tag'>"+p+"</span>":''}).join('');
+}
 
 function render(){
   var list=getFiltered();
@@ -548,7 +555,7 @@ function render(){
       +"<div class='card-meta'>"+(d.v?"<b>"+E(d.v)+"</b> &middot; ":"")+d.g+"</div>"
       +"<div class='card-foot'><span class='bdrtag bdr-"+d.b+"'>"+d.b+"</span></div>"
       +(sigs?"<div class='sigs'>"+sigs+"</div>":"")
-      +(d.ai?"<div class='ai-badge'>&#129302; AI Intent &middot; "+E(d.ai)+"</div>":"");
+      +(d.ai?"<div class='ai-badge'>&#129302; "+E(d.ai)+(d.aiPrd?" &middot; "+aiPrdTags(d.aiPrd):"")+"</div>":"");
     c.onclick=function(){if(!hidden)openModal(d);};
     g.appendChild(c);
   });
@@ -558,7 +565,7 @@ function openModal(d){
   cur=d;aTab="overview";
   var t=T(d.is);
   document.getElementById("mco").textContent=d.c;
-  document.getElementById("mmeta").innerHTML="<span class='tbadge "+t.c+"'>"+t.l+"</span><span class='bdrtag bdr-"+d.b+"'>"+d.b+"</span><span style='color:var(--text3)'>"+d.g+"</span>"+(d.v?"<span style='color:var(--text3)'>"+E(d.v)+"</span>":"");
+  document.getElementById("mmeta").innerHTML="<span class='tbadge "+t.c+"'>"+t.l+"</span><span class='bdrtag bdr-"+d.b+"'>"+d.b+"</span><span style='color:var(--text3)'>"+d.g+"</span>"+(d.v?"<span style='color:var(--text3)'>"+E(d.v)+"</span>":"")+(d.aiPrd?aiPrdTags(d.aiPrd):"");
   var lk="";
   if(d.w){var hw=d.w.indexOf("http")===0?d.w:"https://"+d.w;lk+="<a class='mlink' href='"+hw+"' target='_blank'>&#127760; Website</a>";}
   if(d.li){var hl=d.li.indexOf("http")===0?d.li:"https://"+d.li;lk+="<a class='mlink' href='"+hl+"' target='_blank'>LinkedIn</a>";}
@@ -605,7 +612,7 @@ function renderTab(){
       h+="<div class='sh-item'><div class='sh-label'>Website</div><div class='sh-val'>"+d.ws+" "+TREND(d.ws,d.p_ws)+"</div></div>";
       h+="<div class='sh-item'><div class='sh-label'>News</div><div class='sh-val'>"+d.ns+" "+TREND(d.ns,d.p_ns)+"</div></div>";
       h+="<div class='sh-item'><div class='sh-label'>Jobs</div><div class='sh-val'>"+d.js+" "+TREND(d.js,d.p_js)+"</div></div>";
-      h+="<div class='sh-item'><div class='sh-label'>Updated</div><div class='sh-val' style='font-size:11px;font-family:Inter,sans-serif'>"+d.scoreDate+"</div></div>";
+      if(d.scoreDate)h+="<div class='sh-item'><div class='sh-label'>Updated</div><div class='sh-val' style='font-size:11px;font-family:Inter,sans-serif'>"+d.scoreDate+"</div></div>";
       h+="</div>";
     }
     if(d.bi>0)h+="<div class='sec'><div class='sec-title'>Buyer Intent</div><div class='iblock'><div class='irow'><span class='ik'>Score</span><span class='iv' style='color:var(--bi);font-weight:700'>"+d.bi+"/5</span></div>"+(d.bid&&d.bid!=="-"?"<div class='irow'><span class='ik'>Date</span><span class='iv'>"+D(d.bid)+"</span></div>":"")+(d.bi>=4?"<div style='margin-top:8px;padding:9px 12px;background:var(--bibg);border-radius:7px;border-left:3px solid var(--bi);font-size:13px;color:var(--bi);font-weight:600'>Very high intent - reach out now</div>":"")+"</div></div>";
@@ -649,7 +656,8 @@ function renderTab(){
 
 function NC(n,mini){
   var sc=parseInt(n.score||0),scC=sc>=5?"var(--hot)":sc>=3?"var(--warm)":"var(--text3)";
-  var h="<div class='ncard'><div class='ntop'><div class='ntitle'>"+E(n.title||"Untitled")+"</div><div class='nscore' style='color:"+scC+"'>"+n.score+"</div></div>";
+  var isAiDet=(n.ai_det||"").toString().toUpperCase()==="YES";
+  var h="<div class='ncard"+(isAiDet?" ncard-ai":"")+"'>"+(isAiDet?"<div class='ai-news-badge'>&#129302; AI Signal Detected</div>":"")+"<div class='ntop'>"<div class='ntitle'>"+E(n.title||"Untitled")+"</div><div class='nscore' style='color:"+scC+"'>"+n.score+"</div></div>";
   if(n.dt&&n.dt!=="-")h+="<div style='font-size:11px;color:var(--text3);margin-bottom:6px'>&#128197; "+D(n.dt)+"</div>";
   if(n.signal_type)h+="<div style='display:inline-block;padding:2px 8px;border-radius:4px;background:var(--newsbg);color:var(--news);font-size:11px;font-weight:600;margin-bottom:6px'>"+E(n.signal_type)+"</div>";
   if(n.summary)h+="<div class='nsummary'>"+E(n.summary)+"</div>";
