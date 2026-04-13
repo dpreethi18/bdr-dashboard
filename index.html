@@ -377,7 +377,9 @@ function buildChips(){
   mk("geo-chips",geos,function(){return aGeo;},function(v){aGeo=v;});
   mk("sig-chips",sigs,function(){return aSig;},function(v){aSig=v;});
   mk("cat-chips",cats,function(){return aCat;},function(v){aCat=v;},"chip-cat");
-  var verts=["All"].concat([...new Set(DATA.map(function(d){return d.v;}).filter(Boolean))].sort());
+  var vertSet={};
+  DATA.forEach(function(d){if(d.v)vertSet[d.v]=true;});
+  var verts=["All"].concat(Object.keys(vertSet).sort());
   mk("vert-chips",verts,"vert",function(){return aVert;},function(v){aVert=v;});
 }
 
