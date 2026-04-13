@@ -138,7 +138,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       <div class="tb-stat"><div class="tb-val s-total" id="s-total">-</div><div class="tb-lbl">Deals</div></div>
       <div class="tb-stat"><div class="tb-val s-value" id="s-value">-</div><div class="tb-lbl">Pipeline</div></div>
       <div class="tb-stat"><div class="tb-val s-signals" id="s-signals">-</div><div class="tb-lbl">With Signals</div></div>
-      <div class="tb-stat"><div class="tb-val s-high" id="s-high">-</div><div class="tb-lbl">High Potential</div></div>
+      <div class="tb-stat"><div class="tb-val s-high" id="s-high">-</div><div class="tb-lbl">Signal Rate</div></div>
     </div>
     <div class='nav-pills'><a class='nav-pill' href='index.html'>🎯 BDR</a><a class='nav-pill active' href='deals.html'>💼 Deals</a><a class='nav-pill' href='inbound.html'>📥 Inbound</a></div>
   </div>
@@ -196,7 +196,6 @@ function E(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/
 function fmt(v){var n=parseFloat(v)||0;if(!n)return '—';if(n>=1000000)return '$'+(n/1000000).toFixed(1)+'M';if(n>=1000)return '$'+(n/1000).toFixed(0)+'K';return '$'+n.toLocaleString();}
 function D(v){if(!v||v==='-'||v==='')return '-';try{var d=new Date(v);if(isNaN(d.getTime()))return v;var dd=String(d.getDate()).padStart(2,'0');var mm=String(d.getMonth()+1).padStart(2,'0');return dd+'/'+mm+'/'+d.getFullYear();}catch(e){return v;}}
 
-
 function stageClass(s){
   if(!s)return 's-other';
   var sl=s.toLowerCase();
@@ -235,7 +234,7 @@ function updateStats(){
   document.getElementById('s-total').textContent=DATA.length;
   document.getElementById('s-value').textContent=totalVal>=1000000?'$'+(totalVal/1000000).toFixed(1)+'M':'$'+(totalVal/1000).toFixed(0)+'K';
   document.getElementById('s-signals').textContent=withSignals;
-  document.getElementById('s-high').textContent=highPotential;
+  document.getElementById('s-high').textContent=withSignals>0?Math.round(withSignals/DATA.length*100)+'%':'0%';
 }
 
 function buildChips(){
@@ -253,7 +252,6 @@ function buildChips(){
         document.querySelectorAll('#'+id+' .chip').forEach(function(c){
           var isOn=c.dataset.v===v;
           c.classList.toggle('on',isOn);
-          
         });
         render();
       };
@@ -306,7 +304,6 @@ function getFiltered(){
       var sb=(b.news?b.news.length:0)+(b.jobs?b.jobs.length:0)+(hasWebSignal(b)?1:0)+(hasBiSignal(b)?1:0);
       return sb-sa;
     }
-  
     return 0;
   });
 }
@@ -362,7 +359,7 @@ function openBriefForOid(oid){
 function showBrief(d){
   document.getElementById('bp-title').textContent=d.oname+' — '+d.acct;
   document.getElementById('bp-meta').innerHTML=
-    "<span class='stage-badge "+stageClass(d.stage)+"' style='font-size:10px'>"+E(d.stage)+"</span>"+
+"<span class='stage-badge "+stageClass(d.stage)+"' style='font-size:10px'>"+E(d.stage)+"</span>"+
     "<span class='bmeta' style='font-weight:700;color:#fff;font-size:13px'>"+fmt(d.amount)+"</span>"+
     "<span class='bmeta'>"+E(d.owner)+"</span>"+
     (d.vertical?"<span class='bmeta'>"+E(d.vertical)+"</span>":"")+
@@ -413,7 +410,6 @@ function showBrief(d){
   if(!isBlank(d.nextStep)){
     body+="<div class='bsec'><div class='bsec-title'>Suggested Next Step</div><div class='bnext'>"+E(d.nextStep)+"</div></div>";
   }
-
   var news=d.news||[];
   if(news.length){
     body+="<div class='bsec'><div class='bsec-title'>Intent Signals — News ("+news.length+")</div>";
