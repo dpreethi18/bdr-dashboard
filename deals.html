@@ -266,7 +266,7 @@ function buildChips(){
 
   // Signal chips
   var sigEl=document.getElementById('signal-chips');sigEl.innerHTML='';
-  [{k:'All',l:'All'},{k:'news',l:'&#128240; Has News'},{k:'jobs',l:'&#128188; Has Jobs'},{k:'web',l:'&#127760; Has Website'},{k:'bi',l:'&#127919; Has Buyer Intent'}].forEach(function(sig){
+  [{k:'All',l:'All'},{k:'intent',l:'&#9889; Has Intent'},{k:'news',l:'&#128240; Has News'},{k:'jobs',l:'&#128188; Has Jobs'},{k:'web',l:'&#127760; Has Website'},{k:'bi',l:'&#127919; Has Buyer Intent'}].forEach(function(sig){
     var b=document.createElement('button');
     b.className='chip'+(aSignal===sig.k?' on':'');
     b.innerHTML=sig.l;b.dataset.v=sig.k;
@@ -286,6 +286,7 @@ function getFiltered(){
     if(aTerritory!=='All'&&getTerritory(d)!==aTerritory)return false;
     if(aVertical!=='All'&&(d.vertical||'')!==aVertical)return false;
     if(aOwner!=='All'&&d.owner!==aOwner)return false;
+    if(aSignal==='intent'&&!(parseFloat(d.totalScore)||0))return false;
     if(aSignal==='news'&&!(d.news&&d.news.length))return false;
     if(aSignal==='jobs'&&!(d.jobs&&d.jobs.length))return false;
     if(aSignal==='web'&&!hasWebSignal(d))return false;
@@ -342,7 +343,8 @@ function render(){
         (hasBrief?"<button class='brief-btn' onclick='event.stopPropagation();openBriefForOid(\""+E(d.oid)+"\")'>Re-engagement Brief ↗</button>":"")+
       "</div>";
 
-    if(hasBrief){card.onclick=function(){openBriefForOid(d.oid);};}
+    var hasAnySignal=nLen||jLen||hasWebSignal(d)||hasBiSignal(d)||parseFloat(d.totalScore);
+    if(hasBrief||hasAnySignal){card.onclick=function(){openBriefForOid(d.oid);};}
     g.appendChild(card);
   });
 }
@@ -437,8 +439,32 @@ function showBrief(d){
     body+="</div>";
   }
 
+  // Always show intent signals section even if no brief text
+  if(!hasWebSignal(d)&&!hasBiSignal(d)){
+    var extraSigs='';
+    if((d.news||[]).length){
+      extraSigs+="<div class='bsec'><div class='bsec-title'>Intent Signals — News ("+d.news.length+")</div>";
+      d.news.forEach(function(n){
+        extraSigs+="<div class='bnews'><div class='bnews-title'>"+E(n.title)+"</div>"+
+          (n.summary?"<div class='bnews-sum'>"+E(n.summary)+"</div>":"")+
+          (n.bdrLine?"<div class='bnews-line'>&#128073; "+E(n.bdrLine)+"</div>":"")+
+          (n.sigType?"<span class='bsigtag'>"+E(n.sigType)+"</span>":"")+"</div>";
+      });
+      extraSigs+="</div>";
+    }
+    if((d.jobs||[]).length){
+      extraSigs+="<div class='bsec'><div class='bsec-title'>Intent Signals — Jobs ("+d.jobs.length+")</div>";
+      d.jobs.forEach(function(j){
+        extraSigs+="<div class='bjob'><div class='bjob-title'>"+E(j.title)+"</div>"+
+          "<div class='bjob-meta'>"+E(j.seniority)+(j.location?" &middot; "+E(j.location):"")+(j.posted&&j.posted!=='-'?" &middot; "+j.posted:"")+"</div>"+
+          (j.url?"<a href='"+E(j.url)+"' target='_blank' class='japply'>View Job &#8599;</a>":"")+"</div>";
+      });
+      extraSigs+="</div>";
+    }
+    if(extraSigs) body=extraSigs+(body||'');
+  }
   if(!body){
-    body="<div class='no-brief'><div style='font-size:32px;margin-bottom:8px'>📭</div>No brief data available</div>";
+    body="<div class='no-brief'><div style='font-size:32px;margin-bottom:8px'>&#128237;</div><div style='font-size:13px;color:var(--text3)'>No brief or signal data available for this account.</div></div>";
   }
 
   document.getElementById('bp-body').innerHTML=body;
