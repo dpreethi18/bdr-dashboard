@@ -439,32 +439,8 @@ function showBrief(d){
     body+="</div>";
   }
 
-  // Always show intent signals section even if no brief text
-  if(!hasWebSignal(d)&&!hasBiSignal(d)){
-    var extraSigs='';
-    if((d.news||[]).length){
-      extraSigs+="<div class='bsec'><div class='bsec-title'>Intent Signals — News ("+d.news.length+")</div>";
-      d.news.forEach(function(n){
-        extraSigs+="<div class='bnews'><div class='bnews-title'>"+E(n.title)+"</div>"+
-          (n.summary?"<div class='bnews-sum'>"+E(n.summary)+"</div>":"")+
-          (n.bdrLine?"<div class='bnews-line'>&#128073; "+E(n.bdrLine)+"</div>":"")+
-          (n.sigType?"<span class='bsigtag'>"+E(n.sigType)+"</span>":"")+"</div>";
-      });
-      extraSigs+="</div>";
-    }
-    if((d.jobs||[]).length){
-      extraSigs+="<div class='bsec'><div class='bsec-title'>Intent Signals — Jobs ("+d.jobs.length+")</div>";
-      d.jobs.forEach(function(j){
-        extraSigs+="<div class='bjob'><div class='bjob-title'>"+E(j.title)+"</div>"+
-          "<div class='bjob-meta'>"+E(j.seniority)+(j.location?" &middot; "+E(j.location):"")+(j.posted&&j.posted!=='-'?" &middot; "+j.posted:"")+"</div>"+
-          (j.url?"<a href='"+E(j.url)+"' target='_blank' class='japply'>View Job &#8599;</a>":"")+"</div>";
-      });
-      extraSigs+="</div>";
-    }
-    if(extraSigs) body=extraSigs+(body||'');
-  }
   if(!body){
-    body="<div class='no-brief'><div style='font-size:32px;margin-bottom:8px'>&#128237;</div><div style='font-size:13px;color:var(--text3)'>No brief or signal data available for this account.</div></div>";
+    body="<div class='no-brief'><div style='font-size:32px;margin-bottom:8px'>📭</div>No brief data available</div>";
   }
 
   document.getElementById('bp-body').innerHTML=body;
