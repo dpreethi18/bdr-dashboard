@@ -390,6 +390,7 @@ function render(){
     if(ws){
       wsPanel+=
         (d.wsScore?"<div class='sp-row'><span class='sp-key'>Score</span><span class='sp-val'><b>"+E(d.wsScore)+"</b> / 5</span></div>":"")+
+        (d.domain?"<div class='sp-row'><span class='sp-key'>Domain</span><span class='sp-val sp-mono'>"+E(d.domain)+"</span></div>":"")+
         (d.wsd&&d.wsd!=='-'?"<div class='sp-row'><span class='sp-key'>Visit Date</span><span class='sp-val'>"+E(D(d.wsd))+"</span></div>":"")+
         (d.wlp?"<div class='sp-row'><span class='sp-key'>Last Page</span><span class='sp-val sp-mono'>"+E(d.wlp)+"</span></div>":"")+
         (d.wtp?"<div class='sp-row'><span class='sp-key'>Total Pages</span><span class='sp-val'>"+E(d.wtp)+"</span></div>":"");
@@ -401,7 +402,8 @@ function render(){
     if(bi){
       biPanel+=
         (d.biScore?"<div class='sp-row'><span class='sp-key'>Score</span><span class='sp-val'><b>"+E(d.biScore)+"</b> / 5</span></div>":"")+
-        (d.bid&&d.bid!=='-'?"<div class='sp-row'><span class='sp-key'>Intent Date</span><span class='sp-val'>"+E(D(d.bid))+"</span></div>":"<div class='sp-row'><span class='sp-key'>Status</span><span class='sp-val'>Signal detected</span></div>");
+        (d.bid&&d.bid!=='-'?"<div class='sp-row'><span class='sp-key'>Intent Date</span><span class='sp-val'>"+E(D(d.bid))+"</span></div>":"")+
+        (d.bi&&d.bi!=='-'&&d.bi!=='no'?"<div class='sp-row'><span class='sp-key'>Recent Signal</span><span class='sp-val'>"+E(d.bi)+"</span></div>":"<div class='sp-row'><span class='sp-key'>Status</span><span class='sp-val'>Signal detected</span></div>");
     }
     biPanel+="</div>";
 
@@ -420,6 +422,7 @@ function render(){
           (c.email?"<div class='c-detail'><span class='c-lbl'>Email</span><span>"+E(c.email)+"</span></div>":"")+
           (c.phone?"<div class='c-detail'><span class='c-lbl'>Phone</span><span>"+E(c.phone)+"</span></div>":"")+
           (c.created?"<div class='c-detail'><span class='c-lbl'>Created</span><span>"+E(c.created)+"</span></div>":"")+
+          (c.lastModified?"<div class='c-detail'><span class='c-lbl'>Modified</span><span>"+E(c.lastModified)+"</span></div>":"")+
           (c.sourceType?"<div class='c-detail'><span class='c-lbl'>Source Type</span><span>"+E(c.sourceType)+"</span></div>":"")+
           (c.broadSource?"<div class='c-detail'><span class='c-lbl'>Broad Source</span><span>"+E(c.broadSource)+"</span></div>":"")+
           "</div>";
@@ -439,6 +442,8 @@ function render(){
         (d.vertical?"<b>"+E(d.vertical)+"</b>"+(d.territory?" &middot; "+E(d.territory):""):"<span>"+E(d.territory||'')+"</span>")+
         "<br>"+E(d.owner||'Unassigned')+
         (d.lastAct?" &middot; "+D(d.lastAct):"")+
+        (d.created?"<br><span style='color:var(--text3);font-size:10px'>Created: "+E(d.created)+"</span>":"")+
+        (d.broadSource?" &middot; <span style='color:var(--text3);font-size:10px'>"+E(d.broadSource)+"</span>":"")+
       "</div>"+
       scoreBadge+
       tabsHtml+
