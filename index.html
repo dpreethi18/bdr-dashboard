@@ -2,8 +2,6 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23301894'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='Inter,Arial,sans-serif' font-weight='800' font-size='20' fill='white'>f</text></svg>">
-
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>BDR Intent Dashboard</title>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
@@ -205,19 +203,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .note-entry-text{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:3px;white-space:pre-wrap}
 .note-entry-meta{font-size:11px;color:var(--text3)}
 
-.trend{font-size:11px;font-weight:700;margin-left:4px}
-.trend-up{color:#059669}.trend-dn{color:#EF4444}.trend-flat{color:#94A3B8}
-.prev-score{font-size:10px;color:var(--text3);margin-left:3px}
-.score-history{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:10px 12px;margin-bottom:12px;display:flex;gap:16px;flex-wrap:wrap}
-.sh-item{display:flex;flex-direction:column;gap:2px}
-.sh-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--text3)}
-.sh-val{font-size:13px;font-weight:700;font-family:'JetBrains Mono',monospace}
-.nav-pills{display:flex;gap:6px;margin-left:12px}
-.nav-pill{padding:6px 14px;border-radius:20px;border:1.5px solid rgba(255,255,255,.25);background:transparent;color:rgba(255,255,255,.75);font-size:12px;font-weight:600;text-decoration:none;white-space:nowrap;transition:all .15s;font-family:'Inter',sans-serif}
-.nav-pill:hover{background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.5)}
-.nav-pill.active{background:#fff;color:var(--brand);border-color:#fff}
-.vert-select{padding:8px 28px 8px 12px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-family:'Inter',sans-serif;font-size:13px;font-weight:500;color:var(--text2);background:var(--surface2);outline:none;cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2394A3B8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
-.vert-select:focus{border-color:var(--accent);background:#fff}
+.ai-sel{padding:8px 28px 8px 12px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-family:'Inter',sans-serif;font-size:13px;font-weight:500;color:var(--text2);background:var(--surface2);outline:none;cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2394A3B8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+.ai-sel:focus{border-color:var(--accent);background:#fff}
 @media(max-width:640px){.topbar,.toolbar,.main{padding-left:16px;padding-right:16px}.sgrid,.bdr-tier-grid,.bdr-sig-row{grid-template-columns:repeat(2,1fr)}.bdr-charts-wrap{grid-template-columns:1fr}}
 </style>
 </head>
@@ -238,7 +225,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     <div class="tb-stat"><div class="tb-val s-jobs" id="s-jobs">-</div><div class="tb-lbl">Jobs</div></div>
     <div class="tb-stat"><div class="tb-val s-news" id="s-news">-</div><div class="tb-lbl">News</div></div>
   </div>
-  <div class="nav-pills"><a class="nav-pill active" href="index.html">🎯 BDR</a><a class="nav-pill" href="deals.html">💼 Deals</a><a class="nav-pill" href="inbound.html">📥 Inbound</a></div>
 </div>
 
 <div class="toolbar">
@@ -256,6 +242,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       <option value="c">Sort: Name</option>
     </select>
     <select class="vert-select" id="vert-sel" onchange="aVert=this.value;render()"><option value="All">All Verticals</option></select>
+    <select class="ai-sel" id="ai-sel" onchange="aAI=this.value;render()"><option value="All">All AI Intent</option></select>
     <span class="count" id="count">-</span>
   </div>
   <div class="tr2">
@@ -298,7 +285,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 </div>
 
 <script>
-var DATA=[], aBdr="All", aGeo="All", aSig="All", aCat="All", aVert="All", cur=null, aTab="overview", showHidden=false;
+var DATA=[], aBdr="All", aGeo="All", aSig="All", aCat="All", aVert="All", aAI="All", cur=null, aTab="overview", showHidden=false;
 var chartFilterVert=null, chartFilterTier=null;
 var tierChart=null;
 var HIDDEN_KEY="bdr_hidden_v1";
@@ -381,6 +368,10 @@ function buildChips(){
   var vertKeys=Object.keys(vertSet).sort();
   var vsel=document.getElementById("vert-sel");
   vertKeys.forEach(function(v){var o=document.createElement("option");o.value=v;o.textContent=v;vsel.appendChild(o);});
+  var aiSet={};
+  DATA.forEach(function(d){if(!d.ai)return;d.ai.split(/[;,]+/).forEach(function(a){a=a.trim();if(a)aiSet[a]=true;});});
+  var aiSel=document.getElementById("ai-sel");
+  Object.keys(aiSet).sort().forEach(function(a){var o=document.createElement("option");o.value=a;o.textContent=a;aiSel.appendChild(o);});
 }
 
 function renderBdrDash(bdr){
@@ -409,9 +400,9 @@ function renderBdrDash(bdr){
   h+="<div class='bdr-section-title'>Account Tiers</div>";
   h+="<div class='bdr-tier-grid'>"
     +"<div class='bdr-tier-card' onclick='applyChartFilter(null,\"hot\")' style='cursor:pointer'><div class='bdr-tier-bar' style='background:var(--hot)'></div><div class='bdr-tier-label'>Hot</div><div class='bdr-tier-val' style='color:var(--hot)'>"+hot+"</div><div class='bdr-tier-sub'>Score 8+</div></div>"
-    +"<div class='bdr-tier-card' onclick='applyChartFilter(null,\"warm\")' style='cursor:pointer'><div class='bdr-tier-bar' style='background:var(--warm)'></div><div class='bdr-tier-label'>Warm</div><div class='bdr-tier-val' style='color:var(--warm)'>"+warm+"</div><div class='bdr-tier-sub'>Score 5u20137</div></div>"
-    +"<div class='bdr-tier-card' onclick='applyChartFilter(null,\"watch\")' style='cursor:pointer'><div class='bdr-tier-bar' style='background:var(--cool)'></div><div class='bdr-tier-label'>Watch</div><div class='bdr-tier-val' style='color:var(--cool)'>"+watch+"</div><div class='bdr-tier-sub'>Score 3u20134</div></div>"
-    +"<div class='bdr-tier-card' onclick='applyChartFilter(null,\"cold\")' style='cursor:pointer'><div class='bdr-tier-bar' style='background:var(--border2)'></div><div class='bdr-tier-label'>Cold</div><div class='bdr-tier-val' style='color:var(--text3)'>"+cold+"</div><div class='bdr-tier-sub'>Score 0u20132</div></div>"
+    +"<div class='bdr-tier-card' onclick='applyChartFilter(null,\"warm\")' style='cursor:pointer'><div class='bdr-tier-bar' style='background:var(--warm)'></div><div class='bdr-tier-label'>Warm</div><div class='bdr-tier-val' style='color:var(--warm)'>"+warm+"</div><div class='bdr-tier-sub'>Score 5–7</div></div>"
+    +"<div class='bdr-tier-card' onclick='applyChartFilter(null,\"watch\")' style='cursor:pointer'><div class='bdr-tier-bar' style='background:var(--cool)'></div><div class='bdr-tier-label'>Watch</div><div class='bdr-tier-val' style='color:var(--cool)'>"+watch+"</div><div class='bdr-tier-sub'>Score 3–4</div></div>"
+    +"<div class='bdr-tier-card' onclick='applyChartFilter(null,\"cold\")' style='cursor:pointer'><div class='bdr-tier-bar' style='background:var(--border2)'></div><div class='bdr-tier-label'>Cold</div><div class='bdr-tier-val' style='color:var(--text3)'>"+cold+"</div><div class='bdr-tier-sub'>Score 0–2</div></div>"
     +"</div>";
 
   h+="<div class='bdr-section-title'>Signals Active</div>";
@@ -482,7 +473,7 @@ function applyChartFilter(vert,tier){
   if(vert)parts.push("Vertical: "+vert);
   if(tier)parts.push("Tier: "+tier.charAt(0).toUpperCase()+tier.slice(1));
   if(parts.length){
-    document.getElementById("chart-banner-text").textContent="Showing u2014 "+parts.join(" u00b7 ");
+    document.getElementById("chart-banner-text").textContent="Showing — "+parts.join(" · ");
     banner.classList.add("visible");
   } else {
     banner.classList.remove("visible");
@@ -498,6 +489,7 @@ function getFiltered(){
     if(!showHidden&&isHidden(d.c))return false;
     if(aBdr!=="All"&&d.b!==aBdr)return false;
     if(aVert!=="All"&&(d.v||"")!==aVert)return false;
+    if(aAI!=="All"&&!(d.ai||"").split(/[;,]+/).map(function(a){return a.trim();}).some(function(a){return a===aAI;}))return false;
     if(aGeo!=="All"&&d.g!==aGeo)return false;
     if(q&&d.c.toLowerCase().indexOf(q)<0&&(d.v||"").toLowerCase().indexOf(q)<0&&(d.b||"").toLowerCase().indexOf(q)<0)return false;
     if(aSig==="hot"&&d.is<8)return false;
@@ -520,15 +512,6 @@ function getFiltered(){
   }).sort(function(a,b){if(s==="c")return a.c.localeCompare(b.c);return(b[s]||0)-(a[s]||0);});
 }
 
-
-function TREND(cur,prev){
-  if(prev===null||prev===undefined)return '';
-  var diff=cur-prev;
-  if(diff>0)return "<span class='trend trend-up'>&#9650;"+diff+"</span><span class='prev-score'>was "+prev+"</span>";
-  if(diff<0)return "<span class='trend trend-dn'>&#9660;"+Math.abs(diff)+"</span><span class='prev-score'>was "+prev+"</span>";
-  return "<span class='trend trend-flat'>&#10145;</span><span class='prev-score'>no change</span>";
-}
-
 function render(){
   var list=getFiltered();
   document.getElementById("count").textContent=list.length+" accounts";
@@ -544,7 +527,6 @@ function render(){
     c.className="card"+(hidden?" hidden-card":"")+(d.ai?" card-ai":"");
     c.innerHTML="<button class='hide-btn' title='"+(hidden?"Unhide":"Hide")+"' onclick='event.stopPropagation();toggleHide(\""+E(d.c)+"\")'>"+( hidden?"&#8635;":"&#10005;")+"</button>"
       +"<div class='card-top'><div class='card-name' title='"+E(d.c)+"'>"+E(d.c)+"</div><div class='tbadge "+t.c+"'>"+t.l+"</div></div>"
-      +(d.scoreDate?TREND(d.is,d.p_is):"")
       +"<div class='card-meta'>"+(d.v?"<b>"+E(d.v)+"</b> &middot; ":"")+d.g+"</div>"
       +"<div class='card-foot'><span class='bdrtag bdr-"+d.b+"'>"+d.b+"</span></div>"
       +(sigs?"<div class='sigs'>"+sigs+"</div>":"")
@@ -598,16 +580,6 @@ function renderTab(){
      +"<div class='scard'><div class='scard-bar' style='background:var(--news)'></div><div class='sl'>News</div><div class='sv' style='color:"+(d.ns>0?"var(--news)":"var(--border2)")+"'>"+d.ns+"</div>"+P(Math.round(d.ns),6,"news")+"<div class='sd'>"+d.news.length+" articles</div></div>"
      +"<div class='scard'><div class='scard-bar' style='background:var(--jobs)'></div><div class='sl'>Jobs</div><div class='sv' style='color:"+(d.js>0?"var(--jobs)":"var(--border2)")+"'>"+d.js+"</div>"+P(Math.round(d.js),5,"jobs")+"<div class='sd'>"+d.jobs.length+" roles</div></div>"
      +"</div>";
-    if(d.scoreDate){
-      h+="<div class='score-history'>";
-      h+="<div class='sh-item'><div class='sh-label'>Intent Score</div><div class='sh-val'>"+d.is+" "+TREND(d.is,d.p_is)+"</div></div>";
-      h+="<div class='sh-item'><div class='sh-label'>Buyer Intent</div><div class='sh-val'>"+d.bi+" "+TREND(d.bi,d.p_bi)+"</div></div>";
-      h+="<div class='sh-item'><div class='sh-label'>Website</div><div class='sh-val'>"+d.ws+" "+TREND(d.ws,d.p_ws)+"</div></div>";
-      h+="<div class='sh-item'><div class='sh-label'>News</div><div class='sh-val'>"+d.ns+" "+TREND(d.ns,d.p_ns)+"</div></div>";
-      h+="<div class='sh-item'><div class='sh-label'>Jobs</div><div class='sh-val'>"+d.js+" "+TREND(d.js,d.p_js)+"</div></div>";
-      h+="<div class='sh-item'><div class='sh-label'>Updated</div><div class='sh-val' style='font-size:11px;font-family:Inter,sans-serif'>"+d.scoreDate+"</div></div>";
-      h+="</div>";
-    }
     if(d.bi>0)h+="<div class='sec'><div class='sec-title'>Buyer Intent</div><div class='iblock'><div class='irow'><span class='ik'>Score</span><span class='iv' style='color:var(--bi);font-weight:700'>"+d.bi+"/5</span></div>"+(d.bid&&d.bid!=="-"?"<div class='irow'><span class='ik'>Date</span><span class='iv'>"+D(d.bid)+"</span></div>":"")+(d.bi>=4?"<div style='margin-top:8px;padding:9px 12px;background:var(--bibg);border-radius:7px;border-left:3px solid var(--bi);font-size:13px;color:var(--bi);font-weight:600'>Very high intent - reach out now</div>":"")+"</div></div>";
     if(d.ws>0)h+="<div class='sec'><div class='sec-title'>Website Signal</div><div class='iblock'><div class='irow'><span class='ik'>Score</span><span class='iv' style='color:var(--ws);font-weight:700'>"+d.ws+"/5</span></div>"+(d.tp>0?"<div class='irow'><span class='ik'>Pages</span><span class='iv'>"+d.tp+"</span></div>":"")+(d.wsd&&d.wsd!=="-"?"<div class='irow'><span class='ik'>Visit Date</span><span class='iv'>"+D(d.wsd)+"</span></div>":"")+(d.lp?"<div class='irow'><span class='ik'>Last Page</span><span class='iv' style='font-family:monospace;font-size:11px'>"+E(d.lp.split(";")[0])+"</span></div>":"")+"</div></div>";
     if(d.news.length>0)h+="<div class='sec'><div class='sec-title'>Top News</div>"+NC(d.news[0],true)+(d.news.length>1?"<div style='font-size:12px;color:var(--text3);text-align:center;margin-top:6px'>+"+(d.news.length-1)+" more in News tab</div>":"")+"</div>";
