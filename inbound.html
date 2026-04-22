@@ -995,9 +995,12 @@ function setPhaseStatus(outputEl, phases, current, message) {
   outputEl.innerHTML = html;
 }
 
-function appendPhaseOutput(text) {
+function appendPhaseOutput(text, isHtml) {
   var el = document.getElementById('phase-output');
-  if (el) el.innerHTML += renderMarkdown(text) + '<hr style="border:none;border-top:1px solid var(--border);margin:16px 0">';
+  if (!el) return;
+  // If already HTML (from saved results), use directly; otherwise render markdown
+  var rendered = isHtml ? text : renderMarkdown(text);
+  el.innerHTML += rendered + '<hr style="border:none;border-top:1px solid var(--border);margin:16px 0">';
 }
 
 async function runSkill() {
@@ -1049,7 +1052,7 @@ async function runSkill() {
         setFPStatus(
           '<div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:#059669">✅ Phase 1: Account Research — loaded from saved results (' + savedAR.date + ')</div>'
         );
-        appendPhaseOutput(savedAR.html);
+        appendPhaseOutput(savedAR.html, true);
         await new Promise(function(r){setTimeout(r, 500);});
       } else {
         setFPStatus('<div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--accent)"><div class="thinking-dots"><span></span><span></span><span></span></div> Phase 1: Running Account Research...</div>');
@@ -1058,7 +1061,7 @@ async function runSkill() {
         phase1Text = p1raw.slice(0, 2500);
         var p1html = renderMarkdown(p1raw);
         saveResult(acc.company, 'account-research', p1html);
-        appendPhaseOutput(p1html);
+        appendPhaseOutput(p1html, true);
         setFPStatus('<div style="font-size:12px;font-weight:600;color:#059669">✅ Phase 1: Account Research — done</div>');
         // Wait 65 seconds before next call
         for (var i = 65; i > 0; i--) {
@@ -1074,7 +1077,7 @@ async function runSkill() {
           '<div style="font-size:12px;font-weight:600;color:#059669">✅ Phase 1: Account Research — saved (' + (savedAR ? savedAR.date : 'just run') + ')</div>' +
           '<div style="font-size:12px;font-weight:600;color:#059669;margin-top:4px">✅ Phase 2: Signal Finder — loaded from saved results (' + savedSF.date + ')</div>'
         );
-        appendPhaseOutput(savedSF.html);
+        appendPhaseOutput(savedSF.html, true);
         await new Promise(function(r){setTimeout(r, 500);});
       } else {
         setFPStatus(
@@ -1087,7 +1090,7 @@ async function runSkill() {
         phase2Text = p2raw.slice(0, 2500);
         var p2html = renderMarkdown(p2raw);
         saveResult(acc.company, 'signal-finder', p2html);
-        appendPhaseOutput(p2html);
+        appendPhaseOutput(p2html, true);
         setFPStatus(
           '<div style="font-size:12px;font-weight:600;color:#059669">✅ Phase 1: Account Research — done</div>' +
           '<div style="font-size:12px;font-weight:600;color:#059669;margin-top:4px">✅ Phase 2: Signal Finder — done</div>'
@@ -1115,7 +1118,7 @@ async function runSkill() {
       var p3raw = await callClaude(p3.system, p3UserWithCtx, false);
       var p3html = renderMarkdown(p3raw);
       saveResult(acc.company, 'messaging-writer', p3html);
-      appendPhaseOutput(p3html);
+      appendPhaseOutput(p3html, true);
 
       setFPStatus(
         '<div style="font-size:12px;font-weight:600;color:#059669">✅ Phase 1: Account Research · ✅ Phase 2: Signal Finder · ✅ Phase 3: Messaging Writer — all done!</div>'
