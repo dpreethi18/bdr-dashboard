@@ -682,7 +682,7 @@ async function runSkill() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-sonnet-4-5',
         max_tokens: 4000,
         system: prompt.system,
         messages: [{ role: 'user', content: prompt.user }]
@@ -705,7 +705,7 @@ async function runSkill() {
       });
     }
 
-    if (!fullText) throw new Error('Empty response: ' + JSON.stringify(data).slice(0, 300));
+    if (!fullText) throw new Error('Empty response. Stop_reason: ' + data.stop_reason + ' | Content blocks: ' + (data.content ? data.content.length : 0) + ' | Types: ' + (data.content ? data.content.map(function(b){return b.type;}).join(',') : 'none') + ' | Error: ' + JSON.stringify(data.error));
 
     outputEl.innerHTML = renderMarkdown(fullText);
     outputEl.className = 'aip-output';
