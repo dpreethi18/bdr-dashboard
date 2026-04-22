@@ -512,10 +512,6 @@ Produce this exact profile structure:
 - ERP or other linked systems
 - Tech confidence: Confirmed / Inferred / Not Found — note source
 
-#### Key People
-Table: Name | Title | LinkedIn search query | Notes
-Priority order: Head of Facilities, Director of FM, Operations Director/COO, CAFM/Digital FM Manager, Energy/Sustainability Manager
-
 #### Closest Facilio Customer Archetype
 - Archetype match (e.g. "IEM Pattern — growing UK FM company that outgrew basic CAFM")
 - Similarity (what specifically makes them similar — size, vertical, likely tech stack)
@@ -1027,49 +1023,105 @@ async function runSkill() {
   try {
     var acc = currentAccount;
 
-    // ── FULL PROSPECT: 3 separate phase calls with live progress ──────────────
+    // ── FULL PROSPECT: uses saved results, only 1 API call for messaging ──────
     if (selectedSkill === 'full-prospect') {
-      var phases = ['Phase 1: Account Research & ICP', 'Phase 2: Buying Signals', 'Phase 3: Outreach'];
       outputEl.style.padding = '0';
       outputEl.style.background = 'var(--surface)';
+      outputEl.innerHTML = '<div id="fp-status" style="padding:16px 20px;background:var(--surface2);border-bottom:1px solid var(--border)"></div><div id="phase-output" style="padding:16px 20px"></div>';
 
-      // PHASE 1 — Account Research
-      setPhaseStatus(outputEl, phases, 0, 'researching company profile...');
-      var p1prompt = SKILL_PROMPTS['account-research'](acc);
-      var phase1Result = await callClaude(p1prompt.system, p1prompt.user, true);
-      setPhaseStatus(outputEl, phases, 1, 'searching for signals...');
-      appendPhaseOutput(phase1Result);
+      function setFPStatus(html) {
+        var el = document.getElementById('fp-status');
+        if (el) el.innerHTML = html;
+      }
 
-      // Trim Phase 1 output to first 2000 chars for context passing (saves tokens)
-      var phase1Summary = phase1Result.slice(0, 2000);
+      function stripHtml(html) {
+        return (html || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 2500);
+      }
 
-      // Wait 10 seconds before Phase 2 to stay within rate limits
-      await new Promise(function(r){setTimeout(r, 10000);});
+      var savedAR = loadResult(acc.company, 'account-research');
+      var savedSF = loadResult(acc.company, 'signal-finder');
+      var phase1Text = '';
+      var phase2Text = '';
 
-      // PHASE 2 — Signal Finder (with trimmed Phase 1 context)
-      var p2prompt = SKILL_PROMPTS['signal-finder'](acc);
-      var p2UserWithContext = p2prompt.user + '\n\n---\n## Account Research Summary\n' + phase1Summary;
-      var phase2Result = await callClaude(p2prompt.system, p2UserWithContext, true);
-      setPhaseStatus(outputEl, phases, 2, 'writing personalised outreach...');
-      appendPhaseOutput(phase2Result);
+      // ── PHASE 1: Account Research ──────────────────────────────────────────
+      if (savedAR) {
+        phase1Text = stripHtml(savedAR.html);
+        setFPStatus(
+          '<div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:#059669">✅ Phase 1: Account Research — loaded from saved results (' + savedAR.date + ')</div>'
+        );
+        appendPhaseOutput(savedAR.html);
+        await new Promise(function(r){setTimeout(r, 500);});
+      } else {
+        setFPStatus('<div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--accent)"><div class="thinking-dots"><span></span><span></span><span></span></div> Phase 1: Running Account Research...</div>');
+        var p1 = SKILL_PROMPTS['account-research'](acc);
+        var p1raw = await callClaude(p1.system, p1.user, false);
+        phase1Text = p1raw.slice(0, 2500);
+        var p1html = renderMarkdown(p1raw);
+        saveResult(acc.company, 'account-research', p1html);
+        appendPhaseOutput(p1html);
+        setFPStatus('<div style="font-size:12px;font-weight:600;color:#059669">✅ Phase 1: Account Research — done</div>');
+        // Wait 65 seconds before next call
+        for (var i = 65; i > 0; i--) {
+          setFPStatus('<div style="font-size:12px;font-weight:600;color:#059669">✅ Phase 1: Done</div><div style="font-size:11px;color:var(--text3);margin-top:4px">⏳ Waiting ' + i + 's before Phase 2 (rate limit pause)...</div>');
+          await new Promise(function(r){setTimeout(r, 1000);});
+        }
+      }
 
-      // Trim Phase 2 output too
-      var phase2Summary = phase2Result.slice(0, 1500);
+      // ── PHASE 2: Signal Finder ─────────────────────────────────────────────
+      if (savedSF) {
+        phase2Text = stripHtml(savedSF.html);
+        setFPStatus(
+          '<div style="font-size:12px;font-weight:600;color:#059669">✅ Phase 1: Account Research — saved (' + (savedAR ? savedAR.date : 'just run') + ')</div>' +
+          '<div style="font-size:12px;font-weight:600;color:#059669;margin-top:4px">✅ Phase 2: Signal Finder — loaded from saved results (' + savedSF.date + ')</div>'
+        );
+        appendPhaseOutput(savedSF.html);
+        await new Promise(function(r){setTimeout(r, 500);});
+      } else {
+        setFPStatus(
+          '<div style="font-size:12px;font-weight:600;color:#059669">✅ Phase 1: Account Research — done</div>' +
+          '<div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--accent);margin-top:4px"><div class="thinking-dots"><span></span><span></span><span></span></div> Phase 2: Running Signal Finder...</div>'
+        );
+        var p2 = SKILL_PROMPTS['signal-finder'](acc);
+        var p2UserWithCtx = p2.user + '\n\n---\n## Account Research Context\n' + phase1Text;
+        var p2raw = await callClaude(p2.system, p2UserWithCtx, false);
+        phase2Text = p2raw.slice(0, 2500);
+        var p2html = renderMarkdown(p2raw);
+        saveResult(acc.company, 'signal-finder', p2html);
+        appendPhaseOutput(p2html);
+        setFPStatus(
+          '<div style="font-size:12px;font-weight:600;color:#059669">✅ Phase 1: Account Research — done</div>' +
+          '<div style="font-size:12px;font-weight:600;color:#059669;margin-top:4px">✅ Phase 2: Signal Finder — done</div>'
+        );
+        // Wait 65 seconds before next call
+        for (var j = 65; j > 0; j--) {
+          setFPStatus(
+            '<div style="font-size:12px;font-weight:600;color:#059669">✅ Phase 1 & 2 done</div>' +
+            '<div style="font-size:11px;color:var(--text3);margin-top:4px">⏳ Waiting ' + j + 's before Phase 3 (rate limit pause)...</div>'
+          );
+          await new Promise(function(r){setTimeout(r, 1000);});
+        }
+      }
 
-      // Wait 10 seconds before Phase 3
-      await new Promise(function(r){setTimeout(r, 10000);});
+      // ── PHASE 3: Messaging Writer — always 1 API call using saved context ──
+      setFPStatus(
+        '<div style="font-size:12px;font-weight:600;color:#059669">✅ Phase 1 & 2 done</div>' +
+        '<div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--accent);margin-top:4px"><div class="thinking-dots"><span></span><span></span><span></span></div> Phase 3: Writing personalised outreach...</div>'
+      );
+      var p3 = SKILL_PROMPTS['messaging-writer'](acc);
+      var p3UserWithCtx = p3.user +
+        '\n\n---\n## Account Research\n' + phase1Text +
+        '\n\n---\n## Signal Finder Results\n' + phase2Text +
+        '\n\nIMPORTANT: Use ALL the research above. Write hyper-personalised outreach referencing specific company details, their FM setup, tech stack, and the strongest signals found.';
+      var p3raw = await callClaude(p3.system, p3UserWithCtx, false);
+      var p3html = renderMarkdown(p3raw);
+      saveResult(acc.company, 'messaging-writer', p3html);
+      appendPhaseOutput(p3html);
 
-      // PHASE 3 — Messaging Writer (with trimmed context from both phases)
-      var p3prompt = SKILL_PROMPTS['messaging-writer'](acc);
-      var p3UserWithContext = p3prompt.user +
-        '\n\n---\n## Account Research Summary\n' + phase1Summary +
-        '\n\n---\n## Signal Summary\n' + phase2Summary +
-        '\n\nWrite hyper-personalised outreach using the above research.';
-      var phase3Result = await callClaude(p3prompt.system, p3UserWithContext, false);
-      setPhaseStatus(outputEl, phases, 3, '');
-      appendPhaseOutput(phase3Result);
+      setFPStatus(
+        '<div style="font-size:12px;font-weight:600;color:#059669">✅ Phase 1: Account Research · ✅ Phase 2: Signal Finder · ✅ Phase 3: Messaging Writer — all done!</div>'
+      );
 
-      fullOutput = phase1Result + '\n\n' + phase2Result + '\n\n' + phase3Result;
+      fullOutput = (savedAR ? stripHtml(savedAR.html) : '') + '\n\n' + (savedSF ? stripHtml(savedSF.html) : '') + '\n\n' + p3raw;
 
     // ── INDIVIDUAL SKILLS: run directly, no pre-calls ───────────────────────
     } else {
