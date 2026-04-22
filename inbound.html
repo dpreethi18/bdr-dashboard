@@ -13,7 +13,6 @@
   --accent:#5B6AF0;--accent2:#EEF0FE;--brand:#301894;
   --ws:#0891B2;--wsbg:#ECFEFF;
   --bi:#8B5CF6;--bibg:#F5F3FF;
-  --ai:#F59E0B;--aibg:#FFFBEB;
   --r:10px;--r-sm:7px;--sh-lg:0 8px 32px rgba(0,0,0,.12)
 }
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
@@ -33,6 +32,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .tb-val{font-size:18px;font-weight:800;font-family:'JetBrains Mono',monospace;line-height:1}
 .tb-lbl{font-size:10px;color:rgba(255,255,255,.4);margin-top:1px}
 .s-total{color:#fff}.s-ws{color:#67E8F9}.s-bi{color:#C4B5FD}.s-both{color:#FCD34D}
+
 
 /* TOOLBAR */
 .toolbar{background:var(--surface);border-bottom:1.5px solid var(--border);padding:12px 28px;display:flex;flex-direction:column;gap:10px;position:sticky;top:62px;z-index:90}
@@ -83,17 +83,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .score-lbl{font-size:10px;color:var(--text3);font-weight:600}
 
 /* SIGNAL TABS */
-.sig-tabs{display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap}
+.sig-tabs{display:flex;gap:4px;margin-bottom:8px}
 .sig-tab{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--surface2);color:var(--text2);transition:all .15s;font-family:'Inter',sans-serif}
 .sig-tab:hover{border-color:var(--accent);color:var(--accent)}
 .sig-tab.tab-ws.active{background:var(--wsbg);border-color:#A5F3FC;color:var(--ws)}
 .sig-tab.tab-bi.active{background:var(--bibg);border-color:#DDD6FE;color:var(--bi)}
 .sig-tab.tab-ct.active{background:var(--accent2);border-color:#C7D2FE;color:var(--accent)}
-
-/* AI PROSPECT BUTTON */
-.btn-prospect{display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;border:1.5px solid var(--ai);background:var(--aibg);color:#92400E;font-size:11px;font-weight:700;cursor:pointer;transition:all .18s;font-family:'Inter',sans-serif;white-space:nowrap;margin-top:8px}
-.btn-prospect:hover{background:var(--ai);color:#fff;border-color:var(--ai);box-shadow:0 2px 12px rgba(245,158,11,.35)}
-.btn-prospect svg{flex-shrink:0}
 
 /* SIGNAL DETAIL PANELS */
 .sig-panel{display:none;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:12px;margin-bottom:8px}
@@ -114,106 +109,15 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .c-detail{font-size:11px;color:var(--text2);margin-bottom:2px;display:flex;gap:5px}
 .c-lbl{color:var(--text3);font-weight:600;min-width:80px;flex-shrink:0}
 .more-contacts{font-size:11px;color:var(--text3);padding-top:6px;font-style:italic}
+
 .no-sig{font-size:11px;color:var(--text3);font-style:italic;padding:3px 0}
 
-/* ============================================
-   AI MODAL
-   ============================================ */
-#ai-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(3px)}
-#ai-overlay.open{opacity:1;pointer-events:all}
-
-#ai-panel{position:fixed;top:50%;left:50%;transform:translate(-50%,-60%);width:880px;max-width:96vw;max-height:90vh;background:var(--surface);z-index:201;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,.3);border-radius:16px;overflow:hidden;opacity:0;pointer-events:none;transition:all .3s cubic-bezier(.4,0,.2,1)}
-#ai-panel.open{transform:translate(-50%,-50%);opacity:1;pointer-events:all}
-
-/* MODAL HEADER */
-.aip-header{background:linear-gradient(135deg,var(--brand) 0%,#5B6AF0 100%);padding:22px 28px 0;flex-shrink:0}
-.aip-header-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px}
-.aip-header-left{display:flex;align-items:center;gap:14px}
-.aip-company-badge{width:44px;height:44px;border-radius:10px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff;flex-shrink:0;letter-spacing:-1px}
-.aip-company{font-size:20px;font-weight:800;color:#fff;line-height:1.2}
-.aip-meta{font-size:12px;color:rgba(255,255,255,.6);margin-top:3px;display:flex;gap:8px;flex-wrap:wrap}
-.aip-meta-tag{background:rgba(255,255,255,.12);padding:2px 8px;border-radius:20px;font-size:11px;color:rgba(255,255,255,.8)}
-.aip-close{background:rgba(255,255,255,.15);border:none;color:#fff;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s;margin-top:2px}
-.aip-close:hover{background:rgba(255,255,255,.3)}
-
-/* SKILL TABS in header */
-.skill-tabs{display:flex;gap:0;border-top:none;margin-top:0}
-.skill-tab-btn{padding:12px 20px;border:none;background:transparent;color:rgba(255,255,255,.6);font-size:13px;font-weight:600;cursor:pointer;transition:all .18s;font-family:'Inter',sans-serif;border-bottom:3px solid transparent;display:flex;align-items:center;gap:7px;white-space:nowrap}
-.skill-tab-btn:hover{color:#fff;background:rgba(255,255,255,.08)}
-.skill-tab-btn.active{color:#fff;border-bottom-color:#fff;background:rgba(255,255,255,.1)}
-.skill-tab-btn .sk-icon{font-size:15px}
-
-/* MODAL BODY */
-.aip-body{display:flex;flex:1;overflow:hidden;min-height:0}
-
-/* LEFT SIDEBAR */
-.aip-sidebar{width:220px;flex-shrink:0;border-right:1.5px solid var(--border);display:flex;flex-direction:column;background:var(--surface2)}
-.aip-run-btn{margin:16px;padding:11px;background:var(--accent);color:#fff;border:none;border-radius:var(--r-sm);font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:center;gap:8px}
-.aip-run-btn:hover{background:#4355e8;box-shadow:0 4px 16px rgba(91,106,240,.4)}
-.aip-run-btn:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
-.aip-sidebar-info{padding:0 16px 16px;border-top:1px solid var(--border);margin-top:auto}
-.aip-sidebar-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:8px;margin-top:16px}
-.aip-account-detail{font-size:11px;color:var(--text2);margin-bottom:4px;display:flex;gap:6px}
-.aip-account-detail .lbl{color:var(--text3);font-weight:600;min-width:60px;flex-shrink:0}
-
-/* RIGHT OUTPUT */
-.aip-output-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;padding:20px 24px}
-.aip-output-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text3);margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.out-badge{padding:2px 8px;background:var(--accent2);color:var(--accent);border-radius:20px;font-size:10px;font-weight:700}
-.aip-output{flex:1;overflow-y:auto;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:18px 20px;font-size:13px;line-height:1.7;color:var(--text2);word-break:break-word;font-family:'Inter',sans-serif}
-.aip-output.streaming{border-color:var(--accent);background:#FAFAFF}
-.aip-placeholder{color:var(--text3);font-size:13px;text-align:center;padding:60px 20px}
-.aip-placeholder .ph-icon{font-size:40px;display:block;margin-bottom:12px}
-
-/* STREAMING CURSOR */
-.cursor{display:inline-block;width:2px;height:14px;background:var(--accent);margin-left:2px;animation:blink .8s step-end infinite;vertical-align:middle}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-
-/* ACTION BUTTONS */
-.aip-actions{display:flex;gap:8px;margin-top:12px;flex-shrink:0}
-.aip-copy-btn{padding:7px 16px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text2);border-radius:var(--r-sm);font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px}
-.aip-copy-btn:hover{border-color:var(--accent);color:var(--accent)}
-.aip-clear-btn{padding:7px 16px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text2);border-radius:var(--r-sm);font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
-.aip-clear-btn:hover{border-color:#EF4444;color:#EF4444}
-
-/* THINKING ANIMATION */
-.thinking{display:flex;align-items:center;gap:8px;padding:40px 20px;color:var(--text3);font-size:13px;justify-content:center}
-.thinking-dots{display:flex;gap:5px}
-.thinking-dots span{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:dot .9s infinite}
-.thinking-dots span:nth-child(2){animation-delay:.2s}
-.thinking-dots span:nth-child(3){animation-delay:.4s}
-@keyframes dot{0%,60%,100%{transform:scale(.6);opacity:.4}30%{transform:scale(1);opacity:1}}
-
-@media(max-width:640px){.topbar,.toolbar,.main{padding-left:16px;padding-right:16px}#ai-panel{width:98vw;max-height:95vh}.aip-sidebar{display:none}}
+@media(max-width:640px){.topbar,.toolbar,.main{padding-left:16px;padding-right:16px}}
 
 .nav-pills{display:flex;gap:6px;margin-left:12px}
 .nav-pill{padding:6px 14px;border-radius:20px;border:1.5px solid rgba(255,255,255,.25);background:transparent;color:rgba(255,255,255,.75);font-size:12px;font-weight:600;text-decoration:none;white-space:nowrap;transition:all .15s;font-family:'Inter',sans-serif}
 .nav-pill:hover{background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.5)}
 .nav-pill.active{background:#fff;color:var(--brand);border-color:#fff}
-
-/* SAVED RESULTS */
-.saved-tab{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:var(--surface2);color:var(--text3);transition:all .15s;font-family:'Inter',sans-serif;white-space:nowrap}
-.saved-tab:hover{border-color:var(--accent);color:var(--accent)}
-.saved-tab.active-tab{background:var(--accent2);border-color:var(--accent);color:var(--accent)}
-.cache-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;background:#ECFDF5;border:1px solid #A7F3D0;color:#059669;border-radius:20px;font-size:10px;font-weight:700}
-.aip-output-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text3);margin-bottom:8px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-
-/* markdown renderer helper */
-.md-rendered h1{font-size:15px;font-weight:800;color:var(--text);margin:14px 0 6px;border-bottom:2px solid var(--accent2);padding-bottom:4px}
-.md-rendered h2{font-size:13px;font-weight:700;color:var(--text);margin:12px 0 5px;border-bottom:1px solid var(--border);padding-bottom:3px}
-.md-rendered h3{font-size:12px;font-weight:700;color:var(--accent);margin:10px 0 4px}
-.md-rendered p{margin:5px 0;line-height:1.7}
-.md-rendered ul,.md-rendered ol{padding-left:18px;margin:5px 0}
-.md-rendered li{margin-bottom:3px;line-height:1.6}
-.md-rendered strong{color:var(--text);font-weight:700}
-.md-rendered code{background:#E8EAFF;padding:1px 5px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent)}
-.md-rendered hr{border:none;border-top:1px solid var(--border);margin:12px 0}
-.md-rendered table{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0;border-radius:6px;overflow:hidden;display:block;overflow-x:auto}
-.md-rendered th{background:var(--accent2);color:var(--brand);padding:7px 10px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.5px;font-weight:700;white-space:nowrap}
-.md-rendered td{padding:7px 10px;border-bottom:1px solid var(--border);vertical-align:top;min-width:80px;word-break:break-word;max-width:200px}
-.md-rendered tr:last-child td{border-bottom:none}
-.md-rendered tr:hover td{background:#FAFAFF}
-.md-rendered blockquote{border-left:3px solid var(--accent);padding:6px 12px;background:var(--accent2);border-radius:0 6px 6px 0;margin:8px 0;color:var(--text2);font-style:italic;font-size:12px}
 </style>
 </head>
 <body>
@@ -274,904 +178,44 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
   </div>
 </div>
 
-<!-- AI MODAL -->
-<div id="ai-overlay" onclick="closeAIPanel()"></div>
-<div id="ai-panel">
-  <!-- HEADER -->
-  <div class="aip-header">
-    <div class="aip-header-top">
-      <div class="aip-header-left">
-        <div class="aip-company-badge" id="aip-company-initial">?</div>
-        <div>
-          <div class="aip-company" id="aip-company-name">Company Name</div>
-          <div class="aip-meta" id="aip-company-meta"></div>
-        </div>
-      </div>
-      <button class="aip-close" onclick="closeAIPanel()">✕</button>
-    </div>
-    <!-- SKILL TABS -->
-    <div class="skill-tabs">
-      <button class="skill-tab-btn" data-skill="account-research" onclick="selectSkill(this)">
-        <span class="sk-icon">🔍</span> Account Research
-      </button>
-      <button class="skill-tab-btn" data-skill="signal-finder" onclick="selectSkill(this)">
-        <span class="sk-icon">📡</span> Signal Finder
-      </button>
-      <button class="skill-tab-btn" data-skill="messaging-writer" onclick="selectSkill(this)">
-        <span class="sk-icon">✍️</span> Messaging Writer
-      </button>
-      <button class="skill-tab-btn" data-skill="full-prospect" onclick="selectSkill(this)">
-        <span class="sk-icon">⚡</span> Full Prospect
-      </button>
-    </div>
-  </div>
-
-  <!-- BODY -->
-  <div class="aip-body">
-    <!-- LEFT SIDEBAR -->
-    <div class="aip-sidebar">
-      <button class="aip-run-btn" id="aip-run-btn" onclick="runSkill()" disabled>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-        Select a skill
-      </button>
-      <div style="padding:0 16px">
-        <div id="saved-tabs" style="display:none"></div>
-      </div>
-      <div class="aip-sidebar-info">
-        <div class="aip-sidebar-label">Account Details</div>
-        <div class="aip-account-detail"><span class="lbl">Vertical</span><span id="si-vertical">—</span></div>
-        <div class="aip-account-detail"><span class="lbl">Territory</span><span id="si-territory">—</span></div>
-        <div class="aip-account-detail"><span class="lbl">Owner</span><span id="si-owner">—</span></div>
-        <div class="aip-account-detail"><span class="lbl">Status</span><span id="si-status">—</span></div>
-        <div class="aip-account-detail"><span class="lbl">Score</span><span id="si-score">—</span></div>
-        <div class="aip-account-detail"><span class="lbl">Website</span><span id="si-ws">—</span></div>
-        <div class="aip-account-detail"><span class="lbl">Buyer Intent</span><span id="si-bi">—</span></div>
-        <div class="aip-account-detail"><span class="lbl">Contacts</span><span id="si-contacts">—</span></div>
-      </div>
-    </div>
-
-    <!-- OUTPUT -->
-    <div class="aip-output-wrap">
-      <div class="aip-output-label">
-        <span>AI Output</span>
-        <span class="out-badge" id="aip-skill-badge" style="display:none"></span>
-      </div>
-      <div class="aip-output" id="aip-output">
-        <div class="aip-placeholder">
-          <span class="ph-icon">🤖</span>
-          Select a skill above and click Run to start AI prospecting for this account.
-        </div>
-      </div>
-      <div class="aip-actions" id="aip-actions" style="display:none">
-        <button class="aip-copy-btn" onclick="copyOutput()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copy Output
-        </button>
-        <button class="aip-clear-btn" onclick="clearOutput()">Clear</button>
-        <button class="aip-clear-btn" onclick="clearSavedResults(currentAccount.company)" style="margin-left:auto;font-size:11px">🗑 Clear Saved</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <script>
-// ─── STATE ──────────────────────────────────────────────────────────────────
 var DATA=[];
 var aTerritory='All', aOwner='All', aStatus='All', aSignal='All', aVertical='All';
-var currentAccount=null;
-var selectedSkill=null;
-var isStreaming=false;
-var openPanels={};
 
-// ─── SKILL PROMPTS (exact from plugin SKILL.md files) ───────────────────────
-
-var ACCOUNT_CONTEXT = `
-## About Facilio
-- Product: AI-driven Connected CMMS + property operations platform
-- Founded: 2017 | HQ: New York | Offices: UK, UAE, India, Singapore, Australia
-- Key Products: Connected CMMS · Connected Buildings · Connected Refrigeration · Facilio Atom (Agentic AI) · Mira (Helpdesk AI) · FM Copilot
-
-## Known Customers by Region & Vertical
-
-### UK
-CRE Owner/REIT: British Land, Brookfield UK, Takenaka Corporation
-FM Service Providers: Integrated Estate Management (IEM), Senseco Systems
-Healthcare: AIRMASTER, Methodist Homes MHA
-Education: Acorn Early Years Foundation, Hibernia
-Design/Built FM: Q3 Services | Retail: Dunnes Stores | IoT: Virgin Media/O2
-
-### Middle East (68 customers)
-Energy/Smart Buildings: Dalkia EDF, Dalkia Middle East, Emicool, Emirates Nuclear Energy, Engie Qatar, Green Global FM, Mannai Energy, Moro Hub, Netix Global, Siemens, Smart Automation Energy, Tabreed KSA, alfanar
-CRE Owner/Operator: Al-Futtaim Real Estate, Bawaniint, Binghatti, DWTC, Deyaar Property Management, Ghassan Aboud Group, ICD-Brookfield, Majid Al Futtaim, Mazaya Towers, Obeikan Investment Group, Orville Real Estate
-IFM/Multi-service FM: Aspire Oman, Berkeley Services UAE, CIT, Deyari FM, ES Global, Mansions Owners Association Management, Musanadah FM, Quality FM, RA International, Renaissance FM, Spectra Support Services
-IoT/Systems Integration: Avar Global, Bounce Back Technologies, Etisalat, Laith FM, MDS UAE, OSUS, Qatar Site & Power, machinestalk
-Financial Services: DAMAC Group, Dham, Dubai Holding Real Estate, Mubadala, ANB Bank KSA, First Abu Dhabi Bank
-Education: Cognita School, Fortes Education, RGSGD, Royal Grammar School Guildford Dubai, SRS
-Healthcare: Aster | Hospitality: DCI, YAS Marina | Retail/Food: Half Million, Silal, Kitopi
-
-### North America (28 customers)
-Retail/Grocery: Ace Hardware, Houchens Industries, King Kullen, Lunds & Byerlys, Publix Super Markets, The Tile Shop, Woodman's Food Markets
-IFM/FM Services: HG Facilities Solutions, Metro Maintenance, TMG USA, Tuten Labs, Westhab
-Construction-linked FM: Aero Mechanical Controls, HT Lyons, Limbach Inc, Skeens Warehouse Services
-Healthcare: HCA Healthcare, Insight Health Systems, Sonoma Valley Hospital, TJ Regional Health, TRINITY HEALTH
-CRE/Real Estate: Jireh Semiconductor, Starwood Capital Group
-Property Management: Casto Commercial, ICAN
-Education: Boise State University, Purdue University Fort Wayne, BRECK SCHOOL
-Hospitality: Belmont Park | Food/Meal Kit: HelloFresh
-
-### ANZ (7 customers)
-CRE Owner/Operator: Charter Hall, Investa, Kingsmede
-IFM/FM Services: CBRE, Dimeo Facilities Services
-Financial Services: KPMG Australia | Alternative Accommodation: Unilodge Australia
-
-## Win Archetypes
-
-### IEM Pattern — Growing UK FM Service Company
-Profile: Independent FM company, 50–300 employees, UK-based
-Tech before Facilio: Off-the-shelf CAFM (Joblogic, simPRO, Concept FM) that can't support growth
-Core pain: No audit trail, fragmented vendor comms, can't scale client operations
-
-Keywords: "planned maintenance", "PPM", "SFG20", "reactive maintenance", "compliance"
-
-### Quality FM Pattern — ME IFM Company
-Profile: Established FM company in UAE/GCC, 150–500 staff, 500–5,000 property units under management
-Tech before Facilio: Legacy CaFM + ERP combination (often SAP + older CAFM)
-Core pain: No portfolio-wide SLA visibility, tenant escalations, compliance tracking across sites
-
-
-### Investa/Charter Hall Pattern — CRE Owner/Operator
-Profile: Commercial property REIT, fund, or developer managing 10–50+ buildings
-Tech before Facilio: Disparate BMS per building, disconnected FM systems, no portfolio-wide view
-Core pain: Asset downtime, reactive maintenance culture, no cross-site benchmarking, sustainability data gaps
-
-
-### Publix/Tuten Labs Pattern — Retail/Grocery Chain
-Primary product: Connected Refrigeration
-Profile: Grocery, retail, food service chain with 20+ locations and refrigeration assets
-Core pain: Manual refrigerant leak logs, fragmented multi-site monitoring, F-Gas/EPA 608 compliance
-
-
-### Netix/Siemens Pattern — IoT/BMS Systems Integrator
-Profile: Technology company or systems integrator deploying BMS/IoT in buildings
-Core pain: BMS gives device data but no FM workflow, no work order management, no client portal
-
-
-### DAMAC/Mubadala Pattern — Investment/Asset Manager
-Profile: Investment group or sovereign fund with owned property portfolio
-Core pain: Portfolio-level visibility, asset value protection, operational cost control
-
-
-## Known FM Tech Stack Patterns by Vertical
-FM Service Providers UK: Joblogic, simPRO, Concept FM, Axxerion, Kirona, BigChange, FSI/MRI Concept Evolution, Maximo
-FM Service Providers ME: SAP PM module, IBM Maximo, locally built systems
-CRE Owner/Operator: BMS per building (Siemens, Honeywell, Johnson Controls), Yardi/MRI for leasing
-Retail Chains US: ServiceChannel, manual refrigerant logs
-Healthcare UK: MICAD, Concept Evolution/MRI, Asure
-Education: Agility (FMS), Facilities iQ, or spreadsheets
-
-## ICP Exclusions — Auto Poor Fit
-- Single-trade technical contractor (HVAC only, electrical only etc.)
-- Equipment OEM / manufacturer
-- Pure staffing / labour hire
-- FM software vendor (competitor)
-- Less than 20 staff independent contractor
-
-## Regional Compliance Drivers
-UK: EPC B by 2030, Building Safety Act 2022, SFG20, ISO 41001
-Middle East: UAE Net Zero 2050, Saudi Vision 2030, Dubai Smart City, RERA
-North America: EPA Section 608 (refrigerant), ENERGY STAR, WELL Building, BOMA
-ANZ: NABERS rating, Green Star certification, NCC
-`;
-
-var SKILL_PROMPTS = {
-  'account-research': function(acc) {
-    return {
-      system: `You are a senior BDR researcher at Facilio. Use the Facilio Account Context below as your reference throughout this research.
-
-${ACCOUNT_CONTEXT}
-
-Your job: Produce a thorough, structured account profile covering what they do, their FM/property operations setup, tech stack, key people, and how they compare to known Facilio customers.
-
-Research quality standards:
-- Distinguish CONFIRMED (primary source) vs INFERRED (keyword/proxy match)
-- If data is unavailable, say "Not Found — would estimate from [proxy]" — do not guess
-- For UK accounts: always check Companies House (SIC code, revenue band, filing history)
-- Flag anything older than 18 months as potentially stale
-- Check ICP Exclusions first — if account matches any exclusion, mark Poor Fit immediately`,
-
-      user: `Research this inbound account and produce a full account profile.
-
-Company: ${acc.company}
-Domain: ${acc.domain || 'Unknown'}
-Vertical: ${acc.vertical || 'Unknown'}
-Territory: ${acc.territory || 'Unknown'}
-Lead Owner: ${acc.owner || 'Unknown'}
-Lead Status: ${acc.status || 'Unknown'}
-Total Intent Score: ${acc.totalScore || 0}
-Website Visitor Signal: ${acc.ws || 'No'}${acc.wlp ? ' | Last page viewed: ' + acc.wlp : ''}
-Buyer Intent Signal: ${acc.bi || 'No'}${acc.bid && acc.bid !== '-' ? ' | Intent date: ' + acc.bid : ''}
-Contacts on record: ${acc.contacts && acc.contacts.length ? acc.contacts.map(function(c){return ((c.firstName||'')+' '+(c.lastName||'')).trim()+(c.email?' <'+c.email+'>':'');}).join(', ') : 'None'}
-
-Produce this exact profile structure:
-
-### 🏢 ACCOUNT PROFILE: ${acc.company}
-**Domain**: | **Region**: | **HQ**:
-
-#### Company Overview
-- What they do (2–3 sentences — their role in FM/real estate/property operations)
-- Business model (FM Service Provider / CRE Owner / Corporate Occupier / IoT Integrator / Retail / Healthcare / Education)
-- Portfolio scale (# buildings, sq ft, sites, countries — or best estimate with source)
-- Company size (employee count, revenue if available)
-- Ownership/structure (public/private, parent company, regional division)
-
-#### FM & Property Operations Setup
-- How they manage buildings (in-house / outsourced / hybrid)
-- Operational complexity (# assets, # sites, cross-region/multi-client)
-- Known CMMS/CAFM (tool name if confirmed — or "Not Found")
-- BMS/IoT setup
-- ERP or other linked systems
-- Tech confidence: Confirmed / Inferred / Not Found — note source
-
-#### Closest Facilio Customer Archetype
-- Archetype match (e.g. "IEM Pattern — growing UK FM company that outgrew basic CAFM")
-- Similarity (what specifically makes them similar — size, vertical, likely tech stack)
-- Difference (anything that makes them less straightforward)
-
-#### Context Notes
-- Regional regulatory environment relevant to this account
-- Recent company news (M&A, leadership changes, new contracts)
-- Anything distinctive or unusual
-
-#### ICP Verdict
-Check exclusions first. If excluded → Poor Fit immediately.
-**ICP Fit**: Strong Fit / Potential Fit / Poor Fit
-
-| Dimension | Rating | Reason |
-|-----------|--------|--------|
-| Industry/vertical | Strong/Partial/No Fit | |
-| Portfolio scale | Strong/Partial/No Fit | |
-| Operational complexity | Strong/Partial/No Fit | |
-| Tech stack maturity | Strong/Partial/No Fit | |
-
-**Recommendation**: (1–2 sentences — should BDR pursue, deprioritise, or watch and wait?)`
-    };
-  },
-
-  'signal-finder': function(acc) {
-    return {
-      system: `You are a BDR signal analyst at Facilio — an AI-powered Connected CMMS and property operations platform.
-
-Surface buying signals at target accounts that indicate the right time to engage. Focus on signals relevant to FM, property operations, smart buildings, CMMS/CAFM, digital transformation, and facilities management technology.
-
-Rate signals by recency:
-- HOT — within the last 30 days
-- WARM — within the last 90 days
-- COOLING — 90–180 days ago
-
-Cross-reference signals: a leadership change + hiring in the same function = strong combined signal.
-Be honest: if no signals are found, say so clearly. Do not fabricate urgency.
-If you find signals, suggest the Messaging Writer to turn them into personalized outreach.`,
-
-      user: `Find buying signals for this inbound account. Use web search to find current information.
-
-Company: ${acc.company}
-Domain: ${acc.domain || 'Unknown'}
-Vertical: ${acc.vertical || 'Unknown'}
-Territory: ${acc.territory || 'Unknown'}
-Intent Score: ${acc.totalScore || 0}
-Website Signal: ${acc.ws || 'No'}${acc.wlp ? ' | Last page viewed: ' + acc.wlp : ''}
-Buyer Intent Signal: ${acc.bi || 'No'}${acc.bid && acc.bid !== '-' ? ' | Date: ' + acc.bid : ''}
-
-Search for these signal types using web search, LinkedIn, and news sources:
-
-1. HIRING SIGNALS — roles relevant to FM, CMMS, facilities, property operations, digital transformation, smart buildings (check LinkedIn Jobs, company careers page). Flag roles that indicate budget, growth, or unmet need.
-
-2. LEADERSHIP CHANGES — new VP, SVP, Director, or C-level hires in relevant functions. New leaders often re-evaluate vendors in their first 90 days. Check LinkedIn, press releases, news.
-
-3. PRODUCT LAUNCHES & EXPANSIONS — new contracts won, new sites/markets, acquisitions, partnerships, funding. These indicate growth and new budget priorities.
-
-Produce this exact Signal Report:
-
-## Signal Report: ${acc.company}
-**Research date**: today
-
-### Hiring Signals
-| Role Posted | Team/Function | Recency | Relevance | Source |
-|-------------|--------------|---------|-----------|--------|
-
-### Leadership Changes
-| Name | Role | Recency | Why It Matters | Source |
-|------|------|---------|----------------|--------|
-
-### Product Launches & Expansions
-| Event | Recency | Why It Matters | Source |
-|-------|---------|----------------|--------|
-
-### Signal Summary
-**Overall signal strength**: High / Medium / Low / None found
-[2–3 sentence summary of what the signals suggest about timing and angle for outreach]
-
-### Recommended Outreach Hook
-[Based on the strongest signal, suggest one specific angle or hook for first contact]`
-    };
-  },
-
-  'messaging-writer': function(acc) {
-    return {
-      system: `You are an expert BDR messaging specialist at Facilio — an AI-powered Connected CMMS and property operations platform.
-
-Facilio's core value: Replace legacy CMMS/CAFM (Maximo, Archibus, Planon, FSI, Concept Evolution) with a modern AI-driven connected operations platform — cutting maintenance costs, improving compliance, and giving real-time visibility across portfolios.
-
-Known customers for reference: British Land, Brookfield, Quality FM, Publix, HCA Healthcare, Majid Al Futtaim, IEM, DAMAC, Charter Hall, Investa, and 100+ others globally.
-
-STRICT message rules:
-- NEVER start with "I hope this finds you well" or "My name is"
-- NEVER open with a generic compliment about the company
-- ALWAYS lead with the prospect's world — their signal, challenge, or context — before introducing the sender
-- Cold email: under 120 words TOTAL, subject line under 8 words
-- LinkedIn connection request: under 300 characters, no product pitch in first message
-- After writing, note what hook/signal was used so the user can see the reasoning
-- Offer a follow-up sequence (Day 3, Day 7, Day 14) if relevant`,
-
-      user: `Write cold outreach for this inbound account. They have shown intent signals — use that as the hook.
-
-Company: ${acc.company}
-Domain: ${acc.domain || 'Unknown'}
-Vertical: ${acc.vertical || 'Unknown'}
-Territory: ${acc.territory || 'Unknown'}
-Website Signal: ${acc.ws || 'No'}${acc.wlp ? ' | Last page viewed: ' + acc.wlp : ''}
-Buyer Intent Signal: ${acc.bi || 'No'}${acc.bid && acc.bid !== '-' ? ' | Intent date: ' + acc.bid : ''}
-Intent Score: ${acc.totalScore || 0}
-Contacts on record: ${acc.contacts && acc.contacts.length ? acc.contacts.map(function(c){return ((c.firstName||'')+' '+(c.lastName||'')).trim()+(c.email?' ('+c.email+')':'');}).join(', ') : 'None — address to relevant FM/Operations leader'}
-
-Write ALL THREE:
-
-**1. Cold Email**
-Subject: [under 8 words — specific, references hook or company name, not clickbait]
-[Under 120 words total]
-- Opener (1 sentence): The hook — reference the signal or reason for outreach. Do NOT start with "I" or generic compliment.
-- Bridge (1–2 sentences): Connect the signal to their likely challenge or goal.
-- Value prop (1–2 sentences): What Facilio does and the outcome it drives. Be specific, not vague.
-- CTA (1 sentence): Low-friction ask — "Worth a 15-min chat?" or "Open to a quick call next week?"
-
-**2. LinkedIn Connection Request**
-[Under 300 characters. Hook + what Facilio does + soft ask. Human and peer-to-peer. No product pitch.]
-
-**3. Call Script / Talk Track**
-- Opening (5–10 sec): Name, company, reason for calling — one clear sentence
-- Permission check (1 sentence): "Did I catch you at a bad time?"
-- Context/hook (15–20 sec): Why calling them specifically — reference their website visit or buyer intent signal
-- Problem framing (20–30 sec): The challenge their role typically faces
-- Value bridge (15–20 sec): How Facilio helps, with a specific outcome or customer example
-- Ask (10 sec): Low-pressure meeting request
-- Objection responses: "Not interested" | "Send me an email" | "We already have a solution"
-
-**Hook used**: [state which signal or angle was used and why]`
-    };
-  },
-
-  'full-prospect': function(acc) {
-    return {
-      system: `You are a senior SDR/BDR at Facilio — an AI-powered Connected CMMS and property operations platform. You run complete prospecting workflows: research the account, surface buying signals, and write personalized outreach.
-
-Use this Facilio Account Context throughout:
-${ACCOUNT_CONTEXT}
-
-Rules:
-- Run all 3 phases in sequence without stopping unless ICP score is Poor Fit
-- Carry context forward: use Phase 1 company data in Phase 3 messaging
-- Do NOT fabricate names, URLs, or funding data. If not publicly available, say Unknown
-- Keep each phase output scannable — tables and short bullets, not long paragraphs
-- The messaging in Phase 3 should feel tailored, not templated
-- Use web search to find current signals and verify company information`,
-
-      user: `Run the FULL PROSPECT workflow for this inbound account. They have shown intent — they visited our website or showed buyer intent signals.
-
-Company: ${acc.company}
-Domain: ${acc.domain || 'Unknown'}
-Vertical: ${acc.vertical || 'Unknown'}
-Territory: ${acc.territory || 'Unknown'}
-Lead Status: ${acc.status || 'Unknown'}
-Intent Score: ${acc.totalScore || 0}
-Website Signal: ${acc.ws || 'No'}${acc.wlp ? ' | Last page: ' + acc.wlp : ''}
-Buyer Intent: ${acc.bi || 'No'}${acc.bid && acc.bid !== '-' ? ' | Date: ' + acc.bid : ''}
-Contacts: ${acc.contacts && acc.contacts.length ? acc.contacts.map(function(c){return ((c.firstName||'')+' '+(c.lastName||'')).trim()+(c.email?' ('+c.email+')':'');}).join(', ') : 'None on record'}
-
----
-## Phase 1: Account Research & ICP Qualification
-
-Research the company. Produce:
-- Company overview (what they do, business model, portfolio scale, size, ownership)
-- FM & Property Operations setup (how they manage buildings, CMMS/CAFM used, BMS/IoT, tech confidence: Confirmed/Inferred/Not Found)
-- Closest Facilio customer archetype match and why
-- ICP Verdict table (Industry/vertical | Portfolio scale | Operational complexity | Tech stack maturity) each rated Strong/Partial/No Fit
-- ICP Score: Strong Fit / Potential Fit / Poor Fit
-- One-sentence recommendation
-
-> If Poor Fit — state clearly and stop.
-
----
-## Phase 2: Buying Signals
-
-Search for:
-- Hiring signals (roles related to FM, CMMS, facilities, property ops, digital transformation)
-- Leadership changes (new VP/Director/C-level in relevant functions, last 6 months)
-- Expansion signals (new contracts, sites, markets, acquisitions, partnerships, funding)
-
-Rate each: HOT (<30 days) / WARM (30–90 days) / COOLING (90–180 days)
-
-| Signal | Type | Recency | Relevance |
-|--------|------|---------|-----------|
-
-**Overall signal strength**: High / Medium / Low / None found
-**Best hook for outreach**: [single strongest angle]
-
----
-## Phase 3: Outreach
-
-Using the research from Phases 1–2, write:
-
-**Cold Email** (under 120 words, subject under 8 words)
-Lead with the strongest signal. Never start with "I" or generic compliment.
-
-**LinkedIn Connection Request** (under 300 characters)
-Human and peer-to-peer. No product pitch.
-
-**Call Script**
-Opening → Permission check → Hook → Problem framing → Value bridge → Ask → 3 objection responses
-
----
-## Prospecting Summary
-- ICP fit:
-- Top signal:
-- Hook used:
-- Messages written: Cold email ✓ | LinkedIn ✓ | Call script ✓`
-    };
-  }
-};
-
-var SKILL_LABELS = {
-  'account-research': '🔍 Account Research',
-  'signal-finder': '📡 Signal Finder',
-  'messaging-writer': '✍️ Messaging Writer',
-  'full-prospect': '⚡ Full Prospect'
-};
-
-// ─── HELPERS ─────────────────────────────────────────────────────────────────
 function E(s){return(s||'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
 function D(v){
   if(!v||v==='-'||v==='No'||v==='')return '';
-  try{var d=new Date(v);if(isNaN(d.getTime()))return v;var dd=String(d.getDate()).padStart(2,'0');var mm=String(d.getMonth()+1).padStart(2,'0');return dd+'/'+mm+'/'+d.getFullYear();}catch(e){return v;}
+  try{
+    var d=new Date(v);
+    if(isNaN(d.getTime()))return v;
+    var dd=String(d.getDate()).padStart(2,'0');
+    var mm=String(d.getMonth()+1).padStart(2,'0');
+    return dd+'/'+mm+'/'+d.getFullYear();
+  }catch(e){return v;}
 }
+
 function isPos(v){var x=(v||'').toString().trim().toLowerCase();return x==='yes'||x==='y'||x==='true'||x==='1'||x.indexOf('\u2705')>-1;}
 function hasWs(d){return isPos(d.ws);}
 function hasBi(d){return isPos(d.bi);}
 function initials(fn,ln){return((fn||'').charAt(0)+(ln||'').charAt(0)).toUpperCase()||'?';}
-function scoreClass(s){var n=parseFloat(s)||0;if(n>=6)return 'score-high';if(n>=3)return 'score-med';return 'score-low';}
-function statusClass(s){if(!s)return 'st-other';var sl=s.toLowerCase();if(sl==='new')return 'st-new';if(sl==='lto')return 'st-lto';if(sl.indexOf('progress')>-1)return 'st-inprogress';return 'st-other';}
 
-// ─── MARKDOWN RENDERER ───────────────────────────────────────────────────────
-function renderMarkdown(text) {
-  var html = text
-    // Escape HTML first (but preserve our special chars)
-    .replace(/&(?!amp;|lt;|gt;|quot;)/g, '&amp;')
-    .replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    // Headers
-    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
-    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
-    .replace(/^# (.+)$/gm, '<h1>$1</h1>')
-    // Bold and italic
-    .replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>')
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    // Code
-    .replace(/`([^`]+)`/g, '<code>$1</code>')
-    // HR
-    .replace(/^---+$/gm, '<hr>')
-    // Blockquote
-    .replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>')
-    // Tables
-    .replace(/^\|(.+)\|$/gm, function(match, p1, offset, str) {
-      var cells = match.slice(1,-1).split('|').map(function(c){return c.trim();});
-      // Check if previous line was a header (look for |---|) pattern
-      return '<tr>' + cells.map(function(c){return '<td>'+c+'</td>';}).join('') + '</tr>';
-    })
-    .replace(/<tr><td>[-: ]+<\/td>(<td>[-: ]+<\/td>)*<\/tr>/g, '') // remove separator rows
-    // Fix header rows (first row before any separator)
-    // Lists
-    .replace(/^[\*\-] (.+)$/gm, '<li>$1</li>')
-    .replace(/^\d+\. (.+)$/gm, '<li>$1</li>')
-    // Wrap consecutive li in ul
-    .replace(/(<li>.*<\/li>\n?)+/g, function(m){return '<ul>'+m+'</ul>';})
-    // Wrap consecutive tr in table
-    .replace(/(<tr>.*<\/tr>\n?)+/g, function(m){return '<table>'+m+'</table>';})
-    // Paragraphs (lines not already wrapped)
-    .replace(/^(?!<[htubcodl]).+$/gm, function(m){return m?'<p>'+m+'</p>':m;})
-    // Clean up
-    .replace(/<\/ul>\n?<ul>/g,'')
-    .replace(/<\/table>\n?<table>/g,'')
-    .replace(/\n\n+/g,'');
-  return '<div class="md-rendered">'+html+'</div>';
+function scoreClass(s){
+  var n=parseFloat(s)||0;
+  if(n>=6)return 'score-high';
+  if(n>=3)return 'score-med';
+  return 'score-low';
 }
 
-// ─── AI PANEL ────────────────────────────────────────────────────────────────
-// ─── CACHE SYSTEM ────────────────────────────────────────────────────────────
-var CACHE_KEY_PREFIX = 'facilio_ai_';
-
-function getCacheKey(company, skill) {
-  return CACHE_KEY_PREFIX + company.toLowerCase().replace(/[^a-z0-9]/g,'_') + '_' + skill;
+function statusClass(s){
+  if(!s)return 'st-other';
+  var sl=s.toLowerCase();
+  if(sl==='new')return 'st-new';
+  if(sl==='lto')return 'st-lto';
+  if(sl.indexOf('progress')>-1)return 'st-inprogress';
+  return 'st-other';
 }
 
-function saveResult(company, skill, html) {
-  try {
-    var key = getCacheKey(company, skill);
-    var entry = { html: html, skill: skill, company: company, date: new Date().toLocaleDateString('en-GB'), ts: Date.now() };
-    localStorage.setItem(key, JSON.stringify(entry));
-    refreshSavedTabs(company);
-  } catch(e) { console.warn('Cache save failed:', e); }
-}
-
-function loadResult(company, skill) {
-  try {
-    var key = getCacheKey(company, skill);
-    var raw = localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : null;
-  } catch(e) { return null; }
-}
-
-function getSavedSkills(company) {
-  var saved = [];
-  try {
-    var prefix = CACHE_KEY_PREFIX + company.toLowerCase().replace(/[^a-z0-9]/g,'_') + '_';
-    for (var i = 0; i < localStorage.length; i++) {
-      var k = localStorage.key(i);
-      if (k && k.indexOf(prefix) === 0) {
-        var skill = k.replace(prefix, '');
-        var entry = JSON.parse(localStorage.getItem(k));
-        saved.push({ skill: skill, date: entry.date, label: SKILL_LABELS[skill] || skill });
-      }
-    }
-  } catch(e) {}
-  return saved;
-}
-
-function refreshSavedTabs(company) {
-  var saved = getSavedSkills(company || (currentAccount && currentAccount.company) || '');
-  var tabsEl = document.getElementById('saved-tabs');
-  if (!tabsEl) return;
-  if (!saved.length) { tabsEl.style.display = 'none'; return; }
-  tabsEl.style.display = 'block';
-  tabsEl.innerHTML = '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:8px;margin-top:4px">Saved Results</div>';
-  saved.forEach(function(s) {
-    var btn = document.createElement('button');
-    btn.className = 'saved-tab';
-    btn.style.cssText = 'display:block;width:100%;text-align:left;margin-bottom:5px;';
-    btn.textContent = (s.label || s.skill) + ' · ' + s.date;
-    btn.onclick = function() {
-      var entry = loadResult(company || currentAccount.company, s.skill);
-      if (!entry) return;
-      document.querySelectorAll('.saved-tab').forEach(function(b){b.classList.remove('active-tab');});
-      btn.classList.add('active-tab');
-      var badge = document.getElementById('aip-skill-badge');
-      badge.textContent = (SKILL_LABELS[s.skill] || s.skill) + ' (saved ' + entry.date + ')';
-      badge.style.display = 'inline-flex';
-      badge.className = 'out-badge cache-badge';
-      var outputEl = document.getElementById('aip-output');
-      outputEl.className = 'aip-output';
-      outputEl.innerHTML = entry.html;
-      document.getElementById('aip-actions').style.display = 'flex';
-    };
-    tabsEl.appendChild(btn);
-  });
-}
-
-function clearSavedResults(company) {
-  try {
-    var prefix = CACHE_KEY_PREFIX + company.toLowerCase().replace(/[^a-z0-9]/g,'_') + '_';
-    var toDelete = [];
-    for (var i = 0; i < localStorage.length; i++) {
-      var k = localStorage.key(i);
-      if (k && k.indexOf(prefix) === 0) toDelete.push(k);
-    }
-    toDelete.forEach(function(k){ localStorage.removeItem(k); });
-    refreshSavedTabs(company);
-  } catch(e) {}
-}
-
-function openAIPanel(accountIdx) {
-  currentAccount = DATA[accountIdx];
-  selectedSkill = null;
-
-  // Populate header
-  var co = currentAccount.company || 'Unknown';
-  document.getElementById('aip-company-name').textContent = co;
-  document.getElementById('aip-company-initial').textContent = co.charAt(0).toUpperCase();
-
-  // Meta tags
-  var metaEl = document.getElementById('aip-company-meta');
-  metaEl.innerHTML = [currentAccount.vertical, currentAccount.territory, currentAccount.owner]
-    .filter(Boolean)
-    .map(function(t){return "<span class='aip-meta-tag'>"+E(t)+"</span>";})
-    .join('');
-
-  // Sidebar details
-  document.getElementById('si-vertical').textContent = currentAccount.vertical || '—';
-  document.getElementById('si-territory').textContent = currentAccount.territory || '—';
-  document.getElementById('si-owner').textContent = currentAccount.owner || '—';
-  document.getElementById('si-status').textContent = currentAccount.status || '—';
-  document.getElementById('si-score').textContent = currentAccount.totalScore ? '⚡ ' + currentAccount.totalScore : '—';
-  document.getElementById('si-ws').textContent = isPos(currentAccount.ws) ? '✅ Yes' : '—';
-  document.getElementById('si-bi').textContent = isPos(currentAccount.bi) ? '✅ Yes' : '—';
-  document.getElementById('si-contacts').textContent = (currentAccount.contacts||[]).length || '—';
-
-  // Reset skill buttons
-  document.querySelectorAll('.skill-tab-btn').forEach(function(b){b.classList.remove('active');});
-
-  // Reset output
-  document.getElementById('aip-output').innerHTML = '<div class="aip-placeholder"><span class="ph-icon">🤖</span>Select a skill above and click Run to start AI prospecting for this account.</div>';
-  document.getElementById('aip-actions').style.display = 'none';
-  document.getElementById('aip-skill-badge').style.display = 'none';
-
-  var runBtn = document.getElementById('aip-run-btn');
-  runBtn.disabled = true;
-  runBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg> Select a skill to run';
-
-  // Load saved tabs for this company
-  refreshSavedTabs(currentAccount.company);
-
-  // Open panel
-  document.getElementById('ai-overlay').classList.add('open');
-  document.getElementById('ai-panel').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeAIPanel() {
-  if (isStreaming) return; // don't close mid-stream
-  document.getElementById('ai-overlay').classList.remove('open');
-  document.getElementById('ai-panel').classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-function selectSkill(btn) {
-  document.querySelectorAll('.skill-tab-btn').forEach(function(b){b.classList.remove('active');});
-  btn.classList.add('active');
-  selectedSkill = btn.dataset.skill;
-
-  var runBtn = document.getElementById('aip-run-btn');
-  runBtn.disabled = false;
-  runBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg> Run ' + SKILL_LABELS[selectedSkill];
-}
-
-async function callClaude(systemPrompt, userPrompt, useWebSearch) {
-  var body = {
-    model: 'claude-haiku-4-5-20251001',
-    max_tokens: 4000,
-    system: systemPrompt,
-    messages: [{ role: 'user', content: userPrompt }]
-  };
-  // Only enable web search when explicitly requested (Full Prospect)
-  if (useWebSearch) {
-    body.tools = [{ type: 'web_search_20250305', name: 'web_search' }];
-    body.max_tokens = 6000;
-  }
-  var response = await fetch('https://orange-snowflake-bcc4.preethi-d.workers.dev', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
-  });
-
-  if (!response.ok) {
-    var errText = await response.text();
-    throw new Error('API error ' + response.status + ': ' + errText.slice(0, 200));
-  }
-
-  var data = await response.json();
-  if (data.error) throw new Error('Claude API: ' + data.error.type + ' — ' + data.error.message);
-
-  // Extract all text blocks (handles multi-turn web search)
-  var fullText = data._extractedText || '';
-  if (!fullText && data.content && Array.isArray(data.content)) {
-    data.content.forEach(function(block) {
-      if (block.type === 'text') fullText += block.text;
-    });
-  }
-
-  if (!fullText) throw new Error('Empty response. Stop reason: ' + data.stop_reason + ' | Raw: ' + JSON.stringify(data).slice(0, 300));
-  return fullText;
-}
-
-function setPhaseStatus(outputEl, phases, current, message) {
-  var html = '<div style="padding:16px 20px;border-bottom:1px solid var(--border);background:var(--surface2)">';
-  phases.forEach(function(p, i) {
-    var isDone = i < current;
-    var isActive = i === current;
-    var color = isDone ? '#059669' : isActive ? 'var(--accent)' : 'var(--text3)';
-    var icon = isDone ? '✅' : isActive ? '<span class="spinner" style="display:inline-block;width:12px;height:12px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle"></span>' : '⏳';
-    html += '<div style="display:flex;align-items:center;gap:8px;padding:5px 0;font-size:12px;font-weight:600;color:'+color+'">';
-    html += '<span>'+icon+'</span><span>'+p+'</span>';
-    if (isActive && message) html += '<span style="font-weight:400;color:var(--text3)"> — '+message+'</span>';
-    html += '</div>';
-  });
-  html += '</div><div id="phase-output" style="padding:16px 20px;flex:1;overflow-y:auto"></div>';
-  outputEl.innerHTML = html;
-}
-
-function appendPhaseOutput(text, isHtml) {
-  var el = document.getElementById('phase-output');
-  if (!el) return;
-  // If already HTML (from saved results), use directly; otherwise render markdown
-  var rendered = isHtml ? text : renderMarkdown(text);
-  el.innerHTML += rendered + '<hr style="border:none;border-top:1px solid var(--border);margin:16px 0">';
-}
-
-async function runSkill() {
-  if (!selectedSkill || !currentAccount || isStreaming) return;
-
-  isStreaming = true;
-  var runBtn = document.getElementById('aip-run-btn');
-  runBtn.disabled = true;
-  runBtn.innerHTML = '<div class="thinking-dots"><span></span><span></span><span></span></div> Running...';
-
-  var badge = document.getElementById('aip-skill-badge');
-  badge.textContent = SKILL_LABELS[selectedSkill];
-  badge.style.display = 'inline-flex';
-  badge.className = 'out-badge';
-
-  var outputEl = document.getElementById('aip-output');
-  outputEl.className = 'aip-output streaming';
-  outputEl.innerHTML = '<div class="thinking"><div class="thinking-dots"><span></span><span></span><span></span></div><span>Starting research for ' + E(currentAccount.company) + '...</span></div>';
-  document.getElementById('aip-actions').style.display = 'none';
-
-  var fullOutput = '';
-
-  try {
-    var acc = currentAccount;
-
-    // ── FULL PROSPECT: uses saved results, only 1 API call for messaging ──────
-    if (selectedSkill === 'full-prospect') {
-      outputEl.style.padding = '0';
-      outputEl.style.background = 'var(--surface)';
-      outputEl.innerHTML = '<div id="fp-status" style="padding:16px 20px;background:var(--surface2);border-bottom:1px solid var(--border)"></div><div id="phase-output" style="padding:16px 20px"></div>';
-
-      function setFPStatus(html) {
-        var el = document.getElementById('fp-status');
-        if (el) el.innerHTML = html;
-      }
-
-      function stripHtml(html) {
-        return (html || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 2500);
-      }
-
-      var savedAR = loadResult(acc.company, 'account-research');
-      var savedSF = loadResult(acc.company, 'signal-finder');
-      var phase1Text = '';
-      var phase2Text = '';
-
-      // ── PHASE 1: Account Research ──────────────────────────────────────────
-      if (savedAR) {
-        phase1Text = stripHtml(savedAR.html);
-        setFPStatus(
-          '<div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:#059669">✅ Phase 1: Account Research — loaded from saved results (' + savedAR.date + ')</div>'
-        );
-        appendPhaseOutput(savedAR.html, true);
-        await new Promise(function(r){setTimeout(r, 500);});
-      } else {
-        setFPStatus('<div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--accent)"><div class="thinking-dots"><span></span><span></span><span></span></div> Phase 1: Running Account Research...</div>');
-        var p1 = SKILL_PROMPTS['account-research'](acc);
-        var p1raw = await callClaude(p1.system, p1.user, false);
-        phase1Text = p1raw.slice(0, 2500);
-        var p1html = renderMarkdown(p1raw);
-        saveResult(acc.company, 'account-research', p1html);
-        appendPhaseOutput(p1html, true);
-        setFPStatus('<div style="font-size:12px;font-weight:600;color:#059669">✅ Phase 1: Account Research — done</div>');
-        // Wait 65 seconds before next call
-        for (var i = 65; i > 0; i--) {
-          setFPStatus('<div style="font-size:12px;font-weight:600;color:#059669">✅ Phase 1: Done</div><div style="font-size:11px;color:var(--text3);margin-top:4px">⏳ Waiting ' + i + 's before Phase 2 (rate limit pause)...</div>');
-          await new Promise(function(r){setTimeout(r, 1000);});
-        }
-      }
-
-      // ── PHASE 2: Signal Finder ─────────────────────────────────────────────
-      if (savedSF) {
-        phase2Text = stripHtml(savedSF.html);
-        setFPStatus(
-          '<div style="font-size:12px;font-weight:600;color:#059669">✅ Phase 1: Account Research — saved (' + (savedAR ? savedAR.date : 'just run') + ')</div>' +
-          '<div style="font-size:12px;font-weight:600;color:#059669;margin-top:4px">✅ Phase 2: Signal Finder — loaded from saved results (' + savedSF.date + ')</div>'
-        );
-        appendPhaseOutput(savedSF.html, true);
-        await new Promise(function(r){setTimeout(r, 500);});
-      } else {
-        setFPStatus(
-          '<div style="font-size:12px;font-weight:600;color:#059669">✅ Phase 1: Account Research — done</div>' +
-          '<div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--accent);margin-top:4px"><div class="thinking-dots"><span></span><span></span><span></span></div> Phase 2: Running Signal Finder...</div>'
-        );
-        var p2 = SKILL_PROMPTS['signal-finder'](acc);
-        var p2UserWithCtx = p2.user + '\n\n---\n## Account Research Context\n' + phase1Text;
-        var p2raw = await callClaude(p2.system, p2UserWithCtx, false);
-        phase2Text = p2raw.slice(0, 2500);
-        var p2html = renderMarkdown(p2raw);
-        saveResult(acc.company, 'signal-finder', p2html);
-        appendPhaseOutput(p2html, true);
-        setFPStatus(
-          '<div style="font-size:12px;font-weight:600;color:#059669">✅ Phase 1: Account Research — done</div>' +
-          '<div style="font-size:12px;font-weight:600;color:#059669;margin-top:4px">✅ Phase 2: Signal Finder — done</div>'
-        );
-        // Wait 65 seconds before next call
-        for (var j = 65; j > 0; j--) {
-          setFPStatus(
-            '<div style="font-size:12px;font-weight:600;color:#059669">✅ Phase 1 & 2 done</div>' +
-            '<div style="font-size:11px;color:var(--text3);margin-top:4px">⏳ Waiting ' + j + 's before Phase 3 (rate limit pause)...</div>'
-          );
-          await new Promise(function(r){setTimeout(r, 1000);});
-        }
-      }
-
-      // ── PHASE 3: Messaging Writer — always 1 API call using saved context ──
-      setFPStatus(
-        '<div style="font-size:12px;font-weight:600;color:#059669">✅ Phase 1 & 2 done</div>' +
-        '<div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--accent);margin-top:4px"><div class="thinking-dots"><span></span><span></span><span></span></div> Phase 3: Writing personalised outreach...</div>'
-      );
-      var p3 = SKILL_PROMPTS['messaging-writer'](acc);
-      var p3UserWithCtx = p3.user +
-        '\n\n---\n## Account Research\n' + phase1Text +
-        '\n\n---\n## Signal Finder Results\n' + phase2Text +
-        '\n\nIMPORTANT: Use ALL the research above. Write hyper-personalised outreach referencing specific company details, their FM setup, tech stack, and the strongest signals found.';
-      var p3raw = await callClaude(p3.system, p3UserWithCtx, false);
-      var p3html = renderMarkdown(p3raw);
-      saveResult(acc.company, 'messaging-writer', p3html);
-      appendPhaseOutput(p3html, true);
-
-      setFPStatus(
-        '<div style="font-size:12px;font-weight:600;color:#059669">✅ Phase 1: Account Research · ✅ Phase 2: Signal Finder · ✅ Phase 3: Messaging Writer — all done!</div>'
-      );
-
-      fullOutput = (savedAR ? stripHtml(savedAR.html) : '') + '\n\n' + (savedSF ? stripHtml(savedSF.html) : '') + '\n\n' + p3raw;
-
-    // ── INDIVIDUAL SKILLS: run directly, no pre-calls ───────────────────────
-    } else {
-      outputEl.style.padding = '';
-      outputEl.style.background = '';
-      outputEl.innerHTML = '<div class="thinking"><div class="thinking-dots"><span></span><span></span><span></span></div><span>Running ' + SKILL_LABELS[selectedSkill] + ' for ' + E(acc.company) + '...</span></div>';
-
-      var skillPrompt = SKILL_PROMPTS[selectedSkill](acc);
-      var skillResult = await callClaude(skillPrompt.system, skillPrompt.user, false);
-
-      outputEl.innerHTML = renderMarkdown(skillResult);
-      fullOutput = skillResult;
-    }
-
-    outputEl.className = 'aip-output';
-    document.getElementById('aip-actions').style.display = 'flex';
-    saveResult(acc.company, selectedSkill, outputEl.innerHTML);
-
-  } catch(err) {
-    outputEl.className = 'aip-output';
-    outputEl.style.padding = '';
-    outputEl.style.background = '';
-    outputEl.innerHTML = '<div style="color:#EF4444;padding:16px;background:#FEF2F2;border-radius:8px;font-size:13px"><strong>Error running skill</strong><br><br>' + E(err.message) + '</div>';
-  }
-
-  isStreaming = false;
-  runBtn.disabled = false;
-  runBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg> Run Again';
-}
-
-function copyOutput() {
-  var outputEl = document.getElementById('aip-output');
-  var text = outputEl.innerText || outputEl.textContent;
-  navigator.clipboard.writeText(text).then(function(){
-    var btn = document.querySelector('.aip-copy-btn');
-    btn.textContent = '✓ Copied!';
-    setTimeout(function(){btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Output';},2000);
-  });
-}
-
-function clearOutput() {
-  document.getElementById('aip-output').innerHTML = '<div class="aip-placeholder"><span class="ph-icon">🤖</span>Select a skill above and click Run to start AI prospecting for this account.</div>';
-  document.getElementById('aip-actions').style.display = 'none';
-}
-
-// ─── DATA LOAD ────────────────────────────────────────────────────────────────
 fetch('inbound.json?v='+Date.now())
   .then(function(r){return r.json();})
   .then(function(d){
@@ -1205,7 +249,11 @@ function buildChips(){
       var b=document.createElement('button');
       b.className='chip'+(getV()===v?' on':'');
       b.textContent=v;b.dataset.v=v;
-      b.onclick=function(){setV(v);document.querySelectorAll('#'+id+' .chip').forEach(function(c){c.classList.toggle('on',c.dataset.v===v);});render();};
+      b.onclick=function(){
+        setV(v);
+        document.querySelectorAll('#'+id+' .chip').forEach(function(c){c.classList.toggle('on',c.dataset.v===v);});
+        render();
+      };
       el.appendChild(b);
     });
   }
@@ -1214,15 +262,26 @@ function buildChips(){
   mk('status-chips',statuses,function(){return aStatus;},function(v){aStatus=v;});
   mk('vertical-chips',verticals,function(){return aVertical;},function(v){aVertical=v;});
 
+  // Owner dropdown
   var sel=document.getElementById('owner-sel');sel.innerHTML='';
-  owners.forEach(function(o){var opt=document.createElement('option');opt.value=o;opt.textContent=o==='All'?'All Owners':o;if(o===aOwner)opt.selected=true;sel.appendChild(opt);});
+  owners.forEach(function(o){
+    var opt=document.createElement('option');
+    opt.value=o;opt.textContent=o==='All'?'All Owners':o;
+    if(o===aOwner)opt.selected=true;
+    sel.appendChild(opt);
+  });
 
+  // Signal chips
   var sigEl=document.getElementById('signal-chips');sigEl.innerHTML='';
   [{k:'All',l:'All'},{k:'ws',l:'🌐 Website'},{k:'bi',l:'🎯 Buyer Intent'},{k:'both',l:'⚡ Both'},{k:'none',l:'No Signals'}].forEach(function(sig){
     var b=document.createElement('button');
     b.className='chip'+(aSignal===sig.k?' on':'');
     b.innerHTML=sig.l;b.dataset.v=sig.k;
-    b.onclick=function(){aSignal=sig.k;document.querySelectorAll('#signal-chips .chip').forEach(function(c){c.classList.toggle('on',c.dataset.v===sig.k);});render();};
+    b.onclick=function(){
+      aSignal=sig.k;
+      document.querySelectorAll('#signal-chips .chip').forEach(function(c){c.classList.toggle('on',c.dataset.v===sig.k);});
+      render();
+    };
     sigEl.appendChild(b);
   });
 }
@@ -1239,7 +298,10 @@ function getFiltered(){
     if(aSignal==='bi'&&!hasBi(d))return false;
     if(aSignal==='both'&&!(hasWs(d)&&hasBi(d)))return false;
     if(aSignal==='none'&&(hasWs(d)||hasBi(d)))return false;
-    if(q){var hay=(d.company||'').toLowerCase()+(d.owner||'').toLowerCase()+(d.vertical||'').toLowerCase()+(d.territory||'').toLowerCase();if(hay.indexOf(q)<0)return false;}
+    if(q){
+      var hay=(d.company||'').toLowerCase()+(d.owner||'').toLowerCase()+(d.vertical||'').toLowerCase()+(d.territory||'').toLowerCase();
+      if(hay.indexOf(q)<0)return false;
+    }
     return true;
   }).sort(function(a,b){
     if(sort==='company')return(a.company||'').localeCompare(b.company||'');
@@ -1253,15 +315,24 @@ function getFiltered(){
   });
 }
 
+// Track which panel is open per card
+var openPanels={};
+
 function togglePanel(cardId, panel){
   var key=cardId+'_'+panel;
+  // Close all panels for this card first
   ['ws','bi','ct'].forEach(function(p){
     var el=document.getElementById(cardId+'_panel_'+p);
     var tab=document.getElementById(cardId+'_tab_'+p);
     if(el){el.classList.remove('open');}
     if(tab){tab.classList.remove('active');}
   });
-  if(openPanels[cardId]===panel){openPanels[cardId]=null;return;}
+  // If same panel was open, it's now closed — done
+  if(openPanels[cardId]===panel){
+    openPanels[cardId]=null;
+    return;
+  }
+  // Open new panel
   openPanels[cardId]=panel;
   var el=document.getElementById(cardId+'_panel_'+panel);
   var tab=document.getElementById(cardId+'_tab_'+panel);
@@ -1269,21 +340,13 @@ function togglePanel(cardId, panel){
   if(tab)tab.classList.add('active');
 }
 
-// ─── RENDER ──────────────────────────────────────────────────────────────────
-var DATA_INDICES = []; // maps rendered idx → DATA idx
-
 function render(){
   var list=getFiltered();
   document.getElementById('count').textContent=list.length+' accounts';
   document.getElementById('empty').style.display=list.length?'none':'block';
   var g=document.getElementById('grid');g.innerHTML='';
-  DATA_INDICES=[];
 
   list.forEach(function(d,idx){
-    // Find the actual index in DATA for AI panel
-    var dataIdx = DATA.indexOf(d);
-    DATA_INDICES.push(dataIdx);
-
     var ws=hasWs(d),bi=hasBi(d);
     var cardId='card_'+idx;
     var sc=statusClass(d.status);
@@ -1294,31 +357,80 @@ function render(){
     card.className='card'+(ws&&bi?' card-both':'');
     card.id=cardId;
 
+    // Score badge
     var scoreBadge='';
-    if(score>0){scoreBadge="<div class='score-row'><span class='score-badge "+scoreClass(score)+"'>&#9889; "+score+"</span><span class='score-lbl'>Overall Intent Score</span></div>";}
+    if(score>0){
+      scoreBadge="<div class='score-row'>"+
+        "<span class='score-badge "+scoreClass(score)+"'>&#9889; "+score+"</span>"+
+        "<span class='score-lbl'>Overall Intent Score</span>"+
+        "</div>";
+    }
 
+    // Signal tabs
     var tabsHtml="<div class='sig-tabs'>";
-    if(ws){tabsHtml+="<button class='sig-tab tab-ws' id='"+cardId+"_tab_ws' onclick='togglePanel(\""+cardId+"\",\"ws\")'>🌐 Website"+(d.wsScore?" "+d.wsScore:"")+"</button>";}
-    if(bi){tabsHtml+="<button class='sig-tab tab-bi' id='"+cardId+"_tab_bi' onclick='togglePanel(\""+cardId+"\",\"bi\")'>🎯 Buyer Intent"+(d.biScore?" "+d.biScore:"")+"</button>";}
-    if(contacts.length){tabsHtml+="<button class='sig-tab tab-ct' id='"+cardId+"_tab_ct' onclick='togglePanel(\""+cardId+"\",\"ct\")'>👥 Contacts ("+contacts.length+")</button>";}
-    if(!ws&&!bi&&!contacts.length){tabsHtml+="<span class='no-sig'>No signals yet</span>";}
+    if(ws){
+      tabsHtml+="<button class='sig-tab tab-ws' id='"+cardId+"_tab_ws' onclick='togglePanel(\""+cardId+"\",\"ws\")'>"+
+        "🌐 Website"+(d.wsScore?" "+d.wsScore:"")+"</button>";
+    }
+    if(bi){
+      tabsHtml+="<button class='sig-tab tab-bi' id='"+cardId+"_tab_bi' onclick='togglePanel(\""+cardId+"\",\"bi\")'>"+
+        "🎯 Buyer Intent"+(d.biScore?" "+d.biScore:"")+"</button>";
+    }
+    if(contacts.length){
+      tabsHtml+="<button class='sig-tab tab-ct' id='"+cardId+"_tab_ct' onclick='togglePanel(\""+cardId+"\",\"ct\")'>"+
+        "👥 Contacts ("+contacts.length+")</button>";
+    }
+    if(!ws&&!bi&&!contacts.length){
+      tabsHtml+="<span class='no-sig'>No signals yet</span>";
+    }
     tabsHtml+="</div>";
 
-    // AI Prospect button
-    var aiBtn = "<button class='btn-prospect' onclick='openAIPanel("+dataIdx+")'>"+
-      "<svg width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5'><path d='M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z'/><path d='M12 8v4l3 3'/></svg>"+
-      "🤖 AI Prospect</button>";
-
+    // Website panel
     var wsPanel="<div class='sig-panel sig-panel-ws' id='"+cardId+"_panel_ws'>";
-    if(ws){wsPanel+=(d.wsScore?"<div class='sp-row'><span class='sp-key'>Score</span><span class='sp-val'><b>"+E(d.wsScore)+"</b> / 5</span></div>":"")+(d.domain?"<div class='sp-row'><span class='sp-key'>Domain</span><span class='sp-val sp-mono'>"+E(d.domain)+"</span></div>":"")+(d.wsd&&d.wsd!=='-'?"<div class='sp-row'><span class='sp-key'>Visit Date</span><span class='sp-val'>"+E(D(d.wsd))+"</span></div>":"")+(d.wlp?"<div class='sp-row'><span class='sp-key'>Last Page</span><span class='sp-val sp-mono'>"+E(d.wlp)+"</span></div>":"")+(d.wtp?"<div class='sp-row'><span class='sp-key'>Total Pages</span><span class='sp-val'>"+E(d.wtp)+"</span></div>":"");}
+    if(ws){
+      wsPanel+=
+        (d.wsScore?"<div class='sp-row'><span class='sp-key'>Score</span><span class='sp-val'><b>"+E(d.wsScore)+"</b> / 5</span></div>":"")+
+        (d.domain?"<div class='sp-row'><span class='sp-key'>Domain</span><span class='sp-val sp-mono'>"+E(d.domain)+"</span></div>":"")+
+        (d.wsd&&d.wsd!=='-'?"<div class='sp-row'><span class='sp-key'>Visit Date</span><span class='sp-val'>"+E(D(d.wsd))+"</span></div>":"")+
+        (d.wlp?"<div class='sp-row'><span class='sp-key'>Last Page</span><span class='sp-val sp-mono'>"+E(d.wlp)+"</span></div>":"")+
+        (d.wtp?"<div class='sp-row'><span class='sp-key'>Total Pages</span><span class='sp-val'>"+E(d.wtp)+"</span></div>":"");
+    }
     wsPanel+="</div>";
 
+    // Buyer intent panel
     var biPanel="<div class='sig-panel sig-panel-bi' id='"+cardId+"_panel_bi'>";
-    if(bi){biPanel+=(d.biScore?"<div class='sp-row'><span class='sp-key'>Score</span><span class='sp-val'><b>"+E(d.biScore)+"</b> / 5</span></div>":"")+(d.bid&&d.bid!=='-'?"<div class='sp-row'><span class='sp-key'>Intent Date</span><span class='sp-val'>"+E(D(d.bid))+"</span></div>":"")+(d.bi&&d.bi!=='-'&&d.bi!=='no'?"<div class='sp-row'><span class='sp-key'>Recent Signal</span><span class='sp-val'>"+E(d.bi)+"</span></div>":"<div class='sp-row'><span class='sp-key'>Status</span><span class='sp-val'>Signal detected</span></div>");}
+    if(bi){
+      biPanel+=
+        (d.biScore?"<div class='sp-row'><span class='sp-key'>Score</span><span class='sp-val'><b>"+E(d.biScore)+"</b> / 5</span></div>":"")+
+        (d.bid&&d.bid!=='-'?"<div class='sp-row'><span class='sp-key'>Intent Date</span><span class='sp-val'>"+E(D(d.bid))+"</span></div>":"")+
+        (d.bi&&d.bi!=='-'&&d.bi!=='no'?"<div class='sp-row'><span class='sp-key'>Recent Signal</span><span class='sp-val'>"+E(d.bi)+"</span></div>":"<div class='sp-row'><span class='sp-key'>Status</span><span class='sp-val'>Signal detected</span></div>");
+    }
     biPanel+="</div>";
 
+    // Contacts panel
     var ctPanel="<div class='sig-panel sig-panel-ct' id='"+cardId+"_panel_ct'>";
-    if(contacts.length){contacts.slice(0,5).forEach(function(c,ci){if(ci>0)ctPanel+="<hr class='sp-divider'>";var fullName=((c.firstName||'')+' '+(c.lastName||'')).trim()||'Unknown';ctPanel+="<div class='contact-block'><div class='contact-name-row'><div class='c-avatar'>"+initials(c.firstName,c.lastName)+"</div><div class='c-name'>"+E(fullName)+"</div></div>"+(c.email?"<div class='c-detail'><span class='c-lbl'>Email</span><span>"+E(c.email)+"</span></div>":"")+(c.phone?"<div class='c-detail'><span class='c-lbl'>Phone</span><span>"+E(c.phone)+"</span></div>":"")+(c.created?"<div class='c-detail'><span class='c-lbl'>Created</span><span>"+E(c.created)+"</span></div>":"")+(c.lastModified?"<div class='c-detail'><span class='c-lbl'>Modified</span><span>"+E(c.lastModified)+"</span></div>":"")+(c.sourceType?"<div class='c-detail'><span class='c-lbl'>Source Type</span><span>"+E(c.sourceType)+"</span></div>":"")+(c.broadSource?"<div class='c-detail'><span class='c-lbl'>Broad Source</span><span>"+E(c.broadSource)+"</span></div>":"")+"</div>";});if(contacts.length>5){ctPanel+="<div class='more-contacts'>+"+(contacts.length-5)+" more contacts</div>";}}
+    if(contacts.length){
+      contacts.slice(0,5).forEach(function(c,ci){
+        if(ci>0)ctPanel+="<hr class='sp-divider'>";
+        var fullName=((c.firstName||'')+' '+(c.lastName||'')).trim()||'Unknown';
+        ctPanel+=
+          "<div class='contact-block'>"+
+          "<div class='contact-name-row'>"+
+            "<div class='c-avatar'>"+initials(c.firstName,c.lastName)+"</div>"+
+            "<div class='c-name'>"+E(fullName)+"</div>"+
+          "</div>"+
+          (c.email?"<div class='c-detail'><span class='c-lbl'>Email</span><span>"+E(c.email)+"</span></div>":"")+
+          (c.phone?"<div class='c-detail'><span class='c-lbl'>Phone</span><span>"+E(c.phone)+"</span></div>":"")+
+          (c.created?"<div class='c-detail'><span class='c-lbl'>Created</span><span>"+E(c.created)+"</span></div>":"")+
+          (c.lastModified?"<div class='c-detail'><span class='c-lbl'>Modified</span><span>"+E(c.lastModified)+"</span></div>":"")+
+          (c.sourceType?"<div class='c-detail'><span class='c-lbl'>Source Type</span><span>"+E(c.sourceType)+"</span></div>":"")+
+          (c.broadSource?"<div class='c-detail'><span class='c-lbl'>Broad Source</span><span>"+E(c.broadSource)+"</span></div>":"")+
+          "</div>";
+      });
+      if(contacts.length>5){
+        ctPanel+="<div class='more-contacts'>+"+(contacts.length-5)+" more contacts</div>";
+      }
+    }
     ctPanel+="</div>";
 
     card.innerHTML=
@@ -1335,8 +447,9 @@ function render(){
       "</div>"+
       scoreBadge+
       tabsHtml+
-      wsPanel+biPanel+ctPanel+
-      aiBtn;
+      wsPanel+
+      biPanel+
+      ctPanel;
 
     g.appendChild(card);
   });
