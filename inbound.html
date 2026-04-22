@@ -1040,25 +1040,31 @@ async function runSkill() {
       setPhaseStatus(outputEl, phases, 1, 'searching for signals...');
       appendPhaseOutput(phase1Result);
 
-      // Small delay between phases to avoid rate limits
-      await new Promise(function(r){setTimeout(r, 3000);});
+      // Trim Phase 1 output to first 2000 chars for context passing (saves tokens)
+      var phase1Summary = phase1Result.slice(0, 2000);
 
-      // PHASE 2 — Signal Finder (with Phase 1 context)
+      // Wait 10 seconds before Phase 2 to stay within rate limits
+      await new Promise(function(r){setTimeout(r, 10000);});
+
+      // PHASE 2 — Signal Finder (with trimmed Phase 1 context)
       var p2prompt = SKILL_PROMPTS['signal-finder'](acc);
-      var p2UserWithContext = p2prompt.user + '\n\n---\n## Account Research Context (from Phase 1)\n' + phase1Result;
+      var p2UserWithContext = p2prompt.user + '\n\n---\n## Account Research Summary\n' + phase1Summary;
       var phase2Result = await callClaude(p2prompt.system, p2UserWithContext, true);
       setPhaseStatus(outputEl, phases, 2, 'writing personalised outreach...');
       appendPhaseOutput(phase2Result);
 
-      // Small delay between phases to avoid rate limits
-      await new Promise(function(r){setTimeout(r, 3000);});
+      // Trim Phase 2 output too
+      var phase2Summary = phase2Result.slice(0, 1500);
 
-      // PHASE 3 — Messaging Writer (with Phase 1 + Phase 2 context)
+      // Wait 10 seconds before Phase 3
+      await new Promise(function(r){setTimeout(r, 10000);});
+
+      // PHASE 3 — Messaging Writer (with trimmed context from both phases)
       var p3prompt = SKILL_PROMPTS['messaging-writer'](acc);
       var p3UserWithContext = p3prompt.user +
-        '\n\n---\n## Account Research (Phase 1 findings)\n' + phase1Result +
-        '\n\n---\n## Buying Signals (Phase 2 findings)\n' + phase2Result +
-        '\n\nUse ALL of the above research to write hyper-personalised outreach. Reference specific findings — company details, signals, and context from the research above.';
+        '\n\n---\n## Account Research Summary\n' + phase1Summary +
+        '\n\n---\n## Signal Summary\n' + phase2Summary +
+        '\n\nWrite hyper-personalised outreach using the above research.';
       var phase3Result = await callClaude(p3prompt.system, p3UserWithContext, false);
       setPhaseStatus(outputEl, phases, 3, '');
       appendPhaseOutput(phase3Result);
