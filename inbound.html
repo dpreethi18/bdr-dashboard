@@ -1035,12 +1035,18 @@ async function runSkill() {
       setPhaseStatus(outputEl, phases, 1, 'searching for signals...');
       appendPhaseOutput(phase1Result);
 
+      // Small delay between phases to avoid rate limits
+      await new Promise(function(r){setTimeout(r, 3000);});
+
       // PHASE 2 — Signal Finder (with Phase 1 context)
       var p2prompt = SKILL_PROMPTS['signal-finder'](acc);
       var p2UserWithContext = p2prompt.user + '\n\n---\n## Account Research Context (from Phase 1)\n' + phase1Result;
       var phase2Result = await callClaude(p2prompt.system, p2UserWithContext);
       setPhaseStatus(outputEl, phases, 2, 'writing personalised outreach...');
       appendPhaseOutput(phase2Result);
+
+      // Small delay between phases to avoid rate limits
+      await new Promise(function(r){setTimeout(r, 3000);});
 
       // PHASE 3 — Messaging Writer (with Phase 1 + Phase 2 context)
       var p3prompt = SKILL_PROMPTS['messaging-writer'](acc);
@@ -1054,51 +1060,17 @@ async function runSkill() {
 
       fullOutput = phase1Result + '\n\n' + phase2Result + '\n\n' + phase3Result;
 
-    // ── INDIVIDUAL SKILLS: silently run Account Research first, then skill ───
+    // ── INDIVIDUAL SKILLS: run directly, no pre-calls ───────────────────────
     } else {
-      var phases = ['Account Research (context)', SKILL_LABELS[selectedSkill]];
-      outputEl.style.padding = '0';
-      outputEl.style.background = 'var(--surface)';
+      outputEl.style.padding = '';
+      outputEl.style.background = '';
+      outputEl.innerHTML = '<div class="thinking"><div class="thinking-dots"><span></span><span></span><span></span></div><span>Running ' + SKILL_LABELS[selectedSkill] + ' for ' + E(acc.company) + '...</span></div>';
 
-      // Step 1 — silently run Account Research for context
-      setPhaseStatus(outputEl, phases, 0, 'building account context...');
-      var arPrompt = SKILL_PROMPTS['account-research'](acc);
-      var accountContext = await callClaude(arPrompt.system, arPrompt.user);
-
-      // Step 2 — run the selected skill with account context injected
-      setPhaseStatus(outputEl, phases, 1, 'running ' + SKILL_LABELS[selectedSkill] + '...');
       var skillPrompt = SKILL_PROMPTS[selectedSkill](acc);
+      var skillResult = await callClaude(skillPrompt.system, skillPrompt.user);
 
-      var enrichedUser = skillPrompt.user +
-        '\n\n---\n## Account Research Context\nThis research was already completed for this account. Use it to inform your output:\n\n' + accountContext;
-
-      // For messaging writer — make it explicit to use the research
-      if (selectedSkill === 'messaging-writer') {
-        enrichedUser += '\n\nIMPORTANT: Use the Account Research Context above to write hyper-personalised messages. Reference specific company details, their likely FM setup, tech stack, and any relevant context. The messages must feel like they were written by someone who did deep research on this company — not a generic template.';
-      }
-
-      var skillResult = await callClaude(skillPrompt.system, enrichedUser);
-
-      // For non-messaging skills, show account context too
-      if (selectedSkill === 'signal-finder') {
-        setPhaseStatus(outputEl, phases, 2, '');
-        appendPhaseOutput(accountContext);
-        appendPhaseOutput(skillResult);
-        fullOutput = accountContext + '\n\n' + skillResult;
-      } else {
-        // Messaging writer — just show final output (context was used internally)
-        setPhaseStatus(outputEl, phases, 2, '');
-        appendPhaseOutput(skillResult);
-        fullOutput = skillResult;
-      }
-
-      // Account Research skill — just show the result directly
-      if (selectedSkill === 'account-research') {
-        outputEl.style.padding = '';
-        outputEl.style.background = '';
-        outputEl.innerHTML = renderMarkdown(accountContext);
-        fullOutput = accountContext;
-      }
+      outputEl.innerHTML = renderMarkdown(skillResult);
+      fullOutput = skillResult;
     }
 
     outputEl.className = 'aip-output';
