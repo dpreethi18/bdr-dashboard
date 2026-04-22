@@ -13,6 +13,7 @@
   --accent:#5B6AF0;--accent2:#EEF0FE;--brand:#301894;
   --ws:#0891B2;--wsbg:#ECFEFF;
   --bi:#8B5CF6;--bibg:#F5F3FF;
+  --ai:#F59E0B;--aibg:#FFFBEB;
   --r:10px;--r-sm:7px;--sh-lg:0 8px 32px rgba(0,0,0,.12)
 }
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
@@ -32,7 +33,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .tb-val{font-size:18px;font-weight:800;font-family:'JetBrains Mono',monospace;line-height:1}
 .tb-lbl{font-size:10px;color:rgba(255,255,255,.4);margin-top:1px}
 .s-total{color:#fff}.s-ws{color:#67E8F9}.s-bi{color:#C4B5FD}.s-both{color:#FCD34D}
-
 
 /* TOOLBAR */
 .toolbar{background:var(--surface);border-bottom:1.5px solid var(--border);padding:12px 28px;display:flex;flex-direction:column;gap:10px;position:sticky;top:62px;z-index:90}
@@ -83,12 +83,17 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .score-lbl{font-size:10px;color:var(--text3);font-weight:600}
 
 /* SIGNAL TABS */
-.sig-tabs{display:flex;gap:4px;margin-bottom:8px}
+.sig-tabs{display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap}
 .sig-tab{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--surface2);color:var(--text2);transition:all .15s;font-family:'Inter',sans-serif}
 .sig-tab:hover{border-color:var(--accent);color:var(--accent)}
 .sig-tab.tab-ws.active{background:var(--wsbg);border-color:#A5F3FC;color:var(--ws)}
 .sig-tab.tab-bi.active{background:var(--bibg);border-color:#DDD6FE;color:var(--bi)}
 .sig-tab.tab-ct.active{background:var(--accent2);border-color:#C7D2FE;color:var(--accent)}
+
+/* AI PROSPECT BUTTON */
+.btn-prospect{display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;border:1.5px solid var(--ai);background:var(--aibg);color:#92400E;font-size:11px;font-weight:700;cursor:pointer;transition:all .18s;font-family:'Inter',sans-serif;white-space:nowrap;margin-top:8px}
+.btn-prospect:hover{background:var(--ai);color:#fff;border-color:var(--ai);box-shadow:0 2px 12px rgba(245,158,11,.35)}
+.btn-prospect svg{flex-shrink:0}
 
 /* SIGNAL DETAIL PANELS */
 .sig-panel{display:none;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:12px;margin-bottom:8px}
@@ -109,15 +114,103 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .c-detail{font-size:11px;color:var(--text2);margin-bottom:2px;display:flex;gap:5px}
 .c-lbl{color:var(--text3);font-weight:600;min-width:80px;flex-shrink:0}
 .more-contacts{font-size:11px;color:var(--text3);padding-top:6px;font-style:italic}
-
 .no-sig{font-size:11px;color:var(--text3);font-style:italic;padding:3px 0}
 
-@media(max-width:640px){.topbar,.toolbar,.main{padding-left:16px;padding-right:16px}}
+/* ============================================
+   AI SLIDE-OUT PANEL
+   ============================================ */
+#ai-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;opacity:0;pointer-events:none;transition:opacity .25s}
+#ai-overlay.open{opacity:1;pointer-events:all}
+
+#ai-panel{position:fixed;top:0;right:0;height:100vh;width:520px;max-width:95vw;background:var(--surface);z-index:201;display:flex;flex-direction:column;box-shadow:-8px 0 40px rgba(0,0,0,.2);transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1)}
+#ai-panel.open{transform:translateX(0)}
+
+.aip-header{background:linear-gradient(135deg,var(--brand) 0%,#5B6AF0 100%);padding:20px 20px 16px;flex-shrink:0}
+.aip-header-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
+.aip-company{font-size:16px;font-weight:800;color:#fff;line-height:1.2}
+.aip-meta{font-size:11px;color:rgba(255,255,255,.6);margin-top:3px}
+.aip-close{background:rgba(255,255,255,.15);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s}
+.aip-close:hover{background:rgba(255,255,255,.3)}
+
+/* SKILL SELECTOR */
+.skill-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.skill-btn{padding:10px 12px;border-radius:var(--r-sm);border:1.5px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;font-size:12px;font-weight:600;cursor:pointer;text-align:left;transition:all .18s;font-family:'Inter',sans-serif;line-height:1.3}
+.skill-btn:hover{background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.5)}
+.skill-btn.active{background:#fff;color:var(--brand);border-color:#fff}
+.skill-btn .sk-icon{font-size:16px;display:block;margin-bottom:3px}
+.skill-btn .sk-name{font-size:11px;font-weight:700;display:block}
+.skill-btn .sk-desc{font-size:10px;opacity:.7;display:block;margin-top:1px}
+.skill-btn-full{grid-column:1/-1;background:rgba(245,158,11,.25);border-color:rgba(245,158,11,.5)}
+.skill-btn-full.active{background:#F59E0B;color:#fff;border-color:#F59E0B}
+
+/* RUN BUTTON */
+.aip-run-wrap{padding:12px 20px 0;flex-shrink:0}
+.aip-run-btn{width:100%;padding:11px;background:var(--accent);color:#fff;border:none;border-radius:var(--r-sm);font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:center;gap:8px}
+.aip-run-btn:hover{background:#4355e8;box-shadow:0 4px 16px rgba(91,106,240,.4)}
+.aip-run-btn:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
+
+/* OUTPUT AREA */
+.aip-output-wrap{flex:1;overflow:hidden;display:flex;flex-direction:column;padding:16px 20px 20px}
+.aip-output-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text3);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.aip-output-label .out-badge{padding:2px 8px;background:var(--accent2);color:var(--accent);border-radius:20px;font-size:10px;font-weight:700}
+.aip-output{flex:1;overflow-y:auto;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:14px;font-size:13px;line-height:1.7;color:var(--text2);white-space:pre-wrap;word-break:break-word;font-family:'Inter',sans-serif}
+.aip-output.streaming{border-color:var(--accent);background:#FAFAFF}
+.aip-output h1,.aip-output h2,.aip-output h3{color:var(--text);margin:12px 0 6px;font-size:13px}
+.aip-output h2{border-bottom:1px solid var(--border);padding-bottom:4px;margin-top:16px}
+.aip-output table{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0}
+.aip-output th{background:var(--accent2);color:var(--accent);padding:6px 8px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.4px}
+.aip-output td{padding:6px 8px;border-bottom:1px solid var(--border)}
+.aip-output tr:hover td{background:var(--surface)}
+.aip-output strong,.aip-output b{color:var(--text);font-weight:700}
+.aip-output code{background:var(--border);padding:1px 5px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11px}
+.aip-output ul,.aip-output ol{padding-left:18px;margin:6px 0}
+.aip-output li{margin-bottom:3px}
+.aip-output hr{border:none;border-top:1px solid var(--border);margin:12px 0}
+.aip-placeholder{color:var(--text3);font-style:italic;font-size:13px;text-align:center;padding:40px 20px}
+.aip-placeholder .ph-icon{font-size:32px;display:block;margin-bottom:10px}
+
+/* STREAMING CURSOR */
+.cursor{display:inline-block;width:2px;height:14px;background:var(--accent);margin-left:2px;animation:blink .8s step-end infinite;vertical-align:middle}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* COPY BUTTON */
+.aip-actions{display:flex;gap:8px;margin-top:10px;flex-shrink:0}
+.aip-copy-btn{padding:7px 16px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text2);border-radius:var(--r-sm);font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px}
+.aip-copy-btn:hover{border-color:var(--accent);color:var(--accent)}
+.aip-clear-btn{padding:7px 16px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text2);border-radius:var(--r-sm);font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
+.aip-clear-btn:hover{border-color:#EF4444;color:#EF4444}
+
+/* THINKING ANIMATION */
+.thinking{display:flex;align-items:center;gap:8px;padding:20px;color:var(--text3);font-size:12px}
+.thinking-dots{display:flex;gap:4px}
+.thinking-dots span{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:dot .9s infinite}
+.thinking-dots span:nth-child(2){animation-delay:.2s}
+.thinking-dots span:nth-child(3){animation-delay:.4s}
+@keyframes dot{0%,60%,100%{transform:scale(.6);opacity:.4}30%{transform:scale(1);opacity:1}}
+
+@media(max-width:640px){.topbar,.toolbar,.main{padding-left:16px;padding-right:16px}#ai-panel{width:100vw}}
 
 .nav-pills{display:flex;gap:6px;margin-left:12px}
 .nav-pill{padding:6px 14px;border-radius:20px;border:1.5px solid rgba(255,255,255,.25);background:transparent;color:rgba(255,255,255,.75);font-size:12px;font-weight:600;text-decoration:none;white-space:nowrap;transition:all .15s;font-family:'Inter',sans-serif}
 .nav-pill:hover{background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.5)}
 .nav-pill.active{background:#fff;color:var(--brand);border-color:#fff}
+
+/* markdown renderer helper */
+.md-rendered h1{font-size:15px;font-weight:800;color:var(--text);margin:14px 0 6px;border-bottom:2px solid var(--accent2);padding-bottom:4px}
+.md-rendered h2{font-size:13px;font-weight:700;color:var(--text);margin:12px 0 5px;border-bottom:1px solid var(--border);padding-bottom:3px}
+.md-rendered h3{font-size:12px;font-weight:700;color:var(--accent);margin:10px 0 4px}
+.md-rendered p{margin:5px 0;line-height:1.7}
+.md-rendered ul,.md-rendered ol{padding-left:18px;margin:5px 0}
+.md-rendered li{margin-bottom:3px;line-height:1.6}
+.md-rendered strong{color:var(--text);font-weight:700}
+.md-rendered code{background:#E8EAFF;padding:1px 5px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent)}
+.md-rendered hr{border:none;border-top:1px solid var(--border);margin:12px 0}
+.md-rendered table{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0;border-radius:6px;overflow:hidden}
+.md-rendered th{background:var(--accent2);color:var(--brand);padding:7px 10px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.5px;font-weight:700}
+.md-rendered td{padding:7px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+.md-rendered tr:last-child td{border-bottom:none}
+.md-rendered tr:hover td{background:#FAFAFF}
+.md-rendered blockquote{border-left:3px solid var(--accent);padding:6px 12px;background:var(--accent2);border-radius:0 6px 6px 0;margin:8px 0;color:var(--text2);font-style:italic;font-size:12px}
 </style>
 </head>
 <body>
@@ -178,44 +271,491 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
   </div>
 </div>
 
+<!-- AI SLIDE-OUT PANEL -->
+<div id="ai-overlay" onclick="closeAIPanel()"></div>
+<div id="ai-panel">
+  <div class="aip-header">
+    <div class="aip-header-top">
+      <div>
+        <div class="aip-company" id="aip-company-name">Company Name</div>
+        <div class="aip-meta" id="aip-company-meta">Vertical · Territory · Owner</div>
+      </div>
+      <button class="aip-close" onclick="closeAIPanel()">✕</button>
+    </div>
+    <!-- SKILL SELECTOR -->
+    <div class="skill-grid">
+      <button class="skill-btn" data-skill="account-research" onclick="selectSkill(this)">
+        <span class="sk-icon">🔍</span>
+        <span class="sk-name">Account Research</span>
+        <span class="sk-desc">ICP fit, tech stack, key people</span>
+      </button>
+      <button class="skill-btn" data-skill="signal-finder" onclick="selectSkill(this)">
+        <span class="sk-icon">📡</span>
+        <span class="sk-name">Signal Finder</span>
+        <span class="sk-desc">Hiring, leadership, expansion signals</span>
+      </button>
+      <button class="skill-btn" data-skill="messaging-writer" onclick="selectSkill(this)">
+        <span class="sk-icon">✍️</span>
+        <span class="sk-name">Messaging Writer</span>
+        <span class="sk-desc">Cold email, LinkedIn, call script</span>
+      </button>
+      <button class="skill-btn skill-btn-full" data-skill="full-prospect" onclick="selectSkill(this)">
+        <span class="sk-icon">⚡</span>
+        <span class="sk-name">Full Prospect</span>
+        <span class="sk-desc">Run all skills end-to-end</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="aip-run-wrap">
+    <button class="aip-run-btn" id="aip-run-btn" onclick="runSkill()" disabled>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      Select a skill to run
+    </button>
+  </div>
+
+  <div class="aip-output-wrap">
+    <div class="aip-output-label">
+      <span>AI Output</span>
+      <span class="out-badge" id="aip-skill-badge" style="display:none"></span>
+    </div>
+    <div class="aip-output" id="aip-output">
+      <div class="aip-placeholder">
+        <span class="ph-icon">🤖</span>
+        Select a skill above and click Run to start AI prospecting for this account.
+      </div>
+    </div>
+    <div class="aip-actions" id="aip-actions" style="display:none">
+      <button class="aip-copy-btn" onclick="copyOutput()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy Output
+      </button>
+      <button class="aip-clear-btn" onclick="clearOutput()">Clear</button>
+    </div>
+  </div>
+</div>
+
 <script>
+// ─── STATE ──────────────────────────────────────────────────────────────────
 var DATA=[];
 var aTerritory='All', aOwner='All', aStatus='All', aSignal='All', aVertical='All';
+var currentAccount=null;
+var selectedSkill=null;
+var isStreaming=false;
+var openPanels={};
 
+// ─── SKILL PROMPTS ───────────────────────────────────────────────────────────
+var SKILL_PROMPTS = {
+  'account-research': function(acc) {
+    return {
+      system: `You are a senior BDR researcher at Facilio — an AI-powered Connected CMMS and property operations platform. Your job is to produce a thorough, structured account profile for any given company.
+
+Facilio sells to:
+- FM Service Providers (multi-service, IFM, integrated FM)
+- CRE Owners / REITs / Property Operators
+- Corporate Occupiers with large property portfolios
+- Healthcare, Education, Retail, Hospitality with significant FM operations
+
+Known customers include: British Land, Brookfield, Quality FM, Publix, HCA Healthcare, Majid Al Futtaim, IEM, DAMAC, and 100+ others globally.
+
+ICP fit criteria:
+- Multi-site / multi-building operations (10+ locations or large sq ft)
+- In-house or outsourced FM with operational complexity
+- Legacy CMMS (Maximo, Archibus, Planon, FSI, Concept Evolution) = strong opportunity
+- Active digital transformation or smart building agenda
+- 200+ employees (or significant FM operations)
+
+EXCLUSIONS (auto Poor Fit):
+- Single-trade technical contractor (HVAC only, electrical only etc.)
+- Equipment OEM / manufacturer
+- Pure staffing / labour hire
+- FM software vendor (competitor)
+- <20 staff independent contractor
+
+Produce the account profile in clean markdown with tables. Be factual and specific — no filler. Use web search context provided.`,
+      user: `Research this inbound account and produce a full account profile with ICP verdict.
+
+**Company**: ${acc.company}
+**Domain**: ${acc.domain || 'Unknown'}
+**Vertical**: ${acc.vertical || 'Unknown'}
+**Territory**: ${acc.territory || 'Unknown'}
+**Lead Owner**: ${acc.owner || 'Unknown'}
+**Lead Status**: ${acc.status || 'Unknown'}
+**Total Intent Score**: ${acc.totalScore || 0}
+**Website Visitor Signal**: ${acc.ws || 'No'}
+**Buyer Intent Signal**: ${acc.bi || 'No'}
+**Contacts**: ${acc.contacts && acc.contacts.length ? acc.contacts.map(function(c){return ((c.firstName||'')+' '+(c.lastName||'')).trim()+(c.email?' <'+c.email+'>':'');}).join(', ') : 'None on record'}
+
+Produce:
+### 🏢 ACCOUNT PROFILE: ${acc.company}
+1. Company Overview (what they do, business model, portfolio scale, size, ownership)
+2. FM & Property Operations Setup (how they manage buildings, CMMS/CAFM used, BMS/IoT, tech confidence)
+3. Key People (table: Name, Title, LinkedIn search query, Notes)
+4. Closest Facilio Customer Archetype (who they're most similar to and why)
+5. ICP Verdict (Strong Fit / Potential Fit / Poor Fit with scoring table)
+6. Recommendation (1–2 sentences: should BDR pursue, deprioritise, or watch?)
+
+Use web search to find current information. Note data confidence (High/Medium/Low) and flag anything older than 18 months.`
+    };
+  },
+
+  'signal-finder': function(acc) {
+    return {
+      system: `You are a BDR signal analyst at Facilio — an AI-powered Connected CMMS and property operations platform. Your job is to surface buying signals at target accounts that indicate the right time to engage.
+
+Focus on signals relevant to FM, property operations, smart buildings, CMMS/CAFM, digital transformation, and facilities management technology.
+
+Rate signals by recency:
+- **Hot** — within the last 30 days
+- **Warm** — within the last 90 days  
+- **Cooling** — 90–180 days ago
+
+Be honest: if no signals are found, say so clearly. Don't fabricate urgency.`,
+      user: `Find buying signals for this inbound account. Use web search to find current information.
+
+**Company**: ${acc.company}
+**Domain**: ${acc.domain || 'Unknown'}
+**Vertical**: ${acc.vertical || 'Unknown'}
+**Territory**: ${acc.territory || 'Unknown'}
+**Intent Score**: ${acc.totalScore || 0}
+**Website Visitor Signal**: ${acc.ws || 'No'}${acc.wlp ? ' | Last page: '+acc.wlp : ''}
+**Buyer Intent Signal**: ${acc.bi || 'No'}
+
+Search for:
+1. **Hiring signals** — open roles related to FM, CMMS, facilities, property operations, digital transformation, smart buildings (check LinkedIn Jobs, company careers page)
+2. **Leadership changes** — new VP/Director/C-level in FM, operations, real estate, technology (last 6 months)
+3. **Expansion signals** — new contracts won, new sites/markets, acquisitions, partnerships, funding
+
+Produce the Signal Report in this format:
+
+## Signal Report: ${acc.company}
+
+### Hiring Signals
+| Role | Team | Recency | Relevance | Source |
+|------|------|---------|-----------|--------|
+
+### Leadership Changes
+| Name | Role | Recency | Why It Matters | Source |
+|------|------|---------|----------------|--------|
+
+### Expansion & News Signals
+| Event | Recency | Why It Matters | Source |
+|-------|---------|----------------|--------|
+
+### Signal Summary
+**Overall signal strength**: [High / Medium / Low / None found]
+[2–3 sentence summary of timing and outreach angle]
+
+### Recommended Outreach Hook
+[The single strongest angle to lead with when reaching out]`
+    };
+  },
+
+  'messaging-writer': function(acc) {
+    return {
+      system: `You are an expert BDR messaging specialist at Facilio — an AI-powered Connected CMMS and property operations platform. You write highly personalized, signal-led cold outreach that doesn't sound templated.
+
+Facilio's core value: Replace legacy CMMS/CAFM (Maximo, Archibus, Planon, FSI) with a modern, AI-driven connected operations platform — cutting maintenance costs, improving compliance, and giving real-time visibility across portfolios.
+
+Message rules:
+- NEVER start with "I hope this finds you well" or "My name is"
+- NEVER open with a generic compliment
+- Always lead with the prospect's world — their signal, challenge, or context
+- Cold email: under 120 words, subject line under 8 words
+- LinkedIn request: under 300 characters
+- Be specific, not vague — reference the company and their likely situation`,
+      user: `Write cold outreach for this inbound account. They have shown intent signals — use that as the hook.
+
+**Company**: ${acc.company}
+**Domain**: ${acc.domain || 'Unknown'}
+**Vertical**: ${acc.vertical || 'Unknown'}
+**Territory**: ${acc.territory || 'Unknown'}
+**Website Visitor**: ${acc.ws || 'No'}${acc.wlp ? ' | Last page viewed: '+acc.wlp : ''}
+**Buyer Intent Signal**: ${acc.bi || 'No'}${acc.bid && acc.bid !== '-' ? ' | Intent date: '+acc.bid : ''}
+**Intent Score**: ${acc.totalScore || 0}
+**Contacts on record**: ${acc.contacts && acc.contacts.length ? acc.contacts.map(function(c){return ((c.firstName||'')+' '+(c.lastName||'')).trim()+(c.email?' ('+c.email+')':'');}).join(', ') : 'None — address to relevant FM/Operations leader'}
+
+Write ALL THREE of these:
+
+**1. Cold Email**
+Subject: [under 8 words]
+[Under 120 words. Hook → Bridge → Value prop → CTA]
+
+**2. LinkedIn Connection Request**
+[Under 300 characters. Hook + what Facilio does + soft ask. No product pitch.]
+
+**3. Call Script / Talk Track**
+- Opening (5–10 sec)
+- Permission check
+- Context/hook (15–20 sec) — reference their website visit or buyer intent signal
+- Problem framing (20–30 sec)
+- Value bridge (15–20 sec)
+- Ask (10 sec)
+- Objection responses: "Not interested", "Send me an email", "We already have a solution"
+
+After each message, note: **Hook used**: [what signal or angle was used]`
+    };
+  },
+
+  'full-prospect': function(acc) {
+    return {
+      system: `You are a senior SDR/BDR at Facilio — an AI-powered Connected CMMS and property operations platform. You run complete prospecting workflows: research, find buyer personas, surface signals, and write personalized outreach.
+
+Facilio sells to FM Service Providers, CRE Owners, Corporate Occupiers, Healthcare, Retail, and Education with significant facilities operations. Replace legacy CMMS (Maximo, Archibus, Planon, FSI) with modern AI-driven operations.
+
+Known customers: British Land, Brookfield, Quality FM, Publix, HCA Healthcare, Majid Al Futtaim, IEM, DAMAC, and 100+ globally.
+
+Run all 4 phases without stopping. Use web search. Be specific, factual, and scannable. Use tables and short bullets.`,
+      user: `Run the FULL PROSPECT workflow for this inbound account. They've shown intent — they visited our website or showed buyer intent signals.
+
+**Company**: ${acc.company}
+**Domain**: ${acc.domain || 'Unknown'}
+**Vertical**: ${acc.vertical || 'Unknown'}
+**Territory**: ${acc.territory || 'Unknown'}
+**Lead Status**: ${acc.status || 'Unknown'}
+**Intent Score**: ${acc.totalScore || 0}
+**Website Signal**: ${acc.ws || 'No'}${acc.wlp ? ' | Last page: '+acc.wlp : ''}
+**Buyer Intent**: ${acc.bi || 'No'}${acc.bid && acc.bid !== '-' ? ' | Date: '+acc.bid : ''}
+**Contacts**: ${acc.contacts && acc.contacts.length ? acc.contacts.map(function(c){return ((c.firstName||'')+' '+(c.lastName||'')).trim()+(c.email?' ('+c.email+')':'');}).join(', ') : 'None on record'}
+
+Run all 4 phases in sequence:
+
+---
+## Phase 1: Account Research & ICP Qualification
+[Company overview, FM setup, tech stack, ICP score: Strong/Potential/Poor Fit]
+
+---
+## Phase 2: Ideal Buyer Personas
+[Table: Tier | Role | Named Contact or Search Query | Notes]
+[Best first contact with rationale]
+
+---
+## Phase 3: Buying Signals
+[Search for hiring, leadership changes, expansion signals. Rate Hot/Warm/Cooling]
+[Overall signal strength + best outreach hook]
+
+---
+## Phase 4: Outreach
+[Write Cold Email + LinkedIn Request + Call Script using strongest signal as hook]
+
+---
+## Prospecting Summary
+- ICP fit: 
+- Best contact: 
+- Top signal: 
+- Messages written: Cold email ✓ | LinkedIn ✓ | Call script ✓`
+    };
+  }
+};
+
+var SKILL_LABELS = {
+  'account-research': '🔍 Account Research',
+  'signal-finder': '📡 Signal Finder',
+  'messaging-writer': '✍️ Messaging Writer',
+  'full-prospect': '⚡ Full Prospect'
+};
+
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
 function E(s){return(s||'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-
 function D(v){
   if(!v||v==='-'||v==='No'||v==='')return '';
-  try{
-    var d=new Date(v);
-    if(isNaN(d.getTime()))return v;
-    var dd=String(d.getDate()).padStart(2,'0');
-    var mm=String(d.getMonth()+1).padStart(2,'0');
-    return dd+'/'+mm+'/'+d.getFullYear();
-  }catch(e){return v;}
+  try{var d=new Date(v);if(isNaN(d.getTime()))return v;var dd=String(d.getDate()).padStart(2,'0');var mm=String(d.getMonth()+1).padStart(2,'0');return dd+'/'+mm+'/'+d.getFullYear();}catch(e){return v;}
 }
-
 function isPos(v){var x=(v||'').toString().trim().toLowerCase();return x==='yes'||x==='y'||x==='true'||x==='1'||x.indexOf('\u2705')>-1;}
 function hasWs(d){return isPos(d.ws);}
 function hasBi(d){return isPos(d.bi);}
 function initials(fn,ln){return((fn||'').charAt(0)+(ln||'').charAt(0)).toUpperCase()||'?';}
+function scoreClass(s){var n=parseFloat(s)||0;if(n>=6)return 'score-high';if(n>=3)return 'score-med';return 'score-low';}
+function statusClass(s){if(!s)return 'st-other';var sl=s.toLowerCase();if(sl==='new')return 'st-new';if(sl==='lto')return 'st-lto';if(sl.indexOf('progress')>-1)return 'st-inprogress';return 'st-other';}
 
-function scoreClass(s){
-  var n=parseFloat(s)||0;
-  if(n>=6)return 'score-high';
-  if(n>=3)return 'score-med';
-  return 'score-low';
+// ─── MARKDOWN RENDERER ───────────────────────────────────────────────────────
+function renderMarkdown(text) {
+  var html = text
+    // Escape HTML first (but preserve our special chars)
+    .replace(/&(?!amp;|lt;|gt;|quot;)/g, '&amp;')
+    .replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    // Headers
+    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+    .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+    // Bold and italic
+    .replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    // Code
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    // HR
+    .replace(/^---+$/gm, '<hr>')
+    // Blockquote
+    .replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>')
+    // Tables
+    .replace(/^\|(.+)\|$/gm, function(match) {
+      var cells = match.slice(1,-1).split('|').map(function(c){return c.trim();});
+      return '<tr>' + cells.map(function(c){return '<td>'+c+'</td>';}).join('') + '</tr>';
+    })
+    .replace(/^(<tr><td>[-: |]+<\/td><\/tr>)$/gm, '') // remove separator rows
+    // Fix header rows (first row before any separator)
+    // Lists
+    .replace(/^[\*\-] (.+)$/gm, '<li>$1</li>')
+    .replace(/^\d+\. (.+)$/gm, '<li>$1</li>')
+    // Wrap consecutive li in ul
+    .replace(/(<li>.*<\/li>\n?)+/g, function(m){return '<ul>'+m+'</ul>';})
+    // Wrap consecutive tr in table
+    .replace(/(<tr>.*<\/tr>\n?)+/g, function(m){return '<table>'+m+'</table>';})
+    // Paragraphs (lines not already wrapped)
+    .replace(/^(?!<[htubcodl]).+$/gm, function(m){return m?'<p>'+m+'</p>':m;})
+    // Clean up
+    .replace(/<\/ul>\n?<ul>/g,'')
+    .replace(/<\/table>\n?<table>/g,'')
+    .replace(/\n\n+/g,'');
+  return '<div class="md-rendered">'+html+'</div>';
 }
 
-function statusClass(s){
-  if(!s)return 'st-other';
-  var sl=s.toLowerCase();
-  if(sl==='new')return 'st-new';
-  if(sl==='lto')return 'st-lto';
-  if(sl.indexOf('progress')>-1)return 'st-inprogress';
-  return 'st-other';
+// ─── AI PANEL ────────────────────────────────────────────────────────────────
+function openAIPanel(accountIdx) {
+  currentAccount = DATA[accountIdx];
+  selectedSkill = null;
+
+  // Populate header
+  document.getElementById('aip-company-name').textContent = currentAccount.company || 'Unknown';
+  document.getElementById('aip-company-meta').textContent =
+    [currentAccount.vertical, currentAccount.territory, currentAccount.owner].filter(Boolean).join(' · ');
+
+  // Reset skill buttons
+  document.querySelectorAll('.skill-btn').forEach(function(b){b.classList.remove('active');});
+
+  // Reset output
+  document.getElementById('aip-output').innerHTML = '<div class="aip-placeholder"><span class="ph-icon">🤖</span>Select a skill above and click Run to start AI prospecting for this account.</div>';
+  document.getElementById('aip-actions').style.display = 'none';
+  document.getElementById('aip-skill-badge').style.display = 'none';
+
+  var runBtn = document.getElementById('aip-run-btn');
+  runBtn.disabled = true;
+  runBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg> Select a skill to run';
+
+  // Open panel
+  document.getElementById('ai-overlay').classList.add('open');
+  document.getElementById('ai-panel').classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
 
+function closeAIPanel() {
+  if (isStreaming) return; // don't close mid-stream
+  document.getElementById('ai-overlay').classList.remove('open');
+  document.getElementById('ai-panel').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function selectSkill(btn) {
+  document.querySelectorAll('.skill-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  selectedSkill = btn.dataset.skill;
+
+  var runBtn = document.getElementById('aip-run-btn');
+  runBtn.disabled = false;
+  runBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg> Run ' + SKILL_LABELS[selectedSkill];
+}
+
+async function runSkill() {
+  if (!selectedSkill || !currentAccount || isStreaming) return;
+
+  isStreaming = true;
+  var runBtn = document.getElementById('aip-run-btn');
+  runBtn.disabled = true;
+  runBtn.innerHTML = '<div class="thinking-dots"><span></span><span></span><span></span></div> Running...';
+
+  var badge = document.getElementById('aip-skill-badge');
+  badge.textContent = SKILL_LABELS[selectedSkill];
+  badge.style.display = 'inline-flex';
+
+  var outputEl = document.getElementById('aip-output');
+  outputEl.className = 'aip-output streaming';
+  outputEl.innerHTML = '<div class="thinking"><div class="thinking-dots"><span></span><span></span><span></span></div><span>Claude is researching ' + E(currentAccount.company) + '...</span></div>';
+
+  document.getElementById('aip-actions').style.display = 'none';
+
+  try {
+    var promptFn = SKILL_PROMPTS[selectedSkill];
+    var prompt = promptFn(currentAccount);
+
+    var response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 4000,
+        stream: true,
+        system: prompt.system,
+        tools: [{type: 'web_search_20250305', name: 'web_search'}],
+        messages: [{ role: 'user', content: prompt.user }]
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('API error: ' + response.status);
+    }
+
+    var reader = response.body.getReader();
+    var decoder = new TextDecoder();
+    var fullText = '';
+    outputEl.innerHTML = '';
+
+    while (true) {
+      var result = await reader.read();
+      if (result.done) break;
+
+      var chunk = decoder.decode(result.value, {stream: true});
+      var lines = chunk.split('\n');
+
+      for (var i = 0; i < lines.length; i++) {
+        var line = lines[i].trim();
+        if (!line.startsWith('data:')) continue;
+        var data = line.slice(5).trim();
+        if (data === '[DONE]') continue;
+
+        try {
+          var event = JSON.parse(data);
+          if (event.type === 'content_block_delta' && event.delta && event.delta.type === 'text_delta') {
+            fullText += event.delta.text;
+            // Render with cursor
+            outputEl.innerHTML = renderMarkdown(fullText) + '<span class="cursor"></span>';
+            outputEl.scrollTop = outputEl.scrollHeight;
+          }
+        } catch(e) {}
+      }
+    }
+
+    // Final render without cursor
+    outputEl.innerHTML = renderMarkdown(fullText);
+    outputEl.className = 'aip-output';
+    document.getElementById('aip-actions').style.display = 'flex';
+
+  } catch(err) {
+    outputEl.className = 'aip-output';
+    outputEl.innerHTML = '<div style="color:#EF4444;padding:12px;background:#FEF2F2;border-radius:6px;font-size:13px"><strong>Error running skill</strong><br>' + E(err.message) + '</div>';
+  }
+
+  isStreaming = false;
+  runBtn.disabled = false;
+  runBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg> Run Again';
+}
+
+function copyOutput() {
+  var outputEl = document.getElementById('aip-output');
+  var text = outputEl.innerText || outputEl.textContent;
+  navigator.clipboard.writeText(text).then(function(){
+    var btn = document.querySelector('.aip-copy-btn');
+    btn.textContent = '✓ Copied!';
+    setTimeout(function(){btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Output';},2000);
+  });
+}
+
+function clearOutput() {
+  document.getElementById('aip-output').innerHTML = '<div class="aip-placeholder"><span class="ph-icon">🤖</span>Select a skill above and click Run to start AI prospecting for this account.</div>';
+  document.getElementById('aip-actions').style.display = 'none';
+}
+
+// ─── DATA LOAD ────────────────────────────────────────────────────────────────
 fetch('inbound.json?v='+Date.now())
   .then(function(r){return r.json();})
   .then(function(d){
@@ -249,11 +789,7 @@ function buildChips(){
       var b=document.createElement('button');
       b.className='chip'+(getV()===v?' on':'');
       b.textContent=v;b.dataset.v=v;
-      b.onclick=function(){
-        setV(v);
-        document.querySelectorAll('#'+id+' .chip').forEach(function(c){c.classList.toggle('on',c.dataset.v===v);});
-        render();
-      };
+      b.onclick=function(){setV(v);document.querySelectorAll('#'+id+' .chip').forEach(function(c){c.classList.toggle('on',c.dataset.v===v);});render();};
       el.appendChild(b);
     });
   }
@@ -262,26 +798,15 @@ function buildChips(){
   mk('status-chips',statuses,function(){return aStatus;},function(v){aStatus=v;});
   mk('vertical-chips',verticals,function(){return aVertical;},function(v){aVertical=v;});
 
-  // Owner dropdown
   var sel=document.getElementById('owner-sel');sel.innerHTML='';
-  owners.forEach(function(o){
-    var opt=document.createElement('option');
-    opt.value=o;opt.textContent=o==='All'?'All Owners':o;
-    if(o===aOwner)opt.selected=true;
-    sel.appendChild(opt);
-  });
+  owners.forEach(function(o){var opt=document.createElement('option');opt.value=o;opt.textContent=o==='All'?'All Owners':o;if(o===aOwner)opt.selected=true;sel.appendChild(opt);});
 
-  // Signal chips
   var sigEl=document.getElementById('signal-chips');sigEl.innerHTML='';
   [{k:'All',l:'All'},{k:'ws',l:'🌐 Website'},{k:'bi',l:'🎯 Buyer Intent'},{k:'both',l:'⚡ Both'},{k:'none',l:'No Signals'}].forEach(function(sig){
     var b=document.createElement('button');
     b.className='chip'+(aSignal===sig.k?' on':'');
     b.innerHTML=sig.l;b.dataset.v=sig.k;
-    b.onclick=function(){
-      aSignal=sig.k;
-      document.querySelectorAll('#signal-chips .chip').forEach(function(c){c.classList.toggle('on',c.dataset.v===sig.k);});
-      render();
-    };
+    b.onclick=function(){aSignal=sig.k;document.querySelectorAll('#signal-chips .chip').forEach(function(c){c.classList.toggle('on',c.dataset.v===sig.k);});render();};
     sigEl.appendChild(b);
   });
 }
@@ -298,10 +823,7 @@ function getFiltered(){
     if(aSignal==='bi'&&!hasBi(d))return false;
     if(aSignal==='both'&&!(hasWs(d)&&hasBi(d)))return false;
     if(aSignal==='none'&&(hasWs(d)||hasBi(d)))return false;
-    if(q){
-      var hay=(d.company||'').toLowerCase()+(d.owner||'').toLowerCase()+(d.vertical||'').toLowerCase()+(d.territory||'').toLowerCase();
-      if(hay.indexOf(q)<0)return false;
-    }
+    if(q){var hay=(d.company||'').toLowerCase()+(d.owner||'').toLowerCase()+(d.vertical||'').toLowerCase()+(d.territory||'').toLowerCase();if(hay.indexOf(q)<0)return false;}
     return true;
   }).sort(function(a,b){
     if(sort==='company')return(a.company||'').localeCompare(b.company||'');
@@ -315,24 +837,15 @@ function getFiltered(){
   });
 }
 
-// Track which panel is open per card
-var openPanels={};
-
 function togglePanel(cardId, panel){
   var key=cardId+'_'+panel;
-  // Close all panels for this card first
   ['ws','bi','ct'].forEach(function(p){
     var el=document.getElementById(cardId+'_panel_'+p);
     var tab=document.getElementById(cardId+'_tab_'+p);
     if(el){el.classList.remove('open');}
     if(tab){tab.classList.remove('active');}
   });
-  // If same panel was open, it's now closed — done
-  if(openPanels[cardId]===panel){
-    openPanels[cardId]=null;
-    return;
-  }
-  // Open new panel
+  if(openPanels[cardId]===panel){openPanels[cardId]=null;return;}
   openPanels[cardId]=panel;
   var el=document.getElementById(cardId+'_panel_'+panel);
   var tab=document.getElementById(cardId+'_tab_'+panel);
@@ -340,13 +853,21 @@ function togglePanel(cardId, panel){
   if(tab)tab.classList.add('active');
 }
 
+// ─── RENDER ──────────────────────────────────────────────────────────────────
+var DATA_INDICES = []; // maps rendered idx → DATA idx
+
 function render(){
   var list=getFiltered();
   document.getElementById('count').textContent=list.length+' accounts';
   document.getElementById('empty').style.display=list.length?'none':'block';
   var g=document.getElementById('grid');g.innerHTML='';
+  DATA_INDICES=[];
 
   list.forEach(function(d,idx){
+    // Find the actual index in DATA for AI panel
+    var dataIdx = DATA.indexOf(d);
+    DATA_INDICES.push(dataIdx);
+
     var ws=hasWs(d),bi=hasBi(d);
     var cardId='card_'+idx;
     var sc=statusClass(d.status);
@@ -357,80 +878,31 @@ function render(){
     card.className='card'+(ws&&bi?' card-both':'');
     card.id=cardId;
 
-    // Score badge
     var scoreBadge='';
-    if(score>0){
-      scoreBadge="<div class='score-row'>"+
-        "<span class='score-badge "+scoreClass(score)+"'>&#9889; "+score+"</span>"+
-        "<span class='score-lbl'>Overall Intent Score</span>"+
-        "</div>";
-    }
+    if(score>0){scoreBadge="<div class='score-row'><span class='score-badge "+scoreClass(score)+"'>&#9889; "+score+"</span><span class='score-lbl'>Overall Intent Score</span></div>";}
 
-    // Signal tabs
     var tabsHtml="<div class='sig-tabs'>";
-    if(ws){
-      tabsHtml+="<button class='sig-tab tab-ws' id='"+cardId+"_tab_ws' onclick='togglePanel(\""+cardId+"\",\"ws\")'>"+
-        "🌐 Website"+(d.wsScore?" "+d.wsScore:"")+"</button>";
-    }
-    if(bi){
-      tabsHtml+="<button class='sig-tab tab-bi' id='"+cardId+"_tab_bi' onclick='togglePanel(\""+cardId+"\",\"bi\")'>"+
-        "🎯 Buyer Intent"+(d.biScore?" "+d.biScore:"")+"</button>";
-    }
-    if(contacts.length){
-      tabsHtml+="<button class='sig-tab tab-ct' id='"+cardId+"_tab_ct' onclick='togglePanel(\""+cardId+"\",\"ct\")'>"+
-        "👥 Contacts ("+contacts.length+")</button>";
-    }
-    if(!ws&&!bi&&!contacts.length){
-      tabsHtml+="<span class='no-sig'>No signals yet</span>";
-    }
+    if(ws){tabsHtml+="<button class='sig-tab tab-ws' id='"+cardId+"_tab_ws' onclick='togglePanel(\""+cardId+"\",\"ws\")'>🌐 Website"+(d.wsScore?" "+d.wsScore:"")+"</button>";}
+    if(bi){tabsHtml+="<button class='sig-tab tab-bi' id='"+cardId+"_tab_bi' onclick='togglePanel(\""+cardId+"\",\"bi\")'>🎯 Buyer Intent"+(d.biScore?" "+d.biScore:"")+"</button>";}
+    if(contacts.length){tabsHtml+="<button class='sig-tab tab-ct' id='"+cardId+"_tab_ct' onclick='togglePanel(\""+cardId+"\",\"ct\")'>👥 Contacts ("+contacts.length+")</button>";}
+    if(!ws&&!bi&&!contacts.length){tabsHtml+="<span class='no-sig'>No signals yet</span>";}
     tabsHtml+="</div>";
 
-    // Website panel
+    // AI Prospect button
+    var aiBtn = "<button class='btn-prospect' onclick='openAIPanel("+dataIdx+")'>"+
+      "<svg width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5'><path d='M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z'/><path d='M12 8v4l3 3'/></svg>"+
+      "🤖 AI Prospect</button>";
+
     var wsPanel="<div class='sig-panel sig-panel-ws' id='"+cardId+"_panel_ws'>";
-    if(ws){
-      wsPanel+=
-        (d.wsScore?"<div class='sp-row'><span class='sp-key'>Score</span><span class='sp-val'><b>"+E(d.wsScore)+"</b> / 5</span></div>":"")+
-        (d.domain?"<div class='sp-row'><span class='sp-key'>Domain</span><span class='sp-val sp-mono'>"+E(d.domain)+"</span></div>":"")+
-        (d.wsd&&d.wsd!=='-'?"<div class='sp-row'><span class='sp-key'>Visit Date</span><span class='sp-val'>"+E(D(d.wsd))+"</span></div>":"")+
-        (d.wlp?"<div class='sp-row'><span class='sp-key'>Last Page</span><span class='sp-val sp-mono'>"+E(d.wlp)+"</span></div>":"")+
-        (d.wtp?"<div class='sp-row'><span class='sp-key'>Total Pages</span><span class='sp-val'>"+E(d.wtp)+"</span></div>":"");
-    }
+    if(ws){wsPanel+=(d.wsScore?"<div class='sp-row'><span class='sp-key'>Score</span><span class='sp-val'><b>"+E(d.wsScore)+"</b> / 5</span></div>":"")+(d.domain?"<div class='sp-row'><span class='sp-key'>Domain</span><span class='sp-val sp-mono'>"+E(d.domain)+"</span></div>":"")+(d.wsd&&d.wsd!=='-'?"<div class='sp-row'><span class='sp-key'>Visit Date</span><span class='sp-val'>"+E(D(d.wsd))+"</span></div>":"")+(d.wlp?"<div class='sp-row'><span class='sp-key'>Last Page</span><span class='sp-val sp-mono'>"+E(d.wlp)+"</span></div>":"")+(d.wtp?"<div class='sp-row'><span class='sp-key'>Total Pages</span><span class='sp-val'>"+E(d.wtp)+"</span></div>":"");}
     wsPanel+="</div>";
 
-    // Buyer intent panel
     var biPanel="<div class='sig-panel sig-panel-bi' id='"+cardId+"_panel_bi'>";
-    if(bi){
-      biPanel+=
-        (d.biScore?"<div class='sp-row'><span class='sp-key'>Score</span><span class='sp-val'><b>"+E(d.biScore)+"</b> / 5</span></div>":"")+
-        (d.bid&&d.bid!=='-'?"<div class='sp-row'><span class='sp-key'>Intent Date</span><span class='sp-val'>"+E(D(d.bid))+"</span></div>":"")+
-        (d.bi&&d.bi!=='-'&&d.bi!=='no'?"<div class='sp-row'><span class='sp-key'>Recent Signal</span><span class='sp-val'>"+E(d.bi)+"</span></div>":"<div class='sp-row'><span class='sp-key'>Status</span><span class='sp-val'>Signal detected</span></div>");
-    }
+    if(bi){biPanel+=(d.biScore?"<div class='sp-row'><span class='sp-key'>Score</span><span class='sp-val'><b>"+E(d.biScore)+"</b> / 5</span></div>":"")+(d.bid&&d.bid!=='-'?"<div class='sp-row'><span class='sp-key'>Intent Date</span><span class='sp-val'>"+E(D(d.bid))+"</span></div>":"")+(d.bi&&d.bi!=='-'&&d.bi!=='no'?"<div class='sp-row'><span class='sp-key'>Recent Signal</span><span class='sp-val'>"+E(d.bi)+"</span></div>":"<div class='sp-row'><span class='sp-key'>Status</span><span class='sp-val'>Signal detected</span></div>");}
     biPanel+="</div>";
 
-    // Contacts panel
     var ctPanel="<div class='sig-panel sig-panel-ct' id='"+cardId+"_panel_ct'>";
-    if(contacts.length){
-      contacts.slice(0,5).forEach(function(c,ci){
-        if(ci>0)ctPanel+="<hr class='sp-divider'>";
-        var fullName=((c.firstName||'')+' '+(c.lastName||'')).trim()||'Unknown';
-        ctPanel+=
-          "<div class='contact-block'>"+
-          "<div class='contact-name-row'>"+
-            "<div class='c-avatar'>"+initials(c.firstName,c.lastName)+"</div>"+
-            "<div class='c-name'>"+E(fullName)+"</div>"+
-          "</div>"+
-          (c.email?"<div class='c-detail'><span class='c-lbl'>Email</span><span>"+E(c.email)+"</span></div>":"")+
-          (c.phone?"<div class='c-detail'><span class='c-lbl'>Phone</span><span>"+E(c.phone)+"</span></div>":"")+
-          (c.created?"<div class='c-detail'><span class='c-lbl'>Created</span><span>"+E(c.created)+"</span></div>":"")+
-          (c.lastModified?"<div class='c-detail'><span class='c-lbl'>Modified</span><span>"+E(c.lastModified)+"</span></div>":"")+
-          (c.sourceType?"<div class='c-detail'><span class='c-lbl'>Source Type</span><span>"+E(c.sourceType)+"</span></div>":"")+
-          (c.broadSource?"<div class='c-detail'><span class='c-lbl'>Broad Source</span><span>"+E(c.broadSource)+"</span></div>":"")+
-          "</div>";
-      });
-      if(contacts.length>5){
-        ctPanel+="<div class='more-contacts'>+"+(contacts.length-5)+" more contacts</div>";
-      }
-    }
+    if(contacts.length){contacts.slice(0,5).forEach(function(c,ci){if(ci>0)ctPanel+="<hr class='sp-divider'>";var fullName=((c.firstName||'')+' '+(c.lastName||'')).trim()||'Unknown';ctPanel+="<div class='contact-block'><div class='contact-name-row'><div class='c-avatar'>"+initials(c.firstName,c.lastName)+"</div><div class='c-name'>"+E(fullName)+"</div></div>"+(c.email?"<div class='c-detail'><span class='c-lbl'>Email</span><span>"+E(c.email)+"</span></div>":"")+(c.phone?"<div class='c-detail'><span class='c-lbl'>Phone</span><span>"+E(c.phone)+"</span></div>":"")+(c.created?"<div class='c-detail'><span class='c-lbl'>Created</span><span>"+E(c.created)+"</span></div>":"")+(c.lastModified?"<div class='c-detail'><span class='c-lbl'>Modified</span><span>"+E(c.lastModified)+"</span></div>":"")+(c.sourceType?"<div class='c-detail'><span class='c-lbl'>Source Type</span><span>"+E(c.sourceType)+"</span></div>":"")+(c.broadSource?"<div class='c-detail'><span class='c-lbl'>Broad Source</span><span>"+E(c.broadSource)+"</span></div>":"")+"</div>";});if(contacts.length>5){ctPanel+="<div class='more-contacts'>+"+(contacts.length-5)+" more contacts</div>";}}
     ctPanel+="</div>";
 
     card.innerHTML=
@@ -447,9 +919,8 @@ function render(){
       "</div>"+
       scoreBadge+
       tabsHtml+
-      wsPanel+
-      biPanel+
-      ctPanel;
+      wsPanel+biPanel+ctPanel+
+      aiBtn;
 
     g.appendChild(card);
   });
