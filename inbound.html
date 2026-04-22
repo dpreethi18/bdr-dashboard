@@ -678,54 +678,34 @@ async function runSkill() {
     var promptFn = SKILL_PROMPTS[selectedSkill];
     var prompt = promptFn(currentAccount);
 
-    var response = await fetch('https://api.anthropic.com/v1/messages', {
+    var response = await fetch('https://orange-snowflake-bcc4.preethi-d.workers.dev', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 4000,
-        stream: true,
         system: prompt.system,
-        tools: [{type: 'web_search_20250305', name: 'web_search'}],
         messages: [{ role: 'user', content: prompt.user }]
       })
     });
 
     if (!response.ok) {
-      throw new Error('API error: ' + response.status);
+      var errText = await response.text();
+      throw new Error('API error ' + response.status + ': ' + errText.slice(0, 200));
     }
 
-    var reader = response.body.getReader();
-    var decoder = new TextDecoder();
+    var data = await response.json();
+
+    // Extract text from response content blocks
     var fullText = '';
-    outputEl.innerHTML = '';
-
-    while (true) {
-      var result = await reader.read();
-      if (result.done) break;
-
-      var chunk = decoder.decode(result.value, {stream: true});
-      var lines = chunk.split('\n');
-
-      for (var i = 0; i < lines.length; i++) {
-        var line = lines[i].trim();
-        if (!line.startsWith('data:')) continue;
-        var data = line.slice(5).trim();
-        if (data === '[DONE]') continue;
-
-        try {
-          var event = JSON.parse(data);
-          if (event.type === 'content_block_delta' && event.delta && event.delta.type === 'text_delta') {
-            fullText += event.delta.text;
-            // Render with cursor
-            outputEl.innerHTML = renderMarkdown(fullText) + '<span class="cursor"></span>';
-            outputEl.scrollTop = outputEl.scrollHeight;
-          }
-        } catch(e) {}
-      }
+    if (data.content && Array.isArray(data.content)) {
+      data.content.forEach(function(block) {
+        if (block.type === 'text') fullText += block.text;
+      });
     }
 
-    // Final render without cursor
+    if (!fullText) throw new Error('No response content received from Claude.');
+
     outputEl.innerHTML = renderMarkdown(fullText);
     outputEl.className = 'aip-output';
     document.getElementById('aip-actions').style.display = 'flex';
