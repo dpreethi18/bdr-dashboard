@@ -537,30 +537,24 @@ Run all 4 phases without stopping. Use web search. Be specific, factual, and sca
 **Buyer Intent**: ${acc.bi || 'No'}${acc.bid && acc.bid !== '-' ? ' | Date: '+acc.bid : ''}
 **Contacts**: ${acc.contacts && acc.contacts.length ? acc.contacts.map(function(c){return ((c.firstName||'')+' '+(c.lastName||'')).trim()+(c.email?' ('+c.email+')':'');}).join(', ') : 'None on record'}
 
-Run all 4 phases in sequence:
+Run all 3 phases in sequence:
 
 ---
 ## Phase 1: Account Research & ICP Qualification
 [Company overview, FM setup, tech stack, ICP score: Strong/Potential/Poor Fit]
 
 ---
-## Phase 2: Ideal Buyer Personas
-[Table: Tier | Role | Named Contact or Search Query | Notes]
-[Best first contact with rationale]
-
----
-## Phase 3: Buying Signals
+## Phase 2: Buying Signals
 [Search for hiring, leadership changes, expansion signals. Rate Hot/Warm/Cooling]
 [Overall signal strength + best outreach hook]
 
 ---
-## Phase 4: Outreach
+## Phase 3: Outreach
 [Write Cold Email + LinkedIn Request + Call Script using strongest signal as hook]
 
 ---
 ## Prospecting Summary
 - ICP fit: 
-- Best contact: 
 - Top signal: 
 - Messages written: Cold email ✓ | LinkedIn ✓ | Call script ✓`
     };
