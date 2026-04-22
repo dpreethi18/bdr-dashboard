@@ -195,6 +195,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .nav-pill:hover{background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.5)}
 .nav-pill.active{background:#fff;color:var(--brand);border-color:#fff}
 
+/* SAVED RESULTS */
+.saved-tab{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:var(--surface2);color:var(--text3);transition:all .15s;font-family:'Inter',sans-serif;white-space:nowrap}
+.saved-tab:hover{border-color:var(--accent);color:var(--accent)}
+.saved-tab.active-tab{background:var(--accent2);border-color:var(--accent);color:var(--accent)}
+.cache-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;background:#ECFDF5;border:1px solid #A7F3D0;color:#059669;border-radius:20px;font-size:10px;font-weight:700}
+.aip-output-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text3);margin-bottom:8px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+
 /* markdown renderer helper */
 .md-rendered h1{font-size:15px;font-weight:800;color:var(--text);margin:14px 0 6px;border-bottom:2px solid var(--accent2);padding-bottom:4px}
 .md-rendered h2{font-size:13px;font-weight:700;color:var(--text);margin:12px 0 5px;border-bottom:1px solid var(--border);padding-bottom:3px}
@@ -205,9 +212,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .md-rendered strong{color:var(--text);font-weight:700}
 .md-rendered code{background:#E8EAFF;padding:1px 5px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent)}
 .md-rendered hr{border:none;border-top:1px solid var(--border);margin:12px 0}
-.md-rendered table{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0;border-radius:6px;overflow:hidden}
-.md-rendered th{background:var(--accent2);color:var(--brand);padding:7px 10px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.5px;font-weight:700}
-.md-rendered td{padding:7px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+.md-rendered table{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0;border-radius:6px;overflow:hidden;display:block;overflow-x:auto}
+.md-rendered th{background:var(--accent2);color:var(--brand);padding:7px 10px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.5px;font-weight:700;white-space:nowrap}
+.md-rendered td{padding:7px 10px;border-bottom:1px solid var(--border);vertical-align:top;min-width:80px;word-break:break-word;max-width:200px}
 .md-rendered tr:last-child td{border-bottom:none}
 .md-rendered tr:hover td{background:#FAFAFF}
 .md-rendered blockquote{border-left:3px solid var(--accent);padding:6px 12px;background:var(--accent2);border-radius:0 6px 6px 0;margin:8px 0;color:var(--text2);font-style:italic;font-size:12px}
@@ -318,6 +325,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     <div class="aip-output-label">
       <span>AI Output</span>
       <span class="out-badge" id="aip-skill-badge" style="display:none"></span>
+      <div id="saved-tabs" style="display:none;display:flex;gap:4px;margin-left:auto;flex-wrap:wrap"></div>
     </div>
     <div class="aip-output" id="aip-output">
       <div class="aip-placeholder">
@@ -331,6 +339,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
         Copy Output
       </button>
       <button class="aip-clear-btn" onclick="clearOutput()">Clear</button>
+      <button class="aip-clear-btn" onclick="clearSavedResults(currentAccount.company)" style="margin-left:auto;font-size:11px">🗑 Clear Saved</button>
     </div>
   </div>
 </div>
@@ -612,6 +621,88 @@ function renderMarkdown(text) {
 }
 
 // ─── AI PANEL ────────────────────────────────────────────────────────────────
+// ─── CACHE SYSTEM ────────────────────────────────────────────────────────────
+var CACHE_KEY_PREFIX = 'facilio_ai_';
+
+function getCacheKey(company, skill) {
+  return CACHE_KEY_PREFIX + company.toLowerCase().replace(/[^a-z0-9]/g,'_') + '_' + skill;
+}
+
+function saveResult(company, skill, html) {
+  try {
+    var key = getCacheKey(company, skill);
+    var entry = { html: html, skill: skill, company: company, date: new Date().toLocaleDateString('en-GB'), ts: Date.now() };
+    localStorage.setItem(key, JSON.stringify(entry));
+    refreshSavedTabs(company);
+  } catch(e) { console.warn('Cache save failed:', e); }
+}
+
+function loadResult(company, skill) {
+  try {
+    var key = getCacheKey(company, skill);
+    var raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : null;
+  } catch(e) { return null; }
+}
+
+function getSavedSkills(company) {
+  var saved = [];
+  try {
+    var prefix = CACHE_KEY_PREFIX + company.toLowerCase().replace(/[^a-z0-9]/g,'_') + '_';
+    for (var i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i);
+      if (k && k.indexOf(prefix) === 0) {
+        var skill = k.replace(prefix, '');
+        var entry = JSON.parse(localStorage.getItem(k));
+        saved.push({ skill: skill, date: entry.date, label: SKILL_LABELS[skill] || skill });
+      }
+    }
+  } catch(e) {}
+  return saved;
+}
+
+function refreshSavedTabs(company) {
+  var saved = getSavedSkills(company || (currentAccount && currentAccount.company) || '');
+  var tabsEl = document.getElementById('saved-tabs');
+  if (!tabsEl) return;
+  if (!saved.length) { tabsEl.style.display = 'none'; return; }
+  tabsEl.style.display = 'flex';
+  tabsEl.innerHTML = '<span style="font-size:10px;color:var(--text3);font-weight:600;align-self:center">SAVED:</span>';
+  saved.forEach(function(s) {
+    var btn = document.createElement('button');
+    btn.className = 'saved-tab';
+    btn.textContent = (s.label || s.skill) + ' · ' + s.date;
+    btn.onclick = function() {
+      var entry = loadResult(company || currentAccount.company, s.skill);
+      if (!entry) return;
+      document.querySelectorAll('.saved-tab').forEach(function(b){b.classList.remove('active-tab');});
+      btn.classList.add('active-tab');
+      var badge = document.getElementById('aip-skill-badge');
+      badge.textContent = (SKILL_LABELS[s.skill] || s.skill) + ' (saved ' + entry.date + ')';
+      badge.style.display = 'inline-flex';
+      badge.className = 'out-badge cache-badge';
+      var outputEl = document.getElementById('aip-output');
+      outputEl.className = 'aip-output';
+      outputEl.innerHTML = entry.html;
+      document.getElementById('aip-actions').style.display = 'flex';
+    };
+    tabsEl.appendChild(btn);
+  });
+}
+
+function clearSavedResults(company) {
+  try {
+    var prefix = CACHE_KEY_PREFIX + company.toLowerCase().replace(/[^a-z0-9]/g,'_') + '_';
+    var toDelete = [];
+    for (var i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i);
+      if (k && k.indexOf(prefix) === 0) toDelete.push(k);
+    }
+    toDelete.forEach(function(k){ localStorage.removeItem(k); });
+    refreshSavedTabs(company);
+  } catch(e) {}
+}
+
 function openAIPanel(accountIdx) {
   currentAccount = DATA[accountIdx];
   selectedSkill = null;
@@ -632,6 +723,9 @@ function openAIPanel(accountIdx) {
   var runBtn = document.getElementById('aip-run-btn');
   runBtn.disabled = true;
   runBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg> Select a skill to run';
+
+  // Load saved tabs for this company
+  refreshSavedTabs(currentAccount.company);
 
   // Open panel
   document.getElementById('ai-overlay').classList.add('open');
@@ -707,9 +801,14 @@ async function runSkill() {
 
     if (!fullText) throw new Error('Empty response. Stop_reason: ' + data.stop_reason + ' | Content blocks: ' + (data.content ? data.content.length : 0) + ' | Types: ' + (data.content ? data.content.map(function(b){return b.type;}).join(',') : 'none') + ' | Error: ' + JSON.stringify(data.error));
 
-    outputEl.innerHTML = renderMarkdown(fullText);
+    var renderedHtml = renderMarkdown(fullText);
+    outputEl.innerHTML = renderedHtml;
     outputEl.className = 'aip-output';
     document.getElementById('aip-actions').style.display = 'flex';
+    // Save to localStorage
+    saveResult(currentAccount.company, selectedSkill, renderedHtml);
+    var badge = document.getElementById('aip-skill-badge');
+    badge.className = 'out-badge';
 
   } catch(err) {
     outputEl.className = 'aip-output';
