@@ -495,7 +495,7 @@ Contacts on record: ${acc.contacts && acc.contacts.length ? acc.contacts.map(fun
 Produce this exact profile structure:
 
 ### 🏢 ACCOUNT PROFILE: ${acc.company}
-**Domain**: | **Region**: | **HQ**: | **Data confidence**: High/Medium/Low
+**Domain**: | **Region**: | **HQ**:
 
 #### Company Overview
 - What they do (2–3 sentences — their role in FM/real estate/property operations)
@@ -771,11 +771,12 @@ function renderMarkdown(text) {
     // Blockquote
     .replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>')
     // Tables
-    .replace(/^\|(.+)\|$/gm, function(match) {
+    .replace(/^\|(.+)\|$/gm, function(match, p1, offset, str) {
       var cells = match.slice(1,-1).split('|').map(function(c){return c.trim();});
+      // Check if previous line was a header (look for |---|) pattern
       return '<tr>' + cells.map(function(c){return '<td>'+c+'</td>';}).join('') + '</tr>';
     })
-    .replace(/^(<tr><td>[-: |]+<\/td><\/tr>)$/gm, '') // remove separator rows
+    .replace(/<tr><td>[-: ]+<\/td>(<td>[-: ]+<\/td>)*<\/tr>/g, '') // remove separator rows
     // Fix header rows (first row before any separator)
     // Lists
     .replace(/^[\*\-] (.+)$/gm, '<li>$1</li>')
