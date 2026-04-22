@@ -117,78 +117,74 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .no-sig{font-size:11px;color:var(--text3);font-style:italic;padding:3px 0}
 
 /* ============================================
-   AI SLIDE-OUT PANEL
+   AI MODAL
    ============================================ */
-#ai-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;opacity:0;pointer-events:none;transition:opacity .25s}
+#ai-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(3px)}
 #ai-overlay.open{opacity:1;pointer-events:all}
 
-#ai-panel{position:fixed;top:0;right:0;height:100vh;width:520px;max-width:95vw;background:var(--surface);z-index:201;display:flex;flex-direction:column;box-shadow:-8px 0 40px rgba(0,0,0,.2);transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1)}
-#ai-panel.open{transform:translateX(0)}
+#ai-panel{position:fixed;top:50%;left:50%;transform:translate(-50%,-60%);width:880px;max-width:96vw;max-height:90vh;background:var(--surface);z-index:201;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,.3);border-radius:16px;overflow:hidden;opacity:0;pointer-events:none;transition:all .3s cubic-bezier(.4,0,.2,1)}
+#ai-panel.open{transform:translate(-50%,-50%);opacity:1;pointer-events:all}
 
-.aip-header{background:linear-gradient(135deg,var(--brand) 0%,#5B6AF0 100%);padding:20px 20px 16px;flex-shrink:0}
-.aip-header-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
-.aip-company{font-size:16px;font-weight:800;color:#fff;line-height:1.2}
-.aip-meta{font-size:11px;color:rgba(255,255,255,.6);margin-top:3px}
-.aip-close{background:rgba(255,255,255,.15);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s}
+/* MODAL HEADER */
+.aip-header{background:linear-gradient(135deg,var(--brand) 0%,#5B6AF0 100%);padding:22px 28px 0;flex-shrink:0}
+.aip-header-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px}
+.aip-header-left{display:flex;align-items:center;gap:14px}
+.aip-company-badge{width:44px;height:44px;border-radius:10px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff;flex-shrink:0;letter-spacing:-1px}
+.aip-company{font-size:20px;font-weight:800;color:#fff;line-height:1.2}
+.aip-meta{font-size:12px;color:rgba(255,255,255,.6);margin-top:3px;display:flex;gap:8px;flex-wrap:wrap}
+.aip-meta-tag{background:rgba(255,255,255,.12);padding:2px 8px;border-radius:20px;font-size:11px;color:rgba(255,255,255,.8)}
+.aip-close{background:rgba(255,255,255,.15);border:none;color:#fff;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s;margin-top:2px}
 .aip-close:hover{background:rgba(255,255,255,.3)}
 
-/* SKILL SELECTOR */
-.skill-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.skill-btn{padding:10px 12px;border-radius:var(--r-sm);border:1.5px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;font-size:12px;font-weight:600;cursor:pointer;text-align:left;transition:all .18s;font-family:'Inter',sans-serif;line-height:1.3}
-.skill-btn:hover{background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.5)}
-.skill-btn.active{background:#fff;color:var(--brand);border-color:#fff}
-.skill-btn .sk-icon{font-size:16px;display:block;margin-bottom:3px}
-.skill-btn .sk-name{font-size:11px;font-weight:700;display:block}
-.skill-btn .sk-desc{font-size:10px;opacity:.7;display:block;margin-top:1px}
-.skill-btn-full{grid-column:1/-1;background:rgba(245,158,11,.25);border-color:rgba(245,158,11,.5)}
-.skill-btn-full.active{background:#F59E0B;color:#fff;border-color:#F59E0B}
+/* SKILL TABS in header */
+.skill-tabs{display:flex;gap:0;border-top:none;margin-top:0}
+.skill-tab-btn{padding:12px 20px;border:none;background:transparent;color:rgba(255,255,255,.6);font-size:13px;font-weight:600;cursor:pointer;transition:all .18s;font-family:'Inter',sans-serif;border-bottom:3px solid transparent;display:flex;align-items:center;gap:7px;white-space:nowrap}
+.skill-tab-btn:hover{color:#fff;background:rgba(255,255,255,.08)}
+.skill-tab-btn.active{color:#fff;border-bottom-color:#fff;background:rgba(255,255,255,.1)}
+.skill-tab-btn .sk-icon{font-size:15px}
 
-/* RUN BUTTON */
-.aip-run-wrap{padding:12px 20px 0;flex-shrink:0}
-.aip-run-btn{width:100%;padding:11px;background:var(--accent);color:#fff;border:none;border-radius:var(--r-sm);font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:center;gap:8px}
+/* MODAL BODY */
+.aip-body{display:flex;flex:1;overflow:hidden;min-height:0}
+
+/* LEFT SIDEBAR */
+.aip-sidebar{width:220px;flex-shrink:0;border-right:1.5px solid var(--border);display:flex;flex-direction:column;background:var(--surface2)}
+.aip-run-btn{margin:16px;padding:11px;background:var(--accent);color:#fff;border:none;border-radius:var(--r-sm);font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:center;gap:8px}
 .aip-run-btn:hover{background:#4355e8;box-shadow:0 4px 16px rgba(91,106,240,.4)}
 .aip-run-btn:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
+.aip-sidebar-info{padding:0 16px 16px;border-top:1px solid var(--border);margin-top:auto}
+.aip-sidebar-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:8px;margin-top:16px}
+.aip-account-detail{font-size:11px;color:var(--text2);margin-bottom:4px;display:flex;gap:6px}
+.aip-account-detail .lbl{color:var(--text3);font-weight:600;min-width:60px;flex-shrink:0}
 
-/* OUTPUT AREA */
-.aip-output-wrap{flex:1;overflow:hidden;display:flex;flex-direction:column;padding:16px 20px 20px}
-.aip-output-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text3);margin-bottom:8px;display:flex;align-items:center;gap:8px}
-.aip-output-label .out-badge{padding:2px 8px;background:var(--accent2);color:var(--accent);border-radius:20px;font-size:10px;font-weight:700}
-.aip-output{flex:1;overflow-y:auto;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:14px;font-size:13px;line-height:1.7;color:var(--text2);white-space:pre-wrap;word-break:break-word;font-family:'Inter',sans-serif}
+/* RIGHT OUTPUT */
+.aip-output-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;padding:20px 24px}
+.aip-output-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text3);margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.out-badge{padding:2px 8px;background:var(--accent2);color:var(--accent);border-radius:20px;font-size:10px;font-weight:700}
+.aip-output{flex:1;overflow-y:auto;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:18px 20px;font-size:13px;line-height:1.7;color:var(--text2);word-break:break-word;font-family:'Inter',sans-serif}
 .aip-output.streaming{border-color:var(--accent);background:#FAFAFF}
-.aip-output h1,.aip-output h2,.aip-output h3{color:var(--text);margin:12px 0 6px;font-size:13px}
-.aip-output h2{border-bottom:1px solid var(--border);padding-bottom:4px;margin-top:16px}
-.aip-output table{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0}
-.aip-output th{background:var(--accent2);color:var(--accent);padding:6px 8px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.4px}
-.aip-output td{padding:6px 8px;border-bottom:1px solid var(--border)}
-.aip-output tr:hover td{background:var(--surface)}
-.aip-output strong,.aip-output b{color:var(--text);font-weight:700}
-.aip-output code{background:var(--border);padding:1px 5px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11px}
-.aip-output ul,.aip-output ol{padding-left:18px;margin:6px 0}
-.aip-output li{margin-bottom:3px}
-.aip-output hr{border:none;border-top:1px solid var(--border);margin:12px 0}
-.aip-placeholder{color:var(--text3);font-style:italic;font-size:13px;text-align:center;padding:40px 20px}
-.aip-placeholder .ph-icon{font-size:32px;display:block;margin-bottom:10px}
+.aip-placeholder{color:var(--text3);font-size:13px;text-align:center;padding:60px 20px}
+.aip-placeholder .ph-icon{font-size:40px;display:block;margin-bottom:12px}
 
 /* STREAMING CURSOR */
 .cursor{display:inline-block;width:2px;height:14px;background:var(--accent);margin-left:2px;animation:blink .8s step-end infinite;vertical-align:middle}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 
-/* COPY BUTTON */
-.aip-actions{display:flex;gap:8px;margin-top:10px;flex-shrink:0}
+/* ACTION BUTTONS */
+.aip-actions{display:flex;gap:8px;margin-top:12px;flex-shrink:0}
 .aip-copy-btn{padding:7px 16px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text2);border-radius:var(--r-sm);font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px}
 .aip-copy-btn:hover{border-color:var(--accent);color:var(--accent)}
 .aip-clear-btn{padding:7px 16px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text2);border-radius:var(--r-sm);font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
 .aip-clear-btn:hover{border-color:#EF4444;color:#EF4444}
 
 /* THINKING ANIMATION */
-.thinking{display:flex;align-items:center;gap:8px;padding:20px;color:var(--text3);font-size:12px}
-.thinking-dots{display:flex;gap:4px}
-.thinking-dots span{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:dot .9s infinite}
+.thinking{display:flex;align-items:center;gap:8px;padding:40px 20px;color:var(--text3);font-size:13px;justify-content:center}
+.thinking-dots{display:flex;gap:5px}
+.thinking-dots span{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:dot .9s infinite}
 .thinking-dots span:nth-child(2){animation-delay:.2s}
 .thinking-dots span:nth-child(3){animation-delay:.4s}
 @keyframes dot{0%,60%,100%{transform:scale(.6);opacity:.4}30%{transform:scale(1);opacity:1}}
 
-@media(max-width:640px){.topbar,.toolbar,.main{padding-left:16px;padding-right:16px}#ai-panel{width:100vw}}
+@media(max-width:640px){.topbar,.toolbar,.main{padding-left:16px;padding-right:16px}#ai-panel{width:98vw;max-height:95vh}.aip-sidebar{display:none}}
 
 .nav-pills{display:flex;gap:6px;margin-left:12px}
 .nav-pill{padding:6px 14px;border-radius:20px;border:1.5px solid rgba(255,255,255,.25);background:transparent;color:rgba(255,255,255,.75);font-size:12px;font-weight:600;text-decoration:none;white-space:nowrap;transition:all .15s;font-family:'Inter',sans-serif}
@@ -278,68 +274,82 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
   </div>
 </div>
 
-<!-- AI SLIDE-OUT PANEL -->
+<!-- AI MODAL -->
 <div id="ai-overlay" onclick="closeAIPanel()"></div>
 <div id="ai-panel">
+  <!-- HEADER -->
   <div class="aip-header">
     <div class="aip-header-top">
-      <div>
-        <div class="aip-company" id="aip-company-name">Company Name</div>
-        <div class="aip-meta" id="aip-company-meta">Vertical · Territory · Owner</div>
+      <div class="aip-header-left">
+        <div class="aip-company-badge" id="aip-company-initial">?</div>
+        <div>
+          <div class="aip-company" id="aip-company-name">Company Name</div>
+          <div class="aip-meta" id="aip-company-meta"></div>
+        </div>
       </div>
       <button class="aip-close" onclick="closeAIPanel()">✕</button>
     </div>
-    <!-- SKILL SELECTOR -->
-    <div class="skill-grid">
-      <button class="skill-btn" data-skill="account-research" onclick="selectSkill(this)">
-        <span class="sk-icon">🔍</span>
-        <span class="sk-name">Account Research</span>
-        <span class="sk-desc">ICP fit, tech stack, key people</span>
+    <!-- SKILL TABS -->
+    <div class="skill-tabs">
+      <button class="skill-tab-btn" data-skill="account-research" onclick="selectSkill(this)">
+        <span class="sk-icon">🔍</span> Account Research
       </button>
-      <button class="skill-btn" data-skill="signal-finder" onclick="selectSkill(this)">
-        <span class="sk-icon">📡</span>
-        <span class="sk-name">Signal Finder</span>
-        <span class="sk-desc">Hiring, leadership, expansion signals</span>
+      <button class="skill-tab-btn" data-skill="signal-finder" onclick="selectSkill(this)">
+        <span class="sk-icon">📡</span> Signal Finder
       </button>
-      <button class="skill-btn" data-skill="messaging-writer" onclick="selectSkill(this)">
-        <span class="sk-icon">✍️</span>
-        <span class="sk-name">Messaging Writer</span>
-        <span class="sk-desc">Cold email, LinkedIn, call script</span>
+      <button class="skill-tab-btn" data-skill="messaging-writer" onclick="selectSkill(this)">
+        <span class="sk-icon">✍️</span> Messaging Writer
       </button>
-      <button class="skill-btn skill-btn-full" data-skill="full-prospect" onclick="selectSkill(this)">
-        <span class="sk-icon">⚡</span>
-        <span class="sk-name">Full Prospect</span>
-        <span class="sk-desc">Run all skills end-to-end</span>
+      <button class="skill-tab-btn" data-skill="full-prospect" onclick="selectSkill(this)">
+        <span class="sk-icon">⚡</span> Full Prospect
       </button>
     </div>
   </div>
 
-  <div class="aip-run-wrap">
-    <button class="aip-run-btn" id="aip-run-btn" onclick="runSkill()" disabled>
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-      Select a skill to run
-    </button>
-  </div>
-
-  <div class="aip-output-wrap">
-    <div class="aip-output-label">
-      <span>AI Output</span>
-      <span class="out-badge" id="aip-skill-badge" style="display:none"></span>
-      <div id="saved-tabs" style="display:none;display:flex;gap:4px;margin-left:auto;flex-wrap:wrap"></div>
-    </div>
-    <div class="aip-output" id="aip-output">
-      <div class="aip-placeholder">
-        <span class="ph-icon">🤖</span>
-        Select a skill above and click Run to start AI prospecting for this account.
+  <!-- BODY -->
+  <div class="aip-body">
+    <!-- LEFT SIDEBAR -->
+    <div class="aip-sidebar">
+      <button class="aip-run-btn" id="aip-run-btn" onclick="runSkill()" disabled>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Select a skill
+      </button>
+      <div style="padding:0 16px">
+        <div id="saved-tabs" style="display:none"></div>
+      </div>
+      <div class="aip-sidebar-info">
+        <div class="aip-sidebar-label">Account Details</div>
+        <div class="aip-account-detail"><span class="lbl">Vertical</span><span id="si-vertical">—</span></div>
+        <div class="aip-account-detail"><span class="lbl">Territory</span><span id="si-territory">—</span></div>
+        <div class="aip-account-detail"><span class="lbl">Owner</span><span id="si-owner">—</span></div>
+        <div class="aip-account-detail"><span class="lbl">Status</span><span id="si-status">—</span></div>
+        <div class="aip-account-detail"><span class="lbl">Score</span><span id="si-score">—</span></div>
+        <div class="aip-account-detail"><span class="lbl">Website</span><span id="si-ws">—</span></div>
+        <div class="aip-account-detail"><span class="lbl">Buyer Intent</span><span id="si-bi">—</span></div>
+        <div class="aip-account-detail"><span class="lbl">Contacts</span><span id="si-contacts">—</span></div>
       </div>
     </div>
-    <div class="aip-actions" id="aip-actions" style="display:none">
-      <button class="aip-copy-btn" onclick="copyOutput()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-        Copy Output
-      </button>
-      <button class="aip-clear-btn" onclick="clearOutput()">Clear</button>
-      <button class="aip-clear-btn" onclick="clearSavedResults(currentAccount.company)" style="margin-left:auto;font-size:11px">🗑 Clear Saved</button>
+
+    <!-- OUTPUT -->
+    <div class="aip-output-wrap">
+      <div class="aip-output-label">
+        <span>AI Output</span>
+        <span class="out-badge" id="aip-skill-badge" style="display:none"></span>
+      </div>
+      <div class="aip-output" id="aip-output">
+        <div class="aip-placeholder">
+          <span class="ph-icon">🤖</span>
+          Select a skill above and click Run to start AI prospecting for this account.
+        </div>
+      </div>
+      <div class="aip-actions" id="aip-actions" style="display:none">
+        <button class="aip-copy-btn" onclick="copyOutput()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copy Output
+        </button>
+        <button class="aip-clear-btn" onclick="clearOutput()">Clear</button>
+        <button class="aip-clear-btn" onclick="clearSavedResults(currentAccount.company)" style="margin-left:auto;font-size:11px">🗑 Clear Saved</button>
+      </div>
     </div>
   </div>
 </div>
@@ -666,11 +676,12 @@ function refreshSavedTabs(company) {
   var tabsEl = document.getElementById('saved-tabs');
   if (!tabsEl) return;
   if (!saved.length) { tabsEl.style.display = 'none'; return; }
-  tabsEl.style.display = 'flex';
-  tabsEl.innerHTML = '<span style="font-size:10px;color:var(--text3);font-weight:600;align-self:center">SAVED:</span>';
+  tabsEl.style.display = 'block';
+  tabsEl.innerHTML = '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:8px;margin-top:4px">Saved Results</div>';
   saved.forEach(function(s) {
     var btn = document.createElement('button');
     btn.className = 'saved-tab';
+    btn.style.cssText = 'display:block;width:100%;text-align:left;margin-bottom:5px;';
     btn.textContent = (s.label || s.skill) + ' · ' + s.date;
     btn.onclick = function() {
       var entry = loadResult(company || currentAccount.company, s.skill);
@@ -708,12 +719,29 @@ function openAIPanel(accountIdx) {
   selectedSkill = null;
 
   // Populate header
-  document.getElementById('aip-company-name').textContent = currentAccount.company || 'Unknown';
-  document.getElementById('aip-company-meta').textContent =
-    [currentAccount.vertical, currentAccount.territory, currentAccount.owner].filter(Boolean).join(' · ');
+  var co = currentAccount.company || 'Unknown';
+  document.getElementById('aip-company-name').textContent = co;
+  document.getElementById('aip-company-initial').textContent = co.charAt(0).toUpperCase();
+
+  // Meta tags
+  var metaEl = document.getElementById('aip-company-meta');
+  metaEl.innerHTML = [currentAccount.vertical, currentAccount.territory, currentAccount.owner]
+    .filter(Boolean)
+    .map(function(t){return "<span class='aip-meta-tag'>"+E(t)+"</span>";})
+    .join('');
+
+  // Sidebar details
+  document.getElementById('si-vertical').textContent = currentAccount.vertical || '—';
+  document.getElementById('si-territory').textContent = currentAccount.territory || '—';
+  document.getElementById('si-owner').textContent = currentAccount.owner || '—';
+  document.getElementById('si-status').textContent = currentAccount.status || '—';
+  document.getElementById('si-score').textContent = currentAccount.totalScore ? '⚡ ' + currentAccount.totalScore : '—';
+  document.getElementById('si-ws').textContent = isPos(currentAccount.ws) ? '✅ Yes' : '—';
+  document.getElementById('si-bi').textContent = isPos(currentAccount.bi) ? '✅ Yes' : '—';
+  document.getElementById('si-contacts').textContent = (currentAccount.contacts||[]).length || '—';
 
   // Reset skill buttons
-  document.querySelectorAll('.skill-btn').forEach(function(b){b.classList.remove('active');});
+  document.querySelectorAll('.skill-tab-btn').forEach(function(b){b.classList.remove('active');});
 
   // Reset output
   document.getElementById('aip-output').innerHTML = '<div class="aip-placeholder"><span class="ph-icon">🤖</span>Select a skill above and click Run to start AI prospecting for this account.</div>';
@@ -741,7 +769,7 @@ function closeAIPanel() {
 }
 
 function selectSkill(btn) {
-  document.querySelectorAll('.skill-btn').forEach(function(b){b.classList.remove('active');});
+  document.querySelectorAll('.skill-tab-btn').forEach(function(b){b.classList.remove('active');});
   btn.classList.add('active');
   selectedSkill = btn.dataset.skill;
 
