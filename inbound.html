@@ -945,17 +945,22 @@ function selectSkill(btn) {
   runBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg> Run ' + SKILL_LABELS[selectedSkill];
 }
 
-async function callClaude(systemPrompt, userPrompt) {
+async function callClaude(systemPrompt, userPrompt, useWebSearch) {
+  var body = {
+    model: 'claude-sonnet-4-5',
+    max_tokens: 4000,
+    system: systemPrompt,
+    messages: [{ role: 'user', content: userPrompt }]
+  };
+  // Only enable web search when explicitly requested (Full Prospect)
+  if (useWebSearch) {
+    body.tools = [{ type: 'web_search_20250305', name: 'web_search' }];
+    body.max_tokens = 6000;
+  }
   var response = await fetch('https://orange-snowflake-bcc4.preethi-d.workers.dev', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-5',
-      max_tokens: 8000,
-      system: systemPrompt,
-      tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-      messages: [{ role: 'user', content: userPrompt }]
-    })
+    body: JSON.stringify(body)
   });
 
   if (!response.ok) {
@@ -1031,7 +1036,7 @@ async function runSkill() {
       // PHASE 1 — Account Research
       setPhaseStatus(outputEl, phases, 0, 'researching company profile...');
       var p1prompt = SKILL_PROMPTS['account-research'](acc);
-      var phase1Result = await callClaude(p1prompt.system, p1prompt.user);
+      var phase1Result = await callClaude(p1prompt.system, p1prompt.user, true);
       setPhaseStatus(outputEl, phases, 1, 'searching for signals...');
       appendPhaseOutput(phase1Result);
 
@@ -1041,7 +1046,7 @@ async function runSkill() {
       // PHASE 2 — Signal Finder (with Phase 1 context)
       var p2prompt = SKILL_PROMPTS['signal-finder'](acc);
       var p2UserWithContext = p2prompt.user + '\n\n---\n## Account Research Context (from Phase 1)\n' + phase1Result;
-      var phase2Result = await callClaude(p2prompt.system, p2UserWithContext);
+      var phase2Result = await callClaude(p2prompt.system, p2UserWithContext, true);
       setPhaseStatus(outputEl, phases, 2, 'writing personalised outreach...');
       appendPhaseOutput(phase2Result);
 
@@ -1054,7 +1059,7 @@ async function runSkill() {
         '\n\n---\n## Account Research (Phase 1 findings)\n' + phase1Result +
         '\n\n---\n## Buying Signals (Phase 2 findings)\n' + phase2Result +
         '\n\nUse ALL of the above research to write hyper-personalised outreach. Reference specific findings — company details, signals, and context from the research above.';
-      var phase3Result = await callClaude(p3prompt.system, p3UserWithContext);
+      var phase3Result = await callClaude(p3prompt.system, p3UserWithContext, false);
       setPhaseStatus(outputEl, phases, 3, '');
       appendPhaseOutput(phase3Result);
 
@@ -1067,7 +1072,7 @@ async function runSkill() {
       outputEl.innerHTML = '<div class="thinking"><div class="thinking-dots"><span></span><span></span><span></span></div><span>Running ' + SKILL_LABELS[selectedSkill] + ' for ' + E(acc.company) + '...</span></div>';
 
       var skillPrompt = SKILL_PROMPTS[selectedSkill](acc);
-      var skillResult = await callClaude(skillPrompt.system, skillPrompt.user);
+      var skillResult = await callClaude(skillPrompt.system, skillPrompt.user, false);
 
       outputEl.innerHTML = renderMarkdown(skillResult);
       fullOutput = skillResult;
