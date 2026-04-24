@@ -400,9 +400,9 @@ function renderBdrDash(bdr){
   h+="<div class='bdr-section-title'>Account Tiers</div>";
   h+="<div class='bdr-tier-grid'>"
     +"<div class='bdr-tier-card' onclick='applyChartFilter(null,\"hot\")' style='cursor:pointer'><div class='bdr-tier-bar' style='background:var(--hot)'></div><div class='bdr-tier-label'>Hot</div><div class='bdr-tier-val' style='color:var(--hot)'>"+hot+"</div><div class='bdr-tier-sub'>Score 8+</div></div>"
-    +"<div class='bdr-tier-card' onclick='applyChartFilter(null,\"warm\")' style='cursor:pointer'><div class='bdr-tier-bar' style='background:var(--warm)'></div><div class='bdr-tier-label'>Warm</div><div class='bdr-tier-val' style='color:var(--warm)'>"+warm+"</div><div class='bdr-tier-sub'>Score 5–7</div></div>"
-    +"<div class='bdr-tier-card' onclick='applyChartFilter(null,\"watch\")' style='cursor:pointer'><div class='bdr-tier-bar' style='background:var(--cool)'></div><div class='bdr-tier-label'>Watch</div><div class='bdr-tier-val' style='color:var(--cool)'>"+watch+"</div><div class='bdr-tier-sub'>Score 3–4</div></div>"
-    +"<div class='bdr-tier-card' onclick='applyChartFilter(null,\"cold\")' style='cursor:pointer'><div class='bdr-tier-bar' style='background:var(--border2)'></div><div class='bdr-tier-label'>Cold</div><div class='bdr-tier-val' style='color:var(--text3)'>"+cold+"</div><div class='bdr-tier-sub'>Score 0–2</div></div>"
+    +"<div class='bdr-tier-card' onclick='applyChartFilter(null,\"warm\")' style='cursor:pointer'><div class='bdr-tier-bar' style='background:var(--warm)'></div><div class='bdr-tier-label'>Warm</div><div class='bdr-tier-val' style='color:var(--warm)'>"+warm+"</div><div class='bdr-tier-sub'>Score 5\u20137</div></div>"
+    +"<div class='bdr-tier-card' onclick='applyChartFilter(null,\"watch\")' style='cursor:pointer'><div class='bdr-tier-bar' style='background:var(--cool)'></div><div class='bdr-tier-label'>Watch</div><div class='bdr-tier-val' style='color:var(--cool)'>"+watch+"</div><div class='bdr-tier-sub'>Score 3\u20134</div></div>"
+    +"<div class='bdr-tier-card' onclick='applyChartFilter(null,\"cold\")' style='cursor:pointer'><div class='bdr-tier-bar' style='background:var(--border2)'></div><div class='bdr-tier-label'>Cold</div><div class='bdr-tier-val' style='color:var(--text3)'>"+cold+"</div><div class='bdr-tier-sub'>Score 0\u20132</div></div>"
     +"</div>";
 
   h+="<div class='bdr-section-title'>Signals Active</div>";
@@ -413,7 +413,7 @@ function renderBdrDash(bdr){
     +"<div class='bdr-sig-card'><div class='bdr-sig-icon'>&#127919;</div><div><div class='bdr-sig-label'>Buyer Intent</div><div class='bdr-sig-count' style='color:var(--bi)'>"+hasBi+"</div></div></div>"
     +"</div>";
 
-  h+="<div class='bdr-section-title' style='margin-top:4px'>Vertical Breakdown u2014 click any bar segment to filter accounts below</div>";
+  h+="<div class='bdr-section-title' style='margin-top:4px'>Vertical Breakdown \u2014 click any bar segment to filter accounts below</div>";
   h+="<div class='bdr-charts-wrap'>"
     +"<div class='bdr-chart-box'><div class='bdr-chart-title'>By Tier (Hot / Warm / Watch / Cold per vertical)</div><div class='bdr-chart-sub'>Click a bar segment to instantly filter the account grid below</div><div class='chart-canvas-wrap' style='height:260px'><canvas id='tier-chart'></canvas></div>"
     +"<div class='chart-legend'><div class='chart-legend-item'><div class='chart-legend-dot' style='background:#EF4444'></div>Hot</div><div class='chart-legend-item'><div class='chart-legend-dot' style='background:#F59E0B'></div>Warm</div><div class='chart-legend-item'><div class='chart-legend-dot' style='background:#3B82F6'></div>Watch</div><div class='chart-legend-item'><div class='chart-legend-dot' style='background:#D1D5DB'></div>Cold</div></div>"
@@ -473,7 +473,7 @@ function applyChartFilter(vert,tier){
   if(vert)parts.push("Vertical: "+vert);
   if(tier)parts.push("Tier: "+tier.charAt(0).toUpperCase()+tier.slice(1));
   if(parts.length){
-    document.getElementById("chart-banner-text").textContent="Showing — "+parts.join(" · ");
+    document.getElementById("chart-banner-text").textContent="Showing \u2014 "+parts.join(" \u00b7 ");
     banner.classList.add("visible");
   } else {
     banner.classList.remove("visible");
@@ -562,7 +562,6 @@ function switchTab(t){aTab=t;document.querySelectorAll(".mtab").forEach(function
 function renderTab(){
   var d=cur,h="";
   if(aTab==="overview"){
-    // u2500u2500 Company About & Services shown at the very top of Overview u2500u2500
     if(d.abt||d.svc){
       h+="<div class='co-info-box'>";
       if(d.abt)h+="<div class='co-info-about'>"+E(d.abt)+"</div>";
@@ -580,8 +579,10 @@ function renderTab(){
      +"<div class='scard'><div class='scard-bar' style='background:var(--news)'></div><div class='sl'>News</div><div class='sv' style='color:"+(d.ns>0?"var(--news)":"var(--border2)")+"'>"+d.ns+"</div>"+P(Math.round(d.ns),5,"news")+"<div class='sd'>"+d.news.length+" articles</div></div>"
      +"<div class='scard'><div class='scard-bar' style='background:var(--jobs)'></div><div class='sl'>Jobs</div><div class='sv' style='color:"+(d.js>0?"var(--jobs)":"var(--border2)")+"'>"+d.js+"</div>"+P(Math.round(d.js),4,"jobs")+"<div class='sd'>"+d.jobs.length+" roles</div></div>"
      +"</div>";
+    // FIX 1: Buyer Intent score label — out of 5
     if(d.bi>0)h+="<div class='sec'><div class='sec-title'>Buyer Intent</div><div class='iblock'><div class='irow'><span class='ik'>Score</span><span class='iv' style='color:var(--bi);font-weight:700'>"+d.bi+"/5</span></div>"+(d.bid&&d.bid!=="-"?"<div class='irow'><span class='ik'>Date</span><span class='iv'>"+D(d.bid)+"</span></div>":"")+(d.bi>=4?"<div style='margin-top:8px;padding:9px 12px;background:var(--bibg);border-radius:7px;border-left:3px solid var(--bi);font-size:13px;color:var(--bi);font-weight:600'>Very high intent - reach out now</div>":"")+"</div></div>";
-    if(d.ws>0)h+="<div class='sec'><div class='sec-title'>Website Signal</div><div class='iblock'><div class='irow'><span class='ik'>Score</span><span class='iv' style='color:var(--ws);font-weight:700'>"+d.ws+"/56/span></div>"+(d.tp>0?"<div class='irow'><span class='ik'>Pages</span><span class='iv'>"+d.tp+"</span></div>":"")+(d.wsd&&d.wsd!=="-"?"<div class='irow'><span class='ik'>Visit Date</span><span class='iv'>"+D(d.wsd)+"</span></div>":"")+(d.lp?"<div class='irow'><span class='ik'>Last Page</span><span class='iv' style='font-family:monospace;font-size:11px'>"+E(d.lp.split(";")[0])+"</span></div>":"")+"</div></div>";
+    // FIX 2: Website score label — out of 6 (was broken as "6/56/span>")
+    if(d.ws>0)h+="<div class='sec'><div class='sec-title'>Website Signal</div><div class='iblock'><div class='irow'><span class='ik'>Score</span><span class='iv' style='color:var(--ws);font-weight:700'>"+d.ws+"/6</span></div>"+(d.tp>0?"<div class='irow'><span class='ik'>Pages</span><span class='iv'>"+d.tp+"</span></div>":"")+(d.wsd&&d.wsd!=="-"?"<div class='irow'><span class='ik'>Visit Date</span><span class='iv'>"+D(d.wsd)+"</span></div>":"")+(d.lp?"<div class='irow'><span class='ik'>Last Page</span><span class='iv' style='font-family:monospace;font-size:11px'>"+E(d.lp.split(";")[0])+"</span></div>":"")+"</div></div>";
     if(d.news.length>0)h+="<div class='sec'><div class='sec-title'>Top News</div>"+NC(d.news[0],true)+(d.news.length>1?"<div style='font-size:12px;color:var(--text3);text-align:center;margin-top:6px'>+"+(d.news.length-1)+" more in News tab</div>":"")+"</div>";
     if(d.jobs.length>0)h+="<div class='sec'><div class='sec-title'>Top Job</div>"+JC(d.jobs[0])+(d.jobs.length>1?"<div style='font-size:12px;color:var(--text3);text-align:center;margin-top:6px'>+"+(d.jobs.length-1)+" more in Jobs tab</div>":"")+"</div>";
     var tips=[];
@@ -593,12 +594,14 @@ function renderTab(){
     h+="<div class='sec'><div class='sec-title'>Outreach Angles</div>"+tips.join("")+"</div>";
   }
   else if(aTab==="buyer"){
+    // FIX 3: Buyer Intent tab score label — out of 5
     if(!d.bi)h="<div class='mt-empty'><div style='font-size:32px;margin-bottom:8px'>&#128237;</div>No buyer intent signals</div>";
     else h="<div class='sec'><div class='sec-title'>Buyer Intent</div><div class='iblock'><div class='irow'><span class='ik'>Score</span><span class='iv' style='color:var(--bi);font-size:20px;font-weight:800'>"+d.bi+" / 5</span></div>"+P(d.bi,5,"bi")+(d.bid&&d.bid!=="-"?"<div class='irow'><span class='ik'>Date</span><span class='iv' style='font-weight:700'>"+D(d.bid)+"</span></div>":"")+"</div>"+(d.bi>=4?"<div style='padding:12px;background:var(--bibg);border-radius:8px;border-left:4px solid var(--bi)'><b style='color:var(--bi)'>Very High Buyer Intent</b><div style='font-size:13px;color:var(--text2);margin-top:4px'>Actively evaluating solutions. Prioritise this week.</div></div>":"")+"</div>";
   }
   else if(aTab==="website"){
+    // FIX 4: Website tab score label — out of 6
     if(!d.ws&&!d.tp)h="<div class='mt-empty'><div style='font-size:32px;margin-bottom:8px'>&#128237;</div>No website visitor data</div>";
-    else h="<div class='sec'><div class='sec-title'>Website Visitors</div><div class='iblock'>"+(d.wsd&&d.wsd!=="-"?"<div class='irow'><span class='ik'>Visit Date</span><span class='iv'>"+D(d.wsd)+"</span></div>":"")+(d.tp?"<div class='irow'><span class='ik'>Pages Viewed</span><span class='iv'>"+d.tp+"</span></div>":"")+(d.lp?"<div class='irow'><span class='ik'>Last Page</span><span class='iv' style='font-family:monospace;font-size:11px'>"+E(d.lp.split(";")[0])+"</span></div>":"")+"<div class='irow'><span class='ik'>Score</span><span class='iv' style='color:var(--ws);font-weight:700'>"+d.ws+"/5</span></div></div></div>";
+    else h="<div class='sec'><div class='sec-title'>Website Visitors</div><div class='iblock'>"+(d.wsd&&d.wsd!=="-"?"<div class='irow'><span class='ik'>Visit Date</span><span class='iv'>"+D(d.wsd)+"</span></div>":"")+(d.tp?"<div class='irow'><span class='ik'>Pages Viewed</span><span class='iv'>"+d.tp+"</span></div>":"")+(d.lp?"<div class='irow'><span class='ik'>Last Page</span><span class='iv' style='font-family:monospace;font-size:11px'>"+E(d.lp.split(";")[0])+"</span></div>":"")+"<div class='irow'><span class='ik'>Score</span><span class='iv' style='color:var(--ws);font-weight:700'>"+d.ws+"/6</span></div></div></div>";
   }
   else if(aTab==="news"){
     if(!d.news.length)h="<div class='mt-empty'><div style='font-size:32px;margin-bottom:8px'>&#128237;</div>No news signals</div>";
